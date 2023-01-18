@@ -41,7 +41,6 @@ export default function Home() {
         </div>
 
         <div className={styles.center}>
-          <h1 className="text-3xl font-bold underline">Hello world!</h1>
           <Image
             priority
             className={styles.logo}

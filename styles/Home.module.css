@@ -142,7 +142,7 @@
 .thirteen::after {
   inset: 0;
   padding: 1px;
-  border-radius: var(--border-radius);
+  border-radius: calc(var(--border-radius) + 0.03em);
   background: linear-gradient(
     to bottom right,
     rgba(var(--tile-start-rgb), 1),
