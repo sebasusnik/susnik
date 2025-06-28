@@ -118,7 +118,7 @@ const Terminal: React.FC = () => {
         <div
           ref={scrollRef}
           className="flex-1 p-4 overflow-y-auto terminal-scroll"
-          onPointerDown={() => !busy && focusVisibleInput()}
+          onPointerDown={() => !busy && introDone && focusVisibleInput()}
         >
           {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
@@ -195,7 +195,7 @@ const Terminal: React.FC = () => {
                 <div
                   ref={scrollRef}
                   className="flex-1 p-4 overflow-y-auto terminal-scroll"
-                  onPointerDown={() => !busy && focusVisibleInput()}
+                  onPointerDown={() => !busy && introDone && focusVisibleInput()}
                 >
                   {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
                   {lines.map((l) => (
