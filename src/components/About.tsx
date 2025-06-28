@@ -12,7 +12,7 @@ const summaryLines: Array<React.ReactNode> = [
       👋 Hi, I'm a <span className="text-cyan-400">full-stack developer</span> who loves transforming ideas into reliable, elegant software.
     </>
   ),
-  '• Focus : JavaScript / TypeScript, React, Node, and cloud-native architectures.',
+  '• Focus : TypeScript, React, Node, and cloud-native architectures.',
   '• Philosophy : Clean code, meaningful UX, and shipping fast without breaking things.',
   '• Currently : Building side-projects, contributing to open source and always learning.',
   ' '

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import PromptLine from './PromptLine';
 import Intro from './Intro';
 import useHistory from '../hooks/useHistory';
@@ -28,12 +28,18 @@ const Terminal: React.FC = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const initialResizeState = useRef<{ width: number; height: number; x: number; y: number } | null>(null);
   const [introKey, setIntroKey] = useState(0);
+  const focusEnableAt = useRef<number>(0);
 
   const focusVisibleInput = () => {
     const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[data-terminal-input]'));
     const visible = inputs.find((el) => el.offsetParent !== null);
     visible?.focus();
   };
+
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 640; // Tailwind's sm breakpoint
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -88,12 +94,15 @@ const Terminal: React.FC = () => {
 
   const onIntroDone = useCallback(() => {
     setIntroDone(true);
+    focusEnableAt.current = Date.now() + 700;
   }, []);
 
   useEffect(() => {
     if (busy) return;
+    if (!introDone) return;
+    if (isMobile) return;
     focusVisibleInput();
-  }, [busy]);
+  }, [busy, introDone, isMobile]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -111,6 +120,23 @@ const Terminal: React.FC = () => {
     return () => window.removeEventListener('keydown', handleWindowKeyDown);
   }, [busy]);
 
+  // Helper to keep scroll container pinned to bottom
+  const scrollToBottom = useCallback(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, []);
+
+  // Maintain bottom alignment on mobile keyboard open/viewport resize
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => {
+      scrollToBottom();
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [scrollToBottom]);
+
   return (
     <>
       {/* Mobile: full-screen terminal without draggable/resize UI */}
@@ -118,7 +144,7 @@ const Terminal: React.FC = () => {
         <div
           ref={scrollRef}
           className="flex-1 p-4 overflow-y-auto terminal-scroll"
-          onPointerDown={() => !busy && introDone && focusVisibleInput()}
+          /* no-op: focus handled by prompt-line form */
         >
           {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
@@ -127,7 +153,15 @@ const Terminal: React.FC = () => {
             </PromptLine>
           ))}
           {introDone && !busy && (
-            <form className="flex items-center whitespace-pre" onSubmit={onSubmit}>
+            <form
+              className="flex items-center whitespace-pre relative"
+              onSubmit={onSubmit}
+              onPointerDown={() => {
+                if (!busy && introDone && Date.now() >= focusEnableAt.current) {
+                  focusVisibleInput();
+                }
+              }}
+            >
               <PromptLine input={input} live valid={validCommands} />
               <input
                 data-terminal-input
@@ -135,7 +169,13 @@ const Terminal: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                autoFocus
+                onFocus={scrollToBottom}
+                onClick={scrollToBottom}
+                autoCapitalize="off"
+                autoCorrect="off"
+                autoComplete="off"
+                spellCheck={false}
+                autoFocus={!isMobile}
               />
             </form>
           )}
@@ -195,7 +235,7 @@ const Terminal: React.FC = () => {
                 <div
                   ref={scrollRef}
                   className="flex-1 p-4 overflow-y-auto terminal-scroll"
-                  onPointerDown={() => !busy && introDone && focusVisibleInput()}
+                  /* no-op: focus handled by prompt-line form */
                 >
                   {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
                   {lines.map((l) => (
@@ -204,7 +244,15 @@ const Terminal: React.FC = () => {
                     </PromptLine>
                   ))}
                   {introDone && !busy && (
-                    <form className="flex items-center whitespace-pre" onSubmit={onSubmit}>
+                    <form
+                      className="flex items-center whitespace-pre relative"
+                      onSubmit={onSubmit}
+                      onPointerDown={() => {
+                        if (!busy && introDone && Date.now() >= focusEnableAt.current) {
+                          focusVisibleInput();
+                        }
+                      }}
+                    >
                       <PromptLine input={input} live valid={validCommands} />
                       <input
                         data-terminal-input
@@ -212,7 +260,13 @@ const Terminal: React.FC = () => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        autoFocus
+                        onFocus={scrollToBottom}
+                        onClick={scrollToBottom}
+                        autoCapitalize="off"
+                        autoCorrect="off"
+                        autoComplete="off"
+                        spellCheck={false}
+                        autoFocus={!isMobile}
                       />
                     </form>
                   )}

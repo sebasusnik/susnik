@@ -6,7 +6,7 @@ interface Props {
 }
 
 const items = [
-  { cmd: 'about', desc: 'Who I am (animated)' },
+  { cmd: 'about', desc: 'Who I am' },
   { cmd: 'exp', desc: 'View my experience' },
   { cmd: 'skills', desc: 'See my competencies' },
   { cmd: 'contact', desc: 'Get in touch' },

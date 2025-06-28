@@ -24,3 +24,15 @@
 .terminal-scroll::-webkit-scrollbar-thumb:active {
   background-color: rgba(255, 255, 255, 0.3);
 }
+
+/* Dynamic viewport height utility for mobile address-bar shrink issues */
+@supports (height: 100dvh) {
+  .min-h-dvh {
+    min-height: 100dvh;
+  }
+}
+@supports (height: 100svh) {
+  .min-h-dvh {
+    min-height: 100svh;
+  }
+}
