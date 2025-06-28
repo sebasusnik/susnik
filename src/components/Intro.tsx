@@ -183,16 +183,29 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
         setTimeout(onDone, 100);
     }, [onDone]);
 
-    // Listen for Enter or Tab to skip
+    // Allow skipping the intro with ANY key press or by tapping/clicking anywhere (mobile & desktop)
     useEffect(() => {
-        const handler = (e: KeyboardEvent) => {
-            if (e.key === 'Enter' || e.key === 'Tab') {
+        const keyHandler = (e: KeyboardEvent) => {
+            // Avoid skipping when modifier keys alone are pressed (Shift, Alt, Meta, Ctrl)
+            if (e.key.length === 1 || ["Enter", "Tab", "Escape", " "].includes(e.key)) {
                 e.preventDefault();
                 skipIntro();
             }
         };
-        window.addEventListener('keydown', handler);
-        return () => window.removeEventListener('keydown', handler);
+
+        const pointerHandler = () => {
+            skipIntro();
+        };
+
+        window.addEventListener('keydown', keyHandler);
+        window.addEventListener('mousedown', pointerHandler);
+        window.addEventListener('touchstart', pointerHandler, { passive: true });
+
+        return () => {
+            window.removeEventListener('keydown', keyHandler);
+            window.removeEventListener('mousedown', pointerHandler);
+            window.removeEventListener('touchstart', pointerHandler);
+        };
     }, [skipIntro]);
 
     const typedLine1 = useTypingEffect(step === 0 ? introLines[0] : '', 50, advanceStep);
