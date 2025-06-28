@@ -162,9 +162,9 @@ const Terminal: React.FC = () => {
               <div className="flex flex-col w-full h-full rounded-lg bg-term-bg border border-term-bor font-mono">
                 <div className="terminal-handle flex items-center px-3 h-8 rounded-t-lg bg-term-bor/50 cursor-move select-none">
                   <div className="flex items-center space-x-2 mr-4">
-                    <span className="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
-                    <span className="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
-                    <span className="w-3 h-3 rounded-full bg-[#27c93f]"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#ff5f56] cursor-pointer"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#ffbd2e] cursor-pointer"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#27c93f] cursor-pointer"></span>
                   </div>
                   <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
                 </div>
