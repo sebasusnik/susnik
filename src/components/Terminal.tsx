@@ -115,7 +115,11 @@ const Terminal: React.FC = () => {
     <>
       {/* Mobile: full-screen terminal without draggable/resize UI */}
       <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10 sm:hidden">
-        <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto terminal-scroll">
+        <div
+          ref={scrollRef}
+          className="flex-1 p-4 overflow-y-auto terminal-scroll"
+          onPointerDown={() => !busy && focusVisibleInput()}
+        >
           {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
             <PromptLine key={l.id} html={l.html}>
@@ -127,7 +131,7 @@ const Terminal: React.FC = () => {
               <PromptLine input={input} live valid={validCommands} />
               <input
                 data-terminal-input
-                className="opacity-0 absolute w-0 h-0"
+                className="absolute inset-0 w-full h-full opacity-0 focus:outline-none"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -188,7 +192,11 @@ const Terminal: React.FC = () => {
                   </div>
                   <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
                 </div>
-                <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto terminal-scroll">
+                <div
+                  ref={scrollRef}
+                  className="flex-1 p-4 overflow-y-auto terminal-scroll"
+                  onPointerDown={() => !busy && focusVisibleInput()}
+                >
                   {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
                   {lines.map((l) => (
                     <PromptLine key={l.id} html={l.html}>
@@ -200,7 +208,7 @@ const Terminal: React.FC = () => {
                       <PromptLine input={input} live valid={validCommands} />
                       <input
                         data-terminal-input
-                        className="opacity-0 absolute w-0 h-0"
+                        className="absolute inset-0 w-full h-full opacity-0 focus:outline-none"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
