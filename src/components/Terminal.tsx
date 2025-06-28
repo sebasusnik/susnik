@@ -6,7 +6,7 @@ import useCommands from '../hooks/useCommands';
 import { Resizable } from 're-resizable';
 import Draggable from 'react-draggable';
 
-const validCommands = ['about', 'projects', 'skills', 'contact', 'clear', 'help'];
+const validCommands = ['about', 'projects', 'skills', 'contact', 'clear', 'help', 'repeat'];
 
 interface Line {
   id: number;
@@ -24,11 +24,11 @@ const Terminal: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [cleared, setCleared] = useState(false);
   const draggableRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState({ width: 896, height: 672 });
+  const [size, setSize] = useState({ width: 934, height: 672 });
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const initialResizeState = useRef<{ width: number; height: number; x: number; y: number } | null>(null);
+  const [introKey, setIntroKey] = useState(0);
 
-  // Helper to focus whichever input is currently visible (mobile or desktop)
   const focusVisibleInput = () => {
     const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[data-terminal-input]'));
     const visible = inputs.find((el) => el.offsetParent !== null);
@@ -42,18 +42,25 @@ const Terminal: React.FC = () => {
         y: (window.innerHeight - size.height) / 2,
       });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
-  const addLine = (html: string) => setLines((prev) => [...prev, { id: ++idCounter, html }]);
 
   const addElement = (element: React.ReactNode) => setLines((prev) => [...prev, { id: ++idCounter, element }]);
 
+  const resetIntro = () => {
+    setLines([]);
+    setCleared(false);
+    setIntroDone(false);
+    setIntroKey((k) => k + 1);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  };
+
   const { handleCommand, busy } = useCommands({
     scrollRef,
-    addLine,
     addElement,
     setLines,
     setCleared,
+    resetIntro,
   });
 
   const onSubmit = (e: React.FormEvent) => {
@@ -96,7 +103,7 @@ const Terminal: React.FC = () => {
       {/* Mobile: full-screen terminal without draggable/resize UI */}
       <div className="fixed inset-0 flex flex-col bg-term-bg font-mono sm:hidden">
         <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
-          {!cleared && <Intro onDone={onIntroDone} />}
+          {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
             <PromptLine key={l.id} html={l.html}>
               {l.element}
@@ -169,7 +176,7 @@ const Terminal: React.FC = () => {
                   <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
                 </div>
                 <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
-                  {!cleared && <Intro onDone={onIntroDone} />}
+                  {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
                   {lines.map((l) => (
                     <PromptLine key={l.id} html={l.html}>
                       {l.element}

@@ -2,6 +2,9 @@ import React, { useCallback, useState } from 'react';
 import About from '../components/About';
 import ProjectsList from '../components/ProjectsList';
 import SkillsList from '../components/SkillsList';
+import HelpList from '../components/HelpList';
+import Contact from '../components/Contact';
+import NotFound from '../components/NotFound';
 
 interface Line {
   id: number;
@@ -11,18 +14,18 @@ interface Line {
 
 interface UseCommandsParams {
   scrollRef: React.RefObject<HTMLDivElement | null>;
-  addLine: (html: string) => void;
   addElement: (element: React.ReactNode) => void;
   setLines: React.Dispatch<React.SetStateAction<Line[]>>;
   setCleared: React.Dispatch<React.SetStateAction<boolean>>;
+  resetIntro: () => void;
 }
 
 const useCommands = ({
   scrollRef,
-  addLine,
   addElement,
   setLines,
   setCleared,
+  resetIntro,
 }: UseCommandsParams) => {
   const [busy, setBusy] = useState(false);
 
@@ -39,11 +42,14 @@ const useCommands = ({
         return;
       }
 
-      if (word === 'help') {
-        addLine(
-          `<p class="mb-1">Available commands: <span class="text-cyan-400">about, projects, skills, contact, clear, help</span></p>`
-        );
+      if (word === 'repeat') {
+        resetIntro();
         setBusy(false);
+        return;
+      }
+
+      if (word === 'help') {
+        addElement(<HelpList animate onFinished={() => setBusy(false)} />);
         return;
       }
 
@@ -58,25 +64,19 @@ const useCommands = ({
       }
 
       if (word === 'skills') {
-        addLine(`<div class="text-cyan-400 mb-4 text-base">Running: \"skills\"...</div>`);
         addElement(<SkillsList animate onFinished={() => setBusy(false)} />);
         return;
       }
 
       if (word === 'contact') {
-        addLine(
-          `<p>You can reach me at:<br/><a href="mailto:sebasusnik@gmail.com" class="text-cyan-400 underline">sebasusnik@gmail.com</a></p>`
-        );
-        setBusy(false);
+        addElement(<Contact animate onFinished={() => setBusy(false)} />);
         return;
       }
 
-      addLine(
-        `<p>Command not found: ${cmd}. Type <span class="text-cyan-400">help</span>.</p>`
-      );
+      addElement(<NotFound command={cmd} animate onFinished={() => setBusy(false)} />);
       setBusy(false);
     },
-    [addLine, addElement, scrollRef, setLines, setCleared]
+    [addElement, scrollRef, setLines, setCleared, resetIntro]
   );
 
   return {

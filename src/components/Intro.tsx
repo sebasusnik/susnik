@@ -2,14 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import SkillsList from './SkillsList';
 import ProjectsList from './ProjectsList';
 
-// Data for the animations
-const projects = [
-    { title: 'Project: E-commerce Platform', status: 'DONE', description: 'Engineered a complete, scalable e-commerce platform using a MERN stack.' },
-    { title: 'Project: Real-time Chat App', status: 'DONE', description: 'Built a responsive, real-time chat application with WebSockets and Vue.js.' },
-    { title: 'Hobby: Open Source Contribution', status: 'ACTIVE', description: 'Regular contributor to open-source projects, focusing on bug fixes and new features.' }
-];
-const skills = ['JavaScript (ES6+)', 'React', 'Vue.js', 'Node.js', 'Express', 'HTML5 & CSS3', 'Tailwind CSS', 'SQL (PostgreSQL)', 'NoSQL (MongoDB)', 'AWS (EC2, S3)', 'Docker', 'Git & GitHub', 'CI/CD', 'REST APIs'];
-
 const introLines = ["I am Sebastian Susnik", "and I like to build stuff..."];
 const projectsCommand = 'projects';
 const skillsCommand = 'skills';
@@ -68,102 +60,6 @@ const StaticPrompt = ({ command }: { command: string }) => (
     <div className="flex items-center mb-1">
         <span className="text-fuchsia-400">sebasusnik@portfolio</span><span className="text-gray-500">:</span><span className="text-cyan-400">~</span><span className="text-gray-500">$</span>
         <span className="pl-2"><span className="text-green-400">{command}</span></span>
-    </div>
-);
-
-const AnimatedProjectsList = ({ onFinished }: { onFinished: () => void }) => {
-    const [renderedProjects, setRenderedProjects] = useState<typeof projects>([]);
-    const onFinishedRef = useRef(onFinished);
-    onFinishedRef.current = onFinished;
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setRenderedProjects(prev => {
-                if (prev.length < projects.length) {
-                    return [...prev, projects[prev.length]];
-                }
-                clearInterval(interval);
-                setTimeout(() => onFinishedRef.current(), 200);
-                return prev;
-            });
-        }, 150);
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div className="mt-2 mb-4">
-            <div className="text-cyan-400 mb-4 text-base">Running: "{projectsCommand}"...</div>
-            {renderedProjects.map(proj => {
-                const statusColor = proj.status === 'DONE' ? 'text-green-400' : 'text-yellow-400';
-                return (
-                    <div key={proj.title} className="text-sm md:text-base mb-6">
-                        <div className="flex items-center">
-                            <span className="text-white font-bold">{proj.title}</span>
-                            <span className="ml-4">[<span className={`${statusColor} font-bold`}>{proj.status}</span>]</span>
-                        </div>
-                        <p className="text-gray-400 mt-1 pl-2">{proj.description}</p>
-                    </div>
-                )
-            })}
-        </div>
-    );
-};
-
-const StaticProjectsList = () => (
-    <div className="mt-2 mb-4">
-        <div className="text-cyan-400 mb-4 text-base">Running: "{projectsCommand}"...</div>
-        {projects.map(proj => {
-            const statusColor = proj.status === 'DONE' ? 'text-green-400' : 'text-yellow-400';
-            return (
-                <div key={proj.title} className="text-sm md:text-base mb-6">
-                    <div className="flex items-center">
-                        <span className="text-white font-bold">{proj.title}</span>
-                        <span className="ml-4">[<span className={`${statusColor} font-bold`}>{proj.status}</span>]</span>
-                    </div>
-                    <p className="text-gray-400 mt-1 pl-2">{proj.description}</p>
-                </div>
-            )
-        })}
-    </div>
-);
-
-const AnimatedSkillsList = ({ onFinished }: { onFinished: () => void }) => {
-    const [renderedSkills, setRenderedSkills] = useState<typeof skills>([]);
-    const onFinishedRef = useRef(onFinished);
-    onFinishedRef.current = onFinished;
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setRenderedSkills(prev => {
-                if (prev.length < skills.length) {
-                    return [...prev, skills[prev.length]];
-                }
-                clearInterval(interval);
-                setTimeout(() => onFinishedRef.current(), 200);
-                return prev;
-            });
-        }, 35);
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div className="mt-2 mb-4">
-            <div className="text-cyan-400 mb-4 text-base">Running: "{skillsCommand}"...</div>
-            <h3 className="text-lg text-cyan-400 font-bold mb-2">Core Competencies:</h3>
-            <ul className="flex flex-wrap gap-x-8 gap-y-2 pl-2">
-                {renderedSkills.map(skill => <li key={skill} className="text-white">- {skill}</li>)}
-            </ul>
-        </div>
-    );
-};
-
-const StaticSkillsList = () => (
-    <div className="mt-2 mb-4">
-        <div className="text-cyan-400 mb-4 text-base">Running: "{skillsCommand}"...</div>
-        <h3 className="text-lg text-cyan-400 font-bold mb-2">Core Competencies:</h3>
-        <ul className="flex flex-wrap gap-x-8 gap-y-2 pl-2">
-            {skills.map(skill => <li key={skill} className="text-white">- {skill}</li>)}
-        </ul>
     </div>
 );
 

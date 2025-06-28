@@ -44,6 +44,7 @@ const SkillsList: React.FC<Props> = ({ animate = false, onFinished }) => {
 
   return (
     <div className="mt-2 mb-4">
+      <div className="text-cyan-400 mb-4 text-base">Running: "skills"...</div>
       <h3 className="text-lg text-cyan-400 font-bold mb-2">Core Competencies:</h3>
       <div className="flex flex-wrap gap-x-8 gap-y-2 pl-2">
         {rendered.map((skill) => (

@@ -44,6 +44,37 @@ function useTyping(text: string, speed = 50, onDone?: () => void) {
   return typed;
 }
 
+const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boolean; onFinished?: () => void }> = ({ lines, animate = false, onFinished }) => {
+  const [rendered, setRendered] = useState<Array<React.ReactNode>>(animate ? [] : lines);
+  const finishedRef = useRef(onFinished);
+  finishedRef.current = onFinished;
+
+  useEffect(() => {
+    if (!animate) return;
+    const interval = setInterval(() => {
+      setRendered((prev) => {
+        if (prev.length < lines.length) {
+          return [...prev, lines[prev.length]];
+        }
+        clearInterval(interval);
+        finishedRef.current?.();
+        return prev;
+      });
+    }, 120);
+    return () => clearInterval(interval);
+  }, [animate, lines]);
+
+  return (
+    <div className="space-y-2 mt-2">
+      {rendered.map((l, idx) => (
+        <p key={idx} className="text-gray-400 first:text-white">
+          {l}
+        </p>
+      ))}
+    </div>
+  );
+};
+
 interface Props {
   animate?: boolean;
   showSummary?: boolean;
@@ -60,10 +91,10 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
 
   useEffect(() => {
     if (!animate) return;
-    if (step === 2) {
+    if (step === 2 && !showSummary) {
       onFinished?.();
     }
-  }, [step, animate, onFinished]);
+  }, [step, animate, showSummary, onFinished]);
 
   const renderIntro = (
     <>
@@ -81,19 +112,13 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
   );
 
   const renderSummary = (
-    <div className="space-y-2 mt-2">
-      {summaryLines.map((l, idx) => (
-        <p key={idx} className="text-gray-400 first:text-white">
-          {l}
-        </p>
-      ))}
-    </div>
+    <SummaryAnimated lines={summaryLines} animate={animate} onFinished={() => onFinished?.()} />
   );
 
   return (
     <div>
       {renderIntro}
-      {showSummary && (!animate || step === 2) && renderSummary}
+      {showSummary && (!animate ? renderSummary : step === 2 && renderSummary)}
     </div>
   );
 };
