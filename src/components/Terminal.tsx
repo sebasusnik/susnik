@@ -3,6 +3,7 @@ import PromptLine from './PromptLine';
 import Intro from './Intro';
 import useHistory from '../hooks/useHistory';
 import useCommands from '../hooks/useCommands';
+import { Resizable } from 're-resizable';
 
 const validCommands = ['about', 'projects', 'skills', 'contact', 'clear', 'help'];
 
@@ -57,31 +58,38 @@ const Terminal: React.FC = () => {
   }, [lines, introDone]);
 
   return (
-    <div
-      ref={scrollRef}
-      className="w-full max-w-4xl rounded-lg p-4 bg-term-bg border border-term-bor h-[42em] overflow-y-auto font-mono"
-      onClick={() => document.getElementById('terminal-input')?.focus()}
+    <Resizable
+      defaultSize={{ width: 896, height: 672 }}
+      minWidth={320}
+      minHeight={200}
+      className="max-w-none"
     >
-      {!cleared && <Intro onDone={onIntroDone} />}
+      <div
+        ref={scrollRef}
+        className="w-full h-full rounded-lg p-4 bg-term-bg border border-term-bor overflow-y-auto font-mono"
+        onClick={() => document.getElementById('terminal-input')?.focus()}
+      >
+        {!cleared && <Intro onDone={onIntroDone} />}
 
-      {lines.map((l) => (
-        <PromptLine key={l.id} html={l.html}>{l.element}</PromptLine>
-      ))}
+        {lines.map((l) => (
+          <PromptLine key={l.id} html={l.html}>{l.element}</PromptLine>
+        ))}
 
-      {introDone && !busy && (
-        <form className="flex items-center whitespace-pre" onSubmit={onSubmit}>
-          <PromptLine input={input} live valid={validCommands} />
-          <input
-            id="terminal-input"
-            className="opacity-0 absolute w-0 h-0"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoFocus
-          />
-        </form>
-      )}
-    </div>
+        {introDone && !busy && (
+          <form className="flex items-center whitespace-pre" onSubmit={onSubmit}>
+            <PromptLine input={input} live valid={validCommands} />
+            <input
+              id="terminal-input"
+              className="opacity-0 absolute w-0 h-0"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+            />
+          </form>
+        )}
+      </div>
+    </Resizable>
   );
 };
 
