@@ -42,7 +42,7 @@ const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boole
   return (
     <div className="space-y-2 mt-2">
       {rendered.map((l, idx) => (
-        <p key={idx} className="text-gray-400 first:text-white">
+        <p key={idx} className="text-gray-400 first:text-white whitespace-pre-wrap break-words">
           {l}
         </p>
       ))}
