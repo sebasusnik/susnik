@@ -2,9 +2,8 @@
 
 This is a personal portfolio reimagined as an interactive, draggable terminal window. Built with Astro, React, and Tailwind CSS, it offers a unique way to explore my projects, skills, and contact information through a command-line interface.
 
-<!-- It would be great to replace this with an actual screenshot of the project! -->
 <p align="center">
-  <img src="public/favicon.svg" alt="Project Logo" width="120">
+  <img src="screenshot.png" alt="Screenshot of the portfolio terminal" width="800"/>
 </p>
 
 ## ✨ Features
