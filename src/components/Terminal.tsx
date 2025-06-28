@@ -44,7 +44,6 @@ const Terminal: React.FC = () => {
     }
   }, []);
 
-  // New: keep scroll pinned to bottom whenever the content inside the scroll container mutates
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || typeof MutationObserver === 'undefined') return;
@@ -54,7 +53,6 @@ const Terminal: React.FC = () => {
     });
 
     observer.observe(el, { childList: true, subtree: true, characterData: true });
-    // Ensure we start at the bottom when observer attaches
     el.scrollTop = el.scrollHeight;
 
     return () => observer.disconnect();
@@ -117,7 +115,7 @@ const Terminal: React.FC = () => {
     <>
       {/* Mobile: full-screen terminal without draggable/resize UI */}
       <div className="fixed inset-0 flex flex-col bg-term-bg font-mono sm:hidden">
-        <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
+        <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto terminal-scroll">
           {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
             <PromptLine key={l.id} html={l.html}>
@@ -190,7 +188,7 @@ const Terminal: React.FC = () => {
                   </div>
                   <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
                 </div>
-                <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
+                <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto terminal-scroll">
                   {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
                   {lines.map((l) => (
                     <PromptLine key={l.id} html={l.html}>
