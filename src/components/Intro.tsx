@@ -186,6 +186,8 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
     // Allow skipping the intro with ANY key press or by tapping/clicking anywhere (mobile & desktop)
     useEffect(() => {
         const keyHandler = (e: KeyboardEvent) => {
+            if (doneRef.current) return; // Intro already skipped/finished
+
             // Avoid skipping when modifier keys alone are pressed (Shift, Alt, Meta, Ctrl)
             if (e.key.length === 1 || ["Enter", "Tab", "Escape", " "].includes(e.key)) {
                 e.preventDefault();
@@ -194,6 +196,7 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
         };
 
         const pointerHandler = () => {
+            if (doneRef.current) return; // Ignore after intro done
             skipIntro();
         };
 
