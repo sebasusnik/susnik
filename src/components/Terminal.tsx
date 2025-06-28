@@ -114,7 +114,7 @@ const Terminal: React.FC = () => {
   return (
     <>
       {/* Mobile: full-screen terminal without draggable/resize UI */}
-      <div className="fixed inset-0 flex flex-col bg-term-bg font-mono sm:hidden">
+      <div className="fixed inset-0 flex flex-col bg-term-bg font-mono z-10 sm:hidden">
         <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto terminal-scroll">
           {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
@@ -146,7 +146,7 @@ const Terminal: React.FC = () => {
           position={position}
           onStop={(e, data) => setPosition({ x: data.x, y: data.y })}
         >
-          <div ref={draggableRef} style={{ position: 'absolute' }}>
+          <div ref={draggableRef} style={{ position: 'absolute', zIndex: 10 }}>
             <Resizable
               size={size}
               minWidth={320}
