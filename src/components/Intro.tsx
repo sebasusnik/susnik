@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import SkillsList from './SkillsList';
 import ProjectsList from './ProjectsList';
+import Caret from './Caret';
 
 const introLines = ["I am Sebastian Susnik", "and I like to build stuff..."];
 const projectsCommand = 'projects';
@@ -50,7 +51,7 @@ const AnimatedPrompt = ({ command, onFinished }: { command: string; onFinished: 
             <span className="text-fuchsia-400">sebasusnik@portfolio</span><span className="text-gray-500">:</span><span className="text-cyan-400">~</span><span className="text-gray-500">$</span>
             <span className="pl-2">
                 <span className="text-green-400">{typedCommand.text}</span>
-                {typedCommand.cursor && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
+                {typedCommand.cursor && <Caret />}
             </span>
         </div>
     );
@@ -75,16 +76,13 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
         if (doneRef.current) return;
         doneRef.current = true;
         setStep(10);
-        // Ensure content is rendered before signalling done
         setTimeout(onDone, 100);
     }, [onDone]);
 
-    // Allow skipping the intro with ANY key press or by tapping/clicking anywhere (mobile & desktop)
     useEffect(() => {
         const keyHandler = (e: KeyboardEvent) => {
-            if (doneRef.current) return; // Intro already skipped/finished
+            if (doneRef.current) return;
 
-            // Avoid skipping when modifier keys alone are pressed (Shift, Alt, Meta, Ctrl)
             if (e.key.length === 1 || ["Enter", "Tab", "Escape", " "].includes(e.key)) {
                 e.preventDefault();
                 skipIntro();
@@ -92,7 +90,7 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
         };
 
         const pointerHandler = () => {
-            if (doneRef.current) return; // Ignore after intro done
+            if (doneRef.current) return;
             skipIntro();
         };
 
@@ -130,14 +128,14 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
             {/* Line 1 */}
             <div className="text-lg md:text-xl lg:text-2xl">
                 <span>{step > 0 ? introLines[0] : typedLine1.text}</span>
-                {step === 0 && typedLine1.cursor && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
+                {step === 0 && typedLine1.cursor && <Caret />}
             </div>
 
             {/* Line 2 */}
             {step >= 1 && (
                 <div className="text-lg md:text-xl lg:text-2xl mb-4">
                     <span>{step > 1 ? introLines[1] : typedLine2.text}</span>
-                    {step === 1 && typedLine2.cursor && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
+                    {step === 1 && typedLine2.cursor && <Caret />}
                 </div>
             )}
 

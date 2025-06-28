@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Caret from './Caret';
 
 const introLines = [
   'I am Sebastian Susnik',
@@ -101,12 +102,12 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
       {/* line1 */}
       <div className="text-lg md:text-xl lg:text-2xl">
         <span>{animate ? (step > 0 ? introLines[0] : typed1) : introLines[0]}</span>
-        {animate && step === 0 && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
+        {animate && step === 0 && <Caret />}
       </div>
       {/* line2 */}
       <div className="text-lg md:text-xl lg:text-2xl mb-4">
         <span>{animate ? (step > 1 ? introLines[1] : typed2) : introLines[1]}</span>
-        {animate && step === 1 && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
+        {animate && step === 1 && <Caret />}
       </div>
     </>
   );

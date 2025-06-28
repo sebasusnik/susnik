@@ -1,4 +1,5 @@
 import React from 'react';
+import Caret from './Caret';
 
 const PREFIX_HTML =
   '<span class="text-fuchsia-400">sebastian@portfolio</span>' +
@@ -51,9 +52,7 @@ const PromptLine: React.FC<Props> = ({ input, live = false, html, children, clas
         {colourCmd(cmd, valid)}
         {rest && <span className="text-white"> {rest}</span>}
         {!rest && trailingSpace && <>&nbsp;</>}
-        {live && (
-          <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />
-        )}
+        {live && <Caret />}
       </div>
     );
   }
@@ -61,4 +60,4 @@ const PromptLine: React.FC<Props> = ({ input, live = false, html, children, clas
   return <div className={`whitespace-pre ${className ?? ''}`}>{children}</div>;
 };
 
-export default PromptLine; 
+export default PromptLine;
