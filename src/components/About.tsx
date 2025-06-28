@@ -1,0 +1,101 @@
+import React, { useEffect, useRef, useState } from 'react';
+
+const introLines = [
+  'I am Sebastian Susnik',
+  'and I like to build stuff...'
+];
+
+const summaryLines: Array<React.ReactNode> = [
+  (
+    <>
+      👋 Hi, I'm a <span className="text-cyan-400">full-stack developer</span> who loves transforming ideas into reliable, elegant software.
+    </>
+  ),
+  '• Focus : JavaScript / TypeScript, React, Node, and cloud-native architectures.',
+  '• Philosophy : Clean code, meaningful UX, and shipping fast without breaking things.',
+  '• Currently : Building side-projects, contributing to open source and always learning.',
+  ' '
+];
+
+function useTyping(text: string, speed = 50, onDone?: () => void) {
+  const [typed, setTyped] = useState('');
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
+
+  useEffect(() => {
+    if (!text) {
+      setTyped('');
+      return;
+    }
+    setTyped('');
+    const interval = setInterval(() => {
+      setTyped((prev) => {
+        if (prev.length < text.length) {
+          return text.slice(0, prev.length + 1);
+        }
+        clearInterval(interval);
+        doneRef.current?.();
+        return prev;
+      });
+    }, speed);
+    return () => clearInterval(interval);
+  }, [text, speed]);
+
+  return typed;
+}
+
+interface Props {
+  animate?: boolean;
+  showSummary?: boolean;
+  onFinished?: () => void;
+}
+
+const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinished }) => {
+  const [step, setStep] = useState(0); // 0 typing first line, 1 typing second, 2 done typing
+
+  const next = () => setStep((s) => s + 1);
+
+  const typed1 = useTyping(step === 0 && animate ? introLines[0] : '', 50, next);
+  const typed2 = useTyping(step === 1 && animate ? introLines[1] : '', 50, next);
+
+  useEffect(() => {
+    if (!animate) return;
+    if (step === 2) {
+      onFinished?.();
+    }
+  }, [step, animate, onFinished]);
+
+  const renderIntro = (
+    <>
+      {/* line1 */}
+      <div className="text-lg md:text-xl lg:text-2xl">
+        <span>{animate ? (step > 0 ? introLines[0] : typed1) : introLines[0]}</span>
+        {animate && step === 0 && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
+      </div>
+      {/* line2 */}
+      <div className="text-lg md:text-xl lg:text-2xl mb-4">
+        <span>{animate ? (step > 1 ? introLines[1] : typed2) : introLines[1]}</span>
+        {animate && step === 1 && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
+      </div>
+    </>
+  );
+
+  const renderSummary = (
+    <div className="space-y-2 mt-2">
+      {summaryLines.map((l, idx) => (
+        <p key={idx} className="text-gray-400 first:text-white">
+          {l}
+        </p>
+      ))}
+    </div>
+  );
+
+  return (
+    <div>
+      {renderIntro}
+      {showSummary && (!animate || step === 2) && renderSummary}
+    </div>
+  );
+};
+
+export default About; 
