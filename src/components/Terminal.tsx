@@ -39,6 +39,7 @@ const Terminal: React.FC = () => {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || typeof MutationObserver === 'undefined') return;
+    if (isMobile) return;
 
     const observer = new MutationObserver(() => {
       el.scrollTop = el.scrollHeight;
@@ -48,7 +49,7 @@ const Terminal: React.FC = () => {
     el.scrollTop = el.scrollHeight;
 
     return () => observer.disconnect();
-  }, []);
+  }, [isMobile]);
 
   const addElement = (element: React.ReactNode) => setLines((prev) => [...prev, { id: ++idCounter, element }]);
 
@@ -100,11 +101,12 @@ const Terminal: React.FC = () => {
     const handleWindowKeyDown = (e: KeyboardEvent) => {
       if (busy) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isMobile) return;
       focusVisibleInput();
     };
     window.addEventListener('keydown', handleWindowKeyDown);
     return () => window.removeEventListener('keydown', handleWindowKeyDown);
-  }, [busy]);
+  }, [busy, isMobile]);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -115,14 +117,14 @@ const Terminal: React.FC = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleResize = () => {
+      if (isMobile) return;
       scrollToBottom();
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [scrollToBottom]);
+  }, [scrollToBottom, isMobile]);
 
-  const terminalProps = {
-    isMobile,
+  const baseTerminalProps = {
     lines,
     cleared,
     introKey,
@@ -139,16 +141,18 @@ const Terminal: React.FC = () => {
     scrollRef,
   };
 
-  const terminalCore = <TerminalCore {...terminalProps} />;
+  return (
+    <>
+      <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10 sm:hidden">
+        <TerminalCore {...baseTerminalProps} isMobile={true} />
+      </div>
 
-  return isMobile ? (
-    <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10">
-      {terminalCore}
-    </div>
-  ) : (
-    <DesktopWindow>
-      {terminalCore}
-    </DesktopWindow>
+      <div className="hidden sm:block">
+        <DesktopWindow>
+          <TerminalCore {...baseTerminalProps} isMobile={false} />
+        </DesktopWindow>
+      </div>
+    </>
   );
 };
 
