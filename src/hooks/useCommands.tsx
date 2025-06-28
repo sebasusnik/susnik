@@ -63,6 +63,14 @@ const useCommands = ({
         return;
       }
 
+      if (word === 'contact') {
+        addLine(
+          `<p>You can reach me at:<br/><a href="mailto:sebasusnik@gmail.com" class="text-cyan-400 underline">sebasusnik@gmail.com</a></p>`
+        );
+        setBusy(false);
+        return;
+      }
+
       addLine(
         `<p>Command not found: ${cmd}. Type <span class="text-cyan-400">help</span>.</p>`
       );
