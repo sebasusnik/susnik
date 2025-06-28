@@ -1,48 +1,58 @@
-# Astro Starter Kit: Basics
+# Portfolio Terminal
 
-```sh
-npm create astro@latest -- --template basics
-```
+This is a personal portfolio reimagined as an interactive, draggable terminal window. Built with Astro, React, and Tailwind CSS, it offers a unique way to explore my projects, skills, and contact information through a command-line interface.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+<!-- It would be great to replace this with an actual screenshot of the project! -->
+<p align="center">
+  <img src="public/favicon.svg" alt="Project Logo" width="120">
+</p>
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## ✨ Features
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+- **Interactive Terminal UI**: A familiar command-line interface for navigating the portfolio.
+- **Draggable & Resizable Window**: The terminal can be moved and resized like a native application window, thanks to `react-draggable` and `re-resizable`.
+- **macOS-like Controls**: Classic red, yellow, and green window buttons for an authentic feel.
+- **Command-Based Navigation**: Use simple, intuitive commands to explore different sections.
+- **Command History**: Cycle through previously entered commands using the up and down arrow keys.
+- **Responsive Design**: Adapts smoothly to various screen sizes.
 
-## 🚀 Project Structure
+## 🚀 Tech Stack
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Framework**: [Astro](https://astro.build/)
+- **UI Library**: [React](https://reactjs.org/) with [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## 🧞 Available Commands
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+All commands are run from the terminal prompt:
 
-## 🧞 Commands
+| Command    | Action                                      |
+| :--------- | :------------------------------------------ |
+| `about`    | Displays a brief introduction about me.     |
+| `projects` | Lists key projects with descriptions.       |
+| `skills`   | Shows a list of technical skills.           |
+| `contact`  | Provides ways to get in touch.              |
+| `help`     | Shows this list of available commands.      |
+| `clear`    | Clears all output from the terminal screen. |
 
-All commands are run from the root of the project, from a terminal:
+## 🛠️ Getting Started
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+To run this project locally:
 
-## 👀 Want to learn more?
+1.  **Clone the repository:**
+    ```sh
+    git clone <your-repo-url>
+    cd <repo-folder>
+    ```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+2.  **Install dependencies:**
+    ```sh
+    npm install
+    ```
+
+3.  **Start the development server:**
+    ```sh
+    npm run dev
+    ```
+
+The application will be available at `http://localhost:4321`.
