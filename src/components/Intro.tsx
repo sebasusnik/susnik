@@ -126,14 +126,14 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
     return (
         <div>
             {/* Line 1 */}
-            <div className="text-lg md:text-xl lg:text-2xl">
+            <div className="text-lg md:text-xl lg:text-2xl text-white">
                 <span>{step > 0 ? introLines[0] : typedLine1.text}</span>
                 {step === 0 && typedLine1.cursor && <Caret />}
             </div>
 
             {/* Line 2 */}
             {step >= 1 && (
-                <div className="text-lg md:text-xl lg:text-2xl mb-4">
+                <div className="text-lg md:text-xl lg:text-2xl mb-4 text-white">
                     <span>{step > 1 ? introLines[1] : typedLine2.text}</span>
                     {step === 1 && typedLine2.cursor && <Caret />}
                 </div>
