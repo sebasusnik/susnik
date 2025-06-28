@@ -114,7 +114,7 @@ const Terminal: React.FC = () => {
   return (
     <>
       {/* Mobile: full-screen terminal without draggable/resize UI */}
-      <div className="fixed inset-0 flex flex-col bg-term-bg font-mono z-10 sm:hidden">
+      <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10 sm:hidden">
         <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto terminal-scroll">
           {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
