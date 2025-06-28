@@ -24,12 +24,22 @@ const Terminal: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [cleared, setCleared] = useState(false);
   const draggableRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 896, height: 672 });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const initialResizeState = useRef<{ width: number; height: number; x: number; y: number } | null>(null);
 
-  const addLine = (html: string) =>
-    setLines((prev) => [...prev, { id: ++idCounter, html }]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setPosition({
+        x: (window.innerWidth - size.width) / 2,
+        y: (window.innerHeight - size.height) / 2,
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const addElement = (element: React.ReactNode) =>
-    setLines((prev) => [...prev, { id: ++idCounter, element }]);
+  const addLine = (html: string) => setLines((prev) => [...prev, { id: ++idCounter, html }]);
+
+  const addElement = (element: React.ReactNode) => setLines((prev) => [...prev, { id: ++idCounter, element }]);
 
   const { handleCommand, busy } = useCommands({
     scrollRef,
@@ -55,47 +65,72 @@ const Terminal: React.FC = () => {
 
   useEffect(() => {
     if (busy) return;
-
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) return;
-
     document.getElementById('terminal-input')?.focus();
   }, [busy]);
 
   useEffect(() => {
     if (scrollRef.current) {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [lines, introDone]);
 
-  // Focus the hidden input whenever the user types anywhere in the window
   useEffect(() => {
     const handleWindowKeyDown = (e: KeyboardEvent) => {
-      if (busy) return;               // Ignore while commands are processing
-      if (e.metaKey || e.ctrlKey || e.altKey) return; // Ignore shortcut combos
-
+      if (busy) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       const inputEl = document.getElementById('terminal-input') as HTMLInputElement | null;
       if (inputEl && document.activeElement !== inputEl) {
         inputEl.focus();
       }
     };
-
     window.addEventListener('keydown', handleWindowKeyDown);
     return () => window.removeEventListener('keydown', handleWindowKeyDown);
   }, [busy]);
 
   return (
-    <Draggable handle=".terminal-handle" nodeRef={draggableRef}>
-      <div ref={draggableRef} className="max-w-none">
+    <Draggable
+      handle=".terminal-handle"
+      nodeRef={draggableRef}
+      position={position}
+      onStop={(e, data) => setPosition({ x: data.x, y: data.y })}
+    >
+      <div ref={draggableRef} style={{ position: 'absolute' }}>
         <Resizable
-          defaultSize={{ width: 896, height: 672 }}
+          size={size}
           minWidth={320}
           minHeight={200}
+          onResizeStart={() => {
+            initialResizeState.current = { ...size, ...position };
+          }}
+          onResize={(e, direction, ref, d) => {
+            if (!initialResizeState.current) return;
+
+            let newWidth = initialResizeState.current.width + d.width;
+            let newHeight = initialResizeState.current.height + d.height;
+            let newX = initialResizeState.current.x;
+            let newY = initialResizeState.current.y;
+
+            if (direction.includes('left')) {
+              newWidth = initialResizeState.current.width + d.width;
+              newX = initialResizeState.current.x - d.width;
+            }
+
+            if (direction.includes('top')) {
+              newHeight = initialResizeState.current.height + d.height;
+              newY = initialResizeState.current.y - d.height;
+            }
+
+            setSize({ width: newWidth, height: newHeight });
+            setPosition({ x: newX, y: newY });
+          }}
+          onResizeStop={() => {
+            initialResizeState.current = null;
+          }}
         >
           <div className="flex flex-col w-full h-full rounded-lg bg-term-bg border border-term-bor font-mono">
-            {/* Header / Drag handle */}
             <div className="terminal-handle flex items-center px-3 h-8 rounded-t-lg bg-term-bor/50 cursor-move select-none">
-              {/* macOS window controls */}
               <div className="flex items-center space-x-2 mr-4">
                 <span className="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
                 <span className="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
@@ -103,18 +138,13 @@ const Terminal: React.FC = () => {
               </div>
               <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
             </div>
-
-            {/* Scrollable content */}
-            <div
-              ref={scrollRef}
-              className="flex-1 p-4 overflow-y-auto"
-            >
+            <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto">
               {!cleared && <Intro onDone={onIntroDone} />}
-
               {lines.map((l) => (
-                <PromptLine key={l.id} html={l.html}>{l.element}</PromptLine>
+                <PromptLine key={l.id} html={l.html}>
+                  {l.element}
+                </PromptLine>
               ))}
-
               {introDone && !busy && (
                 <form className="flex items-center whitespace-pre" onSubmit={onSubmit}>
                   <PromptLine input={input} live valid={validCommands} />
