@@ -8,18 +8,11 @@ const PREFIX_HTML =
   '<span class="text-gray-500">$</span>&nbsp;';
 
 interface Props {
-  /**
-   * Full input currently being typed or already executed.
-   * When provided the component renders the shell prompt and colours the first word.
-   */
   input?: string;
-  /** Set to true for the live command line so a blinking caret is shown */
   live?: boolean;
-  /** HTML string (legacy) shown if provided */
   html?: string;
   children?: React.ReactNode;
   className?: string;
-  /** List of valid commands to highlight in green, otherwise red */
   valid?: string[];
 }
 

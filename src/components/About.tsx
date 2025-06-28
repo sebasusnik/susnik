@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Caret from './Caret';
+import useTyping from '../hooks/useTyping';
 
 const introLines = [
   'I am Sebastian Susnik',
@@ -17,33 +18,6 @@ const summaryLines: Array<React.ReactNode> = [
   '• Currently : Building side-projects, contributing to open source and always learning.',
   ' '
 ];
-
-function useTyping(text: string, speed = 50, onDone?: () => void) {
-  const [typed, setTyped] = useState('');
-  const doneRef = useRef(onDone);
-  doneRef.current = onDone;
-
-  useEffect(() => {
-    if (!text) {
-      setTyped('');
-      return;
-    }
-    setTyped('');
-    const interval = setInterval(() => {
-      setTyped((prev) => {
-        if (prev.length < text.length) {
-          return text.slice(0, prev.length + 1);
-        }
-        clearInterval(interval);
-        doneRef.current?.();
-        return prev;
-      });
-    }, speed);
-    return () => clearInterval(interval);
-  }, [text, speed]);
-
-  return typed;
-}
 
 const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boolean; onFinished?: () => void }> = ({ lines, animate = false, onFinished }) => {
   const [rendered, setRendered] = useState<Array<React.ReactNode>>(animate ? [] : lines);

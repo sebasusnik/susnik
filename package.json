@@ -22,7 +22,8 @@
     "re-resizable": "^6.9.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-draggable": "^4.4.5"
+    "react-draggable": "^4.4.5",
+    "date-fns": "^3.6.0"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",

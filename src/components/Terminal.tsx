@@ -19,7 +19,7 @@ let idCounter = 0;
 const Terminal: React.FC = () => {
   const [lines, setLines] = useState<Line[]>([]);
   const [input, setInput] = useState('');
-  const { handleKeyDown, addToHistory } = useHistory(setInput, ['about', 'projects', 'skills']);
+  const { handleKeyDown, addToHistory } = useHistory(setInput, ['about', 'exp', 'skills']);
   const [introDone, setIntroDone] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [cleared, setCleared] = useState(false);
@@ -120,14 +120,12 @@ const Terminal: React.FC = () => {
     return () => window.removeEventListener('keydown', handleWindowKeyDown);
   }, [busy]);
 
-  // Helper to keep scroll container pinned to bottom
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, []);
 
-  // Maintain bottom alignment on mobile keyboard open/viewport resize
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleResize = () => {
@@ -139,12 +137,10 @@ const Terminal: React.FC = () => {
 
   return (
     <>
-      {/* Mobile: full-screen terminal without draggable/resize UI */}
       <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10 sm:hidden">
         <div
           ref={scrollRef}
           className="flex-1 p-4 overflow-y-auto terminal-scroll"
-          /* no-op: focus handled by prompt-line form */
         >
           {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
           {lines.map((l) => (
@@ -182,7 +178,6 @@ const Terminal: React.FC = () => {
         </div>
       </div>
 
-      {/* Desktop: draggable & resizable window */}
       <div className="hidden sm:block">
         <Draggable
           handle=".terminal-handle"
@@ -235,7 +230,6 @@ const Terminal: React.FC = () => {
                 <div
                   ref={scrollRef}
                   className="flex-1 p-4 overflow-y-auto terminal-scroll"
-                  /* no-op: focus handled by prompt-line form */
                 >
                   {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
                   {lines.map((l) => (
