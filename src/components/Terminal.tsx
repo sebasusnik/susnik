@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import TerminalCore from './TerminalCore';
+import DesktopWindow from './DesktopWindow';
 import PromptLine from './PromptLine';
-import Intro from './Intro';
 import useHistory from '../hooks/useHistory';
 import useCommands from '../hooks/useCommands';
-import { Resizable } from 're-resizable';
-import Draggable from 'react-draggable';
 
 const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat'];
 
@@ -23,10 +22,6 @@ const Terminal: React.FC = () => {
   const [introDone, setIntroDone] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [cleared, setCleared] = useState(false);
-  const draggableRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState({ width: 934, height: 672 });
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const initialResizeState = useRef<{ width: number; height: number; x: number; y: number } | null>(null);
   const [introKey, setIntroKey] = useState(0);
   const focusEnableAt = useRef<number>(0);
 
@@ -38,16 +33,7 @@ const Terminal: React.FC = () => {
 
   const isMobile = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    return window.innerWidth < 640; // Tailwind's sm breakpoint
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setPosition({
-        x: (window.innerWidth - size.width) / 2,
-        y: (window.innerHeight - size.height) / 2,
-      });
-    }
+    return window.innerWidth < 640;
   }, []);
 
   useEffect(() => {
@@ -135,142 +121,34 @@ const Terminal: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [scrollToBottom]);
 
-  return (
-    <>
-      <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10 sm:hidden">
-        <div
-          ref={scrollRef}
-          className="flex-1 p-4 overflow-y-auto terminal-scroll"
-        >
-          {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
-          {lines.map((l) => (
-            <PromptLine key={l.id} html={l.html}>
-              {l.element}
-            </PromptLine>
-          ))}
-          {introDone && !busy && (
-            <form
-              className="flex items-center whitespace-pre relative"
-              onSubmit={onSubmit}
-              onPointerDown={() => {
-                if (!busy && introDone && Date.now() >= focusEnableAt.current) {
-                  focusVisibleInput();
-                }
-              }}
-            >
-              <PromptLine input={input} live valid={validCommands} />
-              <input
-                data-terminal-input
-                className="absolute inset-0 w-full h-full opacity-0 focus:outline-none"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onFocus={scrollToBottom}
-                onClick={scrollToBottom}
-                autoCapitalize="off"
-                autoCorrect="off"
-                autoComplete="off"
-                spellCheck={false}
-                autoFocus={!isMobile}
-              />
-            </form>
-          )}
-        </div>
-      </div>
+  const terminalProps = {
+    isMobile,
+    lines,
+    cleared,
+    introKey,
+    onIntroDone,
+    introDone,
+    busy,
+    input,
+    onSubmit,
+    focusEnableAt,
+    focusVisibleInput,
+    setInput,
+    handleKeyDown,
+    scrollToBottom,
+    scrollRef,
+  };
 
-      <div className="hidden sm:block">
-        <Draggable
-          handle=".terminal-handle"
-          nodeRef={draggableRef}
-          position={position}
-          onStop={(e, data) => setPosition({ x: data.x, y: data.y })}
-        >
-          <div ref={draggableRef} style={{ position: 'absolute', zIndex: 10 }}>
-            <Resizable
-              size={size}
-              minWidth={320}
-              minHeight={200}
-              onResizeStart={() => {
-                initialResizeState.current = { ...size, ...position };
-              }}
-              onResize={(e, direction, ref, d) => {
-                if (!initialResizeState.current) return;
+  const terminalCore = <TerminalCore {...terminalProps} />;
 
-                let newWidth = initialResizeState.current.width + d.width;
-                let newHeight = initialResizeState.current.height + d.height;
-                let newX = initialResizeState.current.x;
-                let newY = initialResizeState.current.y;
-
-                if (direction.includes('left')) {
-                  newWidth = initialResizeState.current.width + d.width;
-                  newX = initialResizeState.current.x - d.width;
-                }
-
-                if (direction.includes('top')) {
-                  newHeight = initialResizeState.current.height + d.height;
-                  newY = initialResizeState.current.y - d.height;
-                }
-
-                setSize({ width: newWidth, height: newHeight });
-                setPosition({ x: newX, y: newY });
-              }}
-              onResizeStop={() => {
-                initialResizeState.current = null;
-              }}
-            >
-              <div className="flex flex-col w-full h-full rounded-lg bg-term-bg border border-term-bor font-mono">
-                <div className="terminal-handle flex items-center px-3 h-8 rounded-t-lg bg-term-bor/50 cursor-move select-none">
-                  <div className="flex items-center space-x-2 mr-4">
-                    <span className="w-3 h-3 rounded-full bg-[#ff5f56] cursor-pointer"></span>
-                    <span className="w-3 h-3 rounded-full bg-[#ffbd2e] cursor-pointer"></span>
-                    <span className="w-3 h-3 rounded-full bg-[#27c93f] cursor-pointer"></span>
-                  </div>
-                  <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
-                </div>
-                <div
-                  ref={scrollRef}
-                  className="flex-1 p-4 overflow-y-auto terminal-scroll"
-                >
-                  {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
-                  {lines.map((l) => (
-                    <PromptLine key={l.id} html={l.html}>
-                      {l.element}
-                    </PromptLine>
-                  ))}
-                  {introDone && !busy && (
-                    <form
-                      className="flex items-center whitespace-pre relative"
-                      onSubmit={onSubmit}
-                      onPointerDown={() => {
-                        if (!busy && introDone && Date.now() >= focusEnableAt.current) {
-                          focusVisibleInput();
-                        }
-                      }}
-                    >
-                      <PromptLine input={input} live valid={validCommands} />
-                      <input
-                        data-terminal-input
-                        className="absolute inset-0 w-full h-full opacity-0 focus:outline-none"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        onFocus={scrollToBottom}
-                        onClick={scrollToBottom}
-                        autoCapitalize="off"
-                        autoCorrect="off"
-                        autoComplete="off"
-                        spellCheck={false}
-                        autoFocus={!isMobile}
-                      />
-                    </form>
-                  )}
-                </div>
-              </div>
-            </Resizable>
-          </div>
-        </Draggable>
-      </div>
-    </>
+  return isMobile ? (
+    <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10">
+      {terminalCore}
+    </div>
+  ) : (
+    <DesktopWindow>
+      {terminalCore}
+    </DesktopWindow>
   );
 };
 
