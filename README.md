@@ -3,7 +3,7 @@
 This is a personal portfolio reimagined as an interactive, draggable terminal window. Built with Astro, React, and Tailwind CSS, it offers a unique way to explore my projects, skills, and contact information through a command-line interface.
 
 <p align="center">
-  <img src="public/screenshot.png" alt="Screenshot of the portfolio terminal" width="800"/>
+  <img src="public/screenshot.png" alt="Screenshot of the portfolio terminal" width="600"/>
 </p>
 
 ## ✨ Features

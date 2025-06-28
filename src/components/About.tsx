@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Caret from './Caret';
 import useTyping from '../hooks/useTyping';
 
@@ -57,43 +57,72 @@ interface Props {
 }
 
 const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinished }) => {
+  const [animating, setAnimating] = useState(animate);
   const [step, setStep] = useState(0); // 0 typing first line, 1 typing second, 2 done typing
 
   const next = () => setStep((s) => s + 1);
 
-  const typed1 = useTyping(step === 0 && animate ? introLines[0] : '', 50, next);
-  const typed2 = useTyping(step === 1 && animate ? introLines[1] : '', 50, next);
+  // Skip handler
+  const skip = useCallback(() => {
+    if (!animating) return;
+    setAnimating(false);
+    setStep(2);
+    onFinished?.();
+  }, [animating, onFinished]);
+
+  const typed1 = useTyping(step === 0 && animating ? introLines[0] : '', 50, next);
+  const typed2 = useTyping(step === 1 && animating ? introLines[1] : '', 50, next);
 
   useEffect(() => {
-    if (!animate) return;
+    if (!animating) return;
     if (step === 2 && !showSummary) {
       onFinished?.();
     }
-  }, [step, animate, showSummary, onFinished]);
+  }, [step, animating, showSummary, onFinished]);
+
+  // Attach key and pointer listeners while animating for skip
+  useEffect(() => {
+    if (!animating) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key.length === 1 || ["Enter", "Tab", "Escape", " "].includes(e.key)) {
+        e.preventDefault();
+        skip();
+      }
+    };
+    const handlePointer = () => skip();
+    window.addEventListener('keydown', handleKey);
+    window.addEventListener('mousedown', handlePointer);
+    window.addEventListener('touchstart', handlePointer, { passive: true });
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      window.removeEventListener('mousedown', handlePointer);
+      window.removeEventListener('touchstart', handlePointer);
+    };
+  }, [animating, skip]);
 
   const renderIntro = (
     <>
       {/* line1 */}
       <div className="text-lg md:text-xl lg:text-2xl">
-        <span>{animate ? (step > 0 ? introLines[0] : typed1) : introLines[0]}</span>
-        {animate && step === 0 && <Caret />}
+        <span>{animating ? (step > 0 ? introLines[0] : typed1) : introLines[0]}</span>
+        {animating && step === 0 && <Caret />}
       </div>
       {/* line2 */}
       <div className="text-lg md:text-xl lg:text-2xl mb-4">
-        <span>{animate ? (step > 1 ? introLines[1] : typed2) : introLines[1]}</span>
-        {animate && step === 1 && <Caret />}
+        <span>{animating ? (step > 1 ? introLines[1] : typed2) : introLines[1]}</span>
+        {animating && step === 1 && <Caret />}
       </div>
     </>
   );
 
   const renderSummary = (
-    <SummaryAnimated lines={summaryLines} animate={animate} onFinished={() => onFinished?.()} />
+    <SummaryAnimated lines={summaryLines} animate={animating} onFinished={() => onFinished?.()} />
   );
 
   return (
     <div>
       {renderIntro}
-      {showSummary && (!animate ? renderSummary : step === 2 && renderSummary)}
+      {showSummary && (!animating ? renderSummary : step === 2 && renderSummary)}
     </div>
   );
 };
