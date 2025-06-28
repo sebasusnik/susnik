@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import SkillsList from './SkillsList';
-import ProjectsList from './ProjectsList';
+import ExpList from './ExpList';
 import Caret from './Caret';
 
 const introLines = ["I am Sebastian Susnik", "and I like to build stuff..."];
-const projectsCommand = 'projects';
+const expCommand = 'exp';
 const skillsCommand = 'skills';
 
 type TypingState = {
@@ -139,9 +139,9 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
                 </div>
             )}
 
-            {/* Projects */}
-            {step >= 3 && (step === 3 ? <AnimatedPrompt command={projectsCommand} onFinished={advanceStep} /> : <StaticPrompt command={projectsCommand} />)}
-            {step === 5 ? <ProjectsList animate onFinished={advanceStep} /> : (step > 5 && <ProjectsList />)}
+            {/* exp */}
+            {step >= 3 && (step === 3 ? <AnimatedPrompt command={expCommand} onFinished={advanceStep} /> : <StaticPrompt command={expCommand} />)}
+            {step === 5 ? <ExpList animate onFinished={advanceStep} /> : (step > 5 && <ExpList />)}
 
             {/* Skills */}
             {step >= 7 && (step === 7 ? <AnimatedPrompt command={skillsCommand} onFinished={advanceStep} /> : <StaticPrompt command={skillsCommand} />)}

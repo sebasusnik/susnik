@@ -7,7 +7,7 @@ interface Props {
 
 const items = [
   { cmd: 'about', desc: 'Who I am (animated)' },
-  { cmd: 'projects', desc: 'View my work' },
+  { cmd: 'exp', desc: 'View my experience' },
   { cmd: 'skills', desc: 'See my competencies' },
   { cmd: 'contact', desc: 'Get in touch' },
   { cmd: 'clear', desc: 'Clear the terminal' },

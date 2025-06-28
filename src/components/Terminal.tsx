@@ -6,7 +6,7 @@ import useCommands from '../hooks/useCommands';
 import { Resizable } from 're-resizable';
 import Draggable from 'react-draggable';
 
-const validCommands = ['about', 'projects', 'skills', 'contact', 'clear', 'help', 'repeat'];
+const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat'];
 
 interface Line {
   id: number;

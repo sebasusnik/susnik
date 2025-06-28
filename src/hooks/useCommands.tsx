@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import About from '../components/About';
-import ProjectsList from '../components/ProjectsList';
+import ExpList from '../components/ExpList';
 import SkillsList from '../components/SkillsList';
 import HelpList from '../components/HelpList';
 import Contact from '../components/Contact';
@@ -59,7 +59,7 @@ const useCommands = ({
       }
 
       if (word === 'projects') {
-        addElement(<ProjectsList animate onFinished={() => setBusy(false)} />);
+        addElement(<ExpList animate onFinished={() => setBusy(false)} />);
         return;
       }
 

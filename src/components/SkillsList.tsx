@@ -1,20 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 export const skills = [
-  'JavaScript (ES6+)',
+  'Typescript',
   'React',
-  'Vue.js',
   'Node.js',
-  'Express',
-  'HTML5 & CSS3',
   'Tailwind CSS',
-  'SQL (PostgreSQL)',
-  'NoSQL (MongoDB)',
-  'AWS (EC2, S3)',
-  'Docker',
-  'Git & GitHub',
-  'CI/CD',
-  'REST APIs',
+  'SQL',
+  'AWS',
 ];
 
 interface Props {
