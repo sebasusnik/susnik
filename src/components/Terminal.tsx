@@ -44,6 +44,21 @@ const Terminal: React.FC = () => {
     }
   }, []);
 
+  // New: keep scroll pinned to bottom whenever the content inside the scroll container mutates
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || typeof MutationObserver === 'undefined') return;
+
+    const observer = new MutationObserver(() => {
+      el.scrollTop = el.scrollHeight;
+    });
+
+    observer.observe(el, { childList: true, subtree: true, characterData: true });
+    // Ensure we start at the bottom when observer attaches
+    el.scrollTop = el.scrollHeight;
+
+    return () => observer.disconnect();
+  }, []);
 
   const addElement = (element: React.ReactNode) => setLines((prev) => [...prev, { id: ++idCounter, element }]);
 
