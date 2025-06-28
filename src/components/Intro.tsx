@@ -55,7 +55,7 @@ const AnimatedPrompt = ({ command, onFinished }: { command: string; onFinished: 
 
     return (
         <div className="flex items-center mb-1">
-            <span className="text-fuchsia-400">sebastian@portfolio</span><span className="text-gray-500">:</span><span className="text-cyan-400">~</span><span className="text-gray-500">$</span>
+            <span className="text-fuchsia-400">sebasusnik@portfolio</span><span className="text-gray-500">:</span><span className="text-cyan-400">~</span><span className="text-gray-500">$</span>
             <span className="pl-2">
                 <span className="text-green-400">{typedCommand.text}</span>
                 {typedCommand.cursor && <span className="inline-block w-[10px] h-[1.2rem] align-middle bg-white animate-cursor" />}
@@ -66,7 +66,7 @@ const AnimatedPrompt = ({ command, onFinished }: { command: string; onFinished: 
 
 const StaticPrompt = ({ command }: { command: string }) => (
     <div className="flex items-center mb-1">
-        <span className="text-fuchsia-400">sebastian@portfolio</span><span className="text-gray-500">:</span><span className="text-cyan-400">~</span><span className="text-gray-500">$</span>
+        <span className="text-fuchsia-400">sebasusnik@portfolio</span><span className="text-gray-500">:</span><span className="text-cyan-400">~</span><span className="text-gray-500">$</span>
         <span className="pl-2"><span className="text-green-400">{command}</span></span>
     </div>
 );
@@ -169,10 +169,31 @@ const StaticSkillsList = () => (
 
 const Intro = ({ onDone }: { onDone: () => void }) => {
     const [step, setStep] = useState(0);
+    const doneRef = useRef(false);
 
     const advanceStep = useCallback(() => {
         setStep(s => s + 1);
     }, []);
+
+    const skipIntro = useCallback(() => {
+        if (doneRef.current) return;
+        doneRef.current = true;
+        setStep(10);
+        // Ensure content is rendered before signalling done
+        setTimeout(onDone, 100);
+    }, [onDone]);
+
+    // Listen for Enter or Tab to skip
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === 'Tab') {
+                e.preventDefault();
+                skipIntro();
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, [skipIntro]);
 
     const typedLine1 = useTypingEffect(step === 0 ? introLines[0] : '', 50, advanceStep);
     const typedLine2 = useTypingEffect(step === 1 ? introLines[1] : '', 50, advanceStep);
@@ -182,7 +203,12 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
         if (step === 2 || step === 4 || step === 6 || step === 8) {
             timer = setTimeout(advanceStep, 500);
         } else if (step === 10) {
-            timer = setTimeout(onDone, 500);
+            if (!doneRef.current) {
+                timer = setTimeout(() => {
+                    doneRef.current = true;
+                    onDone();
+                }, 500);
+            }
         }
         return () => clearTimeout(timer);
     }, [step, onDone, advanceStep]);
