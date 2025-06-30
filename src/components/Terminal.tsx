@@ -135,7 +135,7 @@ const Terminal: React.FC = () => {
 
   return (
     <>
-      <div className="fixed inset-0 flex flex-col bg-term-bg font-mono text-sm z-10 sm:hidden">
+      <div className="fixed inset-0 terminal-mobile flex flex-col bg-term-bg font-mono text-sm z-10 sm:hidden">
         <TerminalCore {...baseTerminalProps} isMobile={true} />
       </div>
 

@@ -25,14 +25,37 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Dynamic viewport height utility for mobile address-bar shrink issues */
+/* Dynamic viewport height utilities for mobile keyboard handling */
 @supports (height: 100dvh) {
   .min-h-dvh {
     min-height: 100dvh;
   }
+  .h-dvh {
+    height: 100dvh;
+  }
 }
+
 @supports (height: 100svh) {
-  .min-h-dvh {
+  .min-h-svh {
     min-height: 100svh;
+  }
+  .h-svh {
+    height: 100svh;
+  }
+}
+
+/* Mobile keyboard-aware bottom padding */
+@media (max-width: 640px) {
+  .terminal-mobile {
+    height: 100dvh;
+    height: 100svh; /* Fallback for older browsers */
+    padding-bottom: env(keyboard-inset-height, 0px);
+  }
+}
+
+/* Ensure content is above virtual keyboard */
+@supports (padding-bottom: env(keyboard-inset-height)) {
+  .keyboard-aware {
+    padding-bottom: env(keyboard-inset-height, 1rem);
   }
 }
