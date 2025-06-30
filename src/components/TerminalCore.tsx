@@ -55,17 +55,19 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
         {l.element}
       </PromptLine>
     ))}
-    {introDone && !busy && (
+    {introDone && (
       <form
         className="flex items-center whitespace-pre relative"
-        onSubmit={onSubmit}
+        onSubmit={busy ? (e) => e.preventDefault() : onSubmit}
         onPointerDown={isMobile ? undefined : () => {
           if (!busy && introDone && Date.now() >= focusEnableAt.current) {
             focusVisibleInput();
           }
         }}
       >
-        <PromptLine input={input} live valid={validCommands} />
+        <div className={busy ? 'invisible' : 'visible transition-all duration-200'}>
+          <PromptLine input={input} live valid={validCommands} />
+        </div>
         <input
           data-terminal-input
           className={isMobile 
@@ -73,10 +75,10 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
             : "absolute left-0 bottom-0 w-px h-px opacity-0 pointer-events-none focus:outline-none"
           }
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={isMobile ? undefined : scrollToBottom}
-          onClick={isMobile ? undefined : scrollToBottom}
+          onChange={busy ? () => {} : (e) => setInput(e.target.value)}
+          onKeyDown={busy ? (e) => e.preventDefault() : handleKeyDown}
+          onFocus={scrollToBottom}
+          onClick={scrollToBottom}
           autoCapitalize="off"
           autoCorrect="off"
           autoComplete="off"

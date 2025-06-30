@@ -87,7 +87,6 @@ const useCommands = ({
       }
 
       addElement(<NotFound command={cmd} animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
-      setBusy(false);
     },
     [addElement, scrollRef, setLines, setCleared, resetIntro, scrollToBottom]
   );

@@ -39,7 +39,6 @@ const Terminal: React.FC = () => {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || typeof MutationObserver === 'undefined') return;
-    if (isMobile) return;
 
     const observer = new MutationObserver(() => {
       el.scrollTop = el.scrollHeight;
@@ -49,7 +48,7 @@ const Terminal: React.FC = () => {
     el.scrollTop = el.scrollHeight;
 
     return () => observer.disconnect();
-  }, [isMobile]);
+  }, []);
 
   const addElement = (element: React.ReactNode) => setLines((prev) => [...prev, { id: ++idCounter, element }]);
 
@@ -92,13 +91,6 @@ const Terminal: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (busy) return;
-    if (!introDone) return;
-    if (isMobile) return;
-    focusVisibleInput();
-  }, [busy, introDone, isMobile]);
-
-  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -118,12 +110,11 @@ const Terminal: React.FC = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleResize = () => {
-      if (isMobile) return;
       scrollToBottom();
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [scrollToBottom, isMobile]);
+  }, [scrollToBottom]);
 
   const baseTerminalProps = {
     lines,
