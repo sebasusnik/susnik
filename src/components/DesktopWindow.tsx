@@ -13,48 +13,58 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
 }) => {
   const draggableRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(initialSize);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isPositioned, setIsPositioned] = useState(false);
-  const initialResizeState = useRef<{ width: number; height: number; x: number; y: number } | null>(null);
+  
+  const getInitialPosition = () => {
+    if (typeof window !== 'undefined') {
+      return {
+        x: (window.innerWidth - initialSize.width) / 2,
+        y: (window.innerHeight - initialSize.height) / 2,
+      };
+    }
+    return { x: 0, y: 0 };
+  };
+  
+  const [position, setPosition] = useState(getInitialPosition);
+  const [isPositioned, setIsPositioned] = useState(typeof window !== 'undefined');
+  const resizeStartPosition = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setPosition({
-        x: (window.innerWidth - size.width) / 2,
-        y: (window.innerHeight - size.height) / 2,
-      });
+    if (!isPositioned && typeof window !== 'undefined') {
+      setPosition(getInitialPosition());
       setIsPositioned(true);
     }
-  }, [size.width, size.height]);
+  }, []);
 
   const handleResizeStart = () => {
-    initialResizeState.current = { ...size, ...position };
+    resizeStartPosition.current = { ...position };
   };
 
   const handleResize = (e: any, direction: any, ref: any, d: any) => {
-    if (!initialResizeState.current) return;
+    if (!resizeStartPosition.current) return;
 
-    let newWidth = initialResizeState.current.width + d.width;
-    let newHeight = initialResizeState.current.height + d.height;
-    let newX = initialResizeState.current.x;
-    let newY = initialResizeState.current.y;
+    const newSize = {
+      width: parseInt(ref.style.width),
+      height: parseInt(ref.style.height)
+    };
+    setSize(newSize);
+
+    let newPosition = { ...resizeStartPosition.current };
 
     if (direction.includes('left')) {
-      newWidth = initialResizeState.current.width + d.width;
-      newX = initialResizeState.current.x - d.width;
+      newPosition.x = resizeStartPosition.current.x - d.width;
     }
 
     if (direction.includes('top')) {
-      newHeight = initialResizeState.current.height + d.height;
-      newY = initialResizeState.current.y - d.height;
+      newPosition.y = resizeStartPosition.current.y - d.height;
     }
 
-    setSize({ width: newWidth, height: newHeight });
-    setPosition({ x: newX, y: newY });
+    if (newPosition.x !== resizeStartPosition.current.x || newPosition.y !== resizeStartPosition.current.y) {
+      setPosition(newPosition);
+    }
   };
 
   const handleResizeStop = () => {
-    initialResizeState.current = null;
+    resizeStartPosition.current = null;
   };
 
   return (
