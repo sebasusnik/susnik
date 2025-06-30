@@ -14,6 +14,7 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   const draggableRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isPositioned, setIsPositioned] = useState(false);
   const initialResizeState = useRef<{ width: number; height: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
@@ -22,8 +23,9 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
         x: (window.innerWidth - size.width) / 2,
         y: (window.innerHeight - size.height) / 2,
       });
+      setIsPositioned(true);
     }
-  }, []);
+  }, [size.width, size.height]);
 
   const handleResizeStart = () => {
     initialResizeState.current = { ...size, ...position };
@@ -57,35 +59,37 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
 
   return (
     <div className="hidden sm:block">
-      <Draggable
-        handle=".terminal-handle"
-        nodeRef={draggableRef}
-        position={position}
-        onStop={(e, data) => setPosition({ x: data.x, y: data.y })}
-      >
-        <div ref={draggableRef} style={{ position: 'absolute', zIndex: 10 }}>
-          <Resizable
-            size={size}
-            minWidth={320}
-            minHeight={200}
-            onResizeStart={handleResizeStart}
-            onResize={handleResize}
-            onResizeStop={handleResizeStop}
-          >
-            <div className="flex flex-col w-full h-full rounded-lg bg-term-bg border border-term-bor font-mono">
-              <div className="terminal-handle flex items-center px-3 h-8 rounded-t-lg bg-term-bor/50 cursor-move select-none">
-                <div className="flex items-center space-x-2 mr-4">
-                  <span className="w-3 h-3 rounded-full bg-[#ff5f56] cursor-pointer"></span>
-                  <span className="w-3 h-3 rounded-full bg-[#ffbd2e] cursor-pointer"></span>
-                  <span className="w-3 h-3 rounded-full bg-[#27c93f] cursor-pointer"></span>
+      {isPositioned && (
+        <Draggable
+          handle=".terminal-handle"
+          nodeRef={draggableRef}
+          position={position}
+          onStop={(e, data) => setPosition({ x: data.x, y: data.y })}
+        >
+          <div ref={draggableRef} style={{ position: 'absolute', zIndex: 10 }}>
+            <Resizable
+              size={size}
+              minWidth={320}
+              minHeight={200}
+              onResizeStart={handleResizeStart}
+              onResize={handleResize}
+              onResizeStop={handleResizeStop}
+            >
+              <div className="flex flex-col w-full h-full rounded-lg bg-term-bg border border-term-bor font-mono">
+                <div className="terminal-handle flex items-center px-3 h-8 rounded-t-lg bg-term-bor/50 cursor-move select-none">
+                  <div className="flex items-center space-x-2 mr-4">
+                    <span className="w-3 h-3 rounded-full bg-[#ff5f56] cursor-pointer"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#ffbd2e] cursor-pointer"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#27c93f] cursor-pointer"></span>
+                  </div>
+                  <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
                 </div>
-                <span className="text-xs text-gray-300">sebasusnik@portfolio:~</span>
+                {children}
               </div>
-              {children}
-            </div>
-          </Resizable>
-        </div>
-      </Draggable>
+            </Resizable>
+          </div>
+        </Draggable>
+      )}
     </div>
   );
 };
