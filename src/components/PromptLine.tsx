@@ -50,7 +50,7 @@ const PromptLine: React.FC<Props> = ({ input, live = false, html, children, clas
     );
   }
 
-  return <div className={`whitespace-pre ${className ?? ''}`}>{children}</div>;
+  return <div className={`whitespace-pre-wrap ${className ?? ''}`}>{children}</div>;
 };
 
 export default PromptLine;

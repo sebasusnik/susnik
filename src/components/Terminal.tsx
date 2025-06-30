@@ -5,7 +5,7 @@ import PromptLine from './PromptLine';
 import useHistory from '../hooks/useHistory';
 import useCommands from '../hooks/useCommands';
 
-const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat'];
+const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat', 'ls', 'pwd'];
 
 interface Line {
   id: number;

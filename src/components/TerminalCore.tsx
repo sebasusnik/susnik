@@ -2,7 +2,7 @@ import React from 'react';
 import PromptLine from './PromptLine';
 import Intro from './Intro';
 
-const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat'];
+const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat', 'ls', 'pwd'];
 
 interface Line {
   id: number;

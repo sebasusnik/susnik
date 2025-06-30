@@ -5,6 +5,7 @@ import SkillsList from '../components/SkillsList';
 import HelpList from '../components/HelpList';
 import Contact from '../components/Contact';
 import NotFound from '../components/NotFound';
+import EasterEgg from '../components/EasterEgg';
 
 interface Line {
   id: number;
@@ -58,7 +59,7 @@ const useCommands = ({
         return;
       }
 
-      if (word === 'projects') {
+      if (word === 'exp') {
         addElement(<ExpList animate onFinished={() => setBusy(false)} />);
         return;
       }
@@ -70,6 +71,16 @@ const useCommands = ({
 
       if (word === 'contact') {
         addElement(<Contact animate onFinished={() => setBusy(false)} />);
+        return;
+      }
+
+      if (word === 'ls') {
+        addElement(<EasterEgg command="ls" animate onFinished={() => setBusy(false)} />);
+        return;
+      }
+
+      if (word === 'pwd') {
+        addElement(<EasterEgg command="pwd" animate onFinished={() => setBusy(false)} />);
         return;
       }
 

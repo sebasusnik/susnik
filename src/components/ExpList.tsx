@@ -32,7 +32,7 @@ interface Props {
   onFinished?: () => void;
 }
 
-const ProjectsList: React.FC<Props> = ({ animate = false, onFinished }) => {
+const ExpList: React.FC<Props> = ({ animate = false, onFinished }) => {
   const [rendered, setRendered] = useState<Experience[]>(animate ? [] : experiences);
   const onFinishedRef = useRef(onFinished);
   onFinishedRef.current = onFinished;
@@ -53,7 +53,7 @@ const ProjectsList: React.FC<Props> = ({ animate = false, onFinished }) => {
   }, [animate]);
 
   return (
-    <div className="mt-2 mb-4">
+    <div className="mt-2 mb-4 whitespace-pre-wrap break-words">
       <div className="text-cyan-400 mb-4 text-base">Running: "experience"...</div>
       {rendered.map((exp) => (
         <div key={`${exp.company}-${exp.role}`} className="text-sm md:text-base mb-6 pl-2">
@@ -75,4 +75,4 @@ const ProjectsList: React.FC<Props> = ({ animate = false, onFinished }) => {
   );
 };
 
-export default ProjectsList; 
+export default ExpList; 
