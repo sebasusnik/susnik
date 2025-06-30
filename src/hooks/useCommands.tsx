@@ -75,12 +75,20 @@ const useCommands = ({
       }
 
       if (word === 'ls') {
+<<<<<<< Updated upstream
         addElement(<EasterEgg command="ls" animate onFinished={() => setBusy(false)} />);
+=======
+        addElement(<EasterEgg command="ls" onFinished={() => setBusy(false)} />);
+>>>>>>> Stashed changes
         return;
       }
 
       if (word === 'pwd') {
+<<<<<<< Updated upstream
         addElement(<EasterEgg command="pwd" animate onFinished={() => setBusy(false)} />);
+=======
+        addElement(<EasterEgg command="pwd" onFinished={() => setBusy(false)} />);
+>>>>>>> Stashed changes
         return;
       }
 

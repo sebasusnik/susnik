@@ -7,9 +7,6 @@ interface Props {
 }
 
 const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished }) => {
-  // ------------------------------
-  // Compute the lines to display
-  // ------------------------------
   const lsLines: React.ReactNode[] = [
     <div key="total" className="text-gray-400 mb-2">total 8</div>,
     <div key="skills" className="mb-1">
@@ -40,16 +37,12 @@ const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished }) =>
 
   const lines = command === 'ls' ? lsLines : pwdLines;
 
-  // ------------------------------
-  // Animation handling
-  // ------------------------------
   const [rendered, setRendered] = React.useState<React.ReactNode[]>(animate ? [] : lines);
   const finishedRef = React.useRef(onFinished);
   finishedRef.current = onFinished;
 
   React.useEffect(() => {
     if (!animate) {
-      // call onFinished immediately to keep behaviour consistent
       if (finishedRef.current) finishedRef.current();
       return;
     }
