@@ -4,9 +4,10 @@ interface Props {
   command: 'ls' | 'pwd';
   animate?: boolean;
   onFinished?: () => void;
+  onLineRendered?: () => void;
 }
 
-const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished }) => {
+const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished, onLineRendered }) => {
   const lsLines: React.ReactNode[] = [
     <div key="total" className="text-gray-400 mb-2">total 8</div>,
     <div key="skills" className="mb-1">
@@ -39,7 +40,9 @@ const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished }) =>
 
   const [rendered, setRendered] = React.useState<React.ReactNode[]>(animate ? [] : lines);
   const finishedRef = React.useRef(onFinished);
+  const lineRenderedRef = React.useRef(onLineRendered);
   finishedRef.current = onFinished;
+  lineRenderedRef.current = onLineRendered;
 
   React.useEffect(() => {
     if (!animate) {
@@ -50,7 +53,12 @@ const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished }) =>
     const interval = setInterval(() => {
       setRendered((prev) => {
         if (prev.length < lines.length) {
-          return [...prev, lines[prev.length]];
+          const newRendered = [...prev, lines[prev.length]];
+          // Trigger scroll after a small delay to ensure DOM is updated
+          setTimeout(() => {
+            lineRenderedRef.current?.();
+          }, 10);
+          return newRendered;
         }
         clearInterval(interval);
         finishedRef.current?.();

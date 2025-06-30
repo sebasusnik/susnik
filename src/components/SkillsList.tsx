@@ -12,19 +12,27 @@ export const skills = [
 interface Props {
   animate?: boolean;
   onFinished?: () => void;
+  onLineRendered?: () => void;
 }
 
-const SkillsList: React.FC<Props> = ({ animate = false, onFinished }) => {
+const SkillsList: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }) => {
   const [rendered, setRendered] = useState<string[]>(animate ? [] : skills);
   const onFinishedRef = useRef(onFinished);
+  const lineRenderedRef = useRef(onLineRendered);
   onFinishedRef.current = onFinished;
+  lineRenderedRef.current = onLineRendered;
 
   useEffect(() => {
     if (!animate) return;
     const interval = setInterval(() => {
       setRendered((prev) => {
         if (prev.length < skills.length) {
-          return [...prev, skills[prev.length]];
+          const newRendered = [...prev, skills[prev.length]];
+          // Trigger scroll after a small delay to ensure DOM is updated
+          setTimeout(() => {
+            lineRenderedRef.current?.();
+          }, 10);
+          return newRendered;
         }
         clearInterval(interval);
         if (onFinishedRef.current) onFinishedRef.current();

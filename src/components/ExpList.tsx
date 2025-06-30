@@ -30,19 +30,27 @@ export const experiences: Experience[] = [
 interface Props {
   animate?: boolean;
   onFinished?: () => void;
+  onLineRendered?: () => void;
 }
 
-const ExpList: React.FC<Props> = ({ animate = false, onFinished }) => {
+const ExpList: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }) => {
   const [rendered, setRendered] = useState<Experience[]>(animate ? [] : experiences);
   const onFinishedRef = useRef(onFinished);
+  const lineRenderedRef = useRef(onLineRendered);
   onFinishedRef.current = onFinished;
+  lineRenderedRef.current = onLineRendered;
 
   useEffect(() => {
     if (!animate) return;
     const interval = setInterval(() => {
       setRendered((prev) => {
         if (prev.length < experiences.length) {
-          return [...prev, experiences[prev.length]];
+          const newRendered = [...prev, experiences[prev.length]];
+          // Trigger scroll after a small delay to ensure DOM is updated
+          setTimeout(() => {
+            lineRenderedRef.current?.();
+          }, 10);
+          return newRendered;
         }
         clearInterval(interval);
         if (onFinishedRef.current) onFinishedRef.current();

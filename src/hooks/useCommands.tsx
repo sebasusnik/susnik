@@ -19,6 +19,7 @@ interface UseCommandsParams {
   setLines: React.Dispatch<React.SetStateAction<Line[]>>;
   setCleared: React.Dispatch<React.SetStateAction<boolean>>;
   resetIntro: () => void;
+  scrollToBottom: () => void;
 }
 
 const useCommands = ({
@@ -27,6 +28,7 @@ const useCommands = ({
   setLines,
   setCleared,
   resetIntro,
+  scrollToBottom,
 }: UseCommandsParams) => {
   const [busy, setBusy] = useState(false);
 
@@ -50,44 +52,44 @@ const useCommands = ({
       }
 
       if (word === 'help') {
-        addElement(<HelpList animate onFinished={() => setBusy(false)} />);
+        addElement(<HelpList animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
         return;
       }
 
       if (word === 'about') {
-        addElement(<About animate showSummary onFinished={() => setBusy(false)} />);
+        addElement(<About animate showSummary onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
         return;
       }
 
       if (word === 'exp') {
-        addElement(<ExpList animate onFinished={() => setBusy(false)} />);
+        addElement(<ExpList animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
         return;
       }
 
       if (word === 'skills') {
-        addElement(<SkillsList animate onFinished={() => setBusy(false)} />);
+        addElement(<SkillsList animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
         return;
       }
 
       if (word === 'contact') {
-        addElement(<Contact animate onFinished={() => setBusy(false)} />);
+        addElement(<Contact animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
         return;
       }
 
       if (word === 'ls') {
-        addElement(<EasterEgg command="ls" animate onFinished={() => setBusy(false)} />);
+        addElement(<EasterEgg command="ls" animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
         return;
       }
 
       if (word === 'pwd') {
-        addElement(<EasterEgg command="pwd" animate onFinished={() => setBusy(false)} />);
+        addElement(<EasterEgg command="pwd" animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
         return;
       }
 
-      addElement(<NotFound command={cmd} animate onFinished={() => setBusy(false)} />);
+      addElement(<NotFound command={cmd} animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />);
       setBusy(false);
     },
-    [addElement, scrollRef, setLines, setCleared, resetIntro]
+    [addElement, scrollRef, setLines, setCleared, resetIntro, scrollToBottom]
   );
 
   return {

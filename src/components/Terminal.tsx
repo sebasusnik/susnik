@@ -53,6 +53,12 @@ const Terminal: React.FC = () => {
 
   const addElement = (element: React.ReactNode) => setLines((prev) => [...prev, { id: ++idCounter, element }]);
 
+  const scrollToBottom = useCallback(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, []);
+
   const resetIntro = () => {
     setLines([]);
     setCleared(false);
@@ -67,6 +73,7 @@ const Terminal: React.FC = () => {
     setLines,
     setCleared,
     resetIntro,
+    scrollToBottom,
   });
 
   const onSubmit = (e: React.FormEvent) => {
@@ -107,12 +114,6 @@ const Terminal: React.FC = () => {
     window.addEventListener('keydown', handleWindowKeyDown);
     return () => window.removeEventListener('keydown', handleWindowKeyDown);
   }, [busy, isMobile]);
-
-  const scrollToBottom = useCallback(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

@@ -3,6 +3,7 @@ import React from 'react';
 interface Props {
   animate?: boolean;
   onFinished?: () => void;
+  onLineRendered?: () => void;
 }
 
 const items = [
@@ -14,17 +15,24 @@ const items = [
   { cmd: 'repeat', desc: 'Replay the intro' },
 ];
 
-const HelpList: React.FC<Props> = ({ animate = false, onFinished }) => {
+const HelpList: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }) => {
   const [rendered, setRendered] = React.useState<typeof items>(animate ? [] : items);
   const finishedRef = React.useRef(onFinished);
+  const lineRenderedRef = React.useRef(onLineRendered);
   finishedRef.current = onFinished;
+  lineRenderedRef.current = onLineRendered;
 
   React.useEffect(() => {
     if (!animate) return;
     const interval = setInterval(() => {
       setRendered((prev) => {
         if (prev.length < items.length) {
-          return [...prev, items[prev.length]];
+          const newRendered = [...prev, items[prev.length]];
+          // Trigger scroll after a small delay to ensure DOM is updated
+          setTimeout(() => {
+            lineRenderedRef.current?.();
+          }, 10);
+          return newRendered;
         }
         clearInterval(interval);
         finishedRef.current?.();

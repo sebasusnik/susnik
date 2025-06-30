@@ -19,17 +19,24 @@ const summaryLines: Array<React.ReactNode> = [
   ' '
 ];
 
-const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boolean; onFinished?: () => void }> = ({ lines, animate = false, onFinished }) => {
+const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boolean; onFinished?: () => void; onLineRendered?: () => void }> = ({ lines, animate = false, onFinished, onLineRendered }) => {
   const [rendered, setRendered] = useState<Array<React.ReactNode>>(animate ? [] : lines);
   const finishedRef = useRef(onFinished);
+  const lineRenderedRef = useRef(onLineRendered);
   finishedRef.current = onFinished;
+  lineRenderedRef.current = onLineRendered;
 
   useEffect(() => {
     if (!animate) return;
     const interval = setInterval(() => {
       setRendered((prev) => {
         if (prev.length < lines.length) {
-          return [...prev, lines[prev.length]];
+          const newRendered = [...prev, lines[prev.length]];
+          // Trigger scroll after a small delay to ensure DOM is updated
+          setTimeout(() => {
+            lineRenderedRef.current?.();
+          }, 10);
+          return newRendered;
         }
         clearInterval(interval);
         finishedRef.current?.();
@@ -54,9 +61,10 @@ interface Props {
   animate?: boolean;
   showSummary?: boolean;
   onFinished?: () => void;
+  onLineRendered?: () => void;
 }
 
-const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinished }) => {
+const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinished, onLineRendered }) => {
   const [animating, setAnimating] = useState(animate);
   const [step, setStep] = useState(0); // 0 typing first line, 1 typing second, 2 done typing
 
@@ -70,8 +78,14 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
     onFinished?.();
   }, [animating, onFinished]);
 
-  const typed1 = useTyping(step === 0 && animating ? introLines[0] : '', 50, next);
-  const typed2 = useTyping(step === 1 && animating ? introLines[1] : '', 50, next);
+  const typed1 = useTyping(step === 0 && animating ? introLines[0] : '', 50, () => {
+    next();
+    onLineRendered?.();
+  });
+  const typed2 = useTyping(step === 1 && animating ? introLines[1] : '', 50, () => {
+    next();
+    onLineRendered?.();
+  });
 
   useEffect(() => {
     if (!animating) return;
@@ -116,7 +130,7 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
   );
 
   const renderSummary = (
-    <SummaryAnimated lines={summaryLines} animate={animating} onFinished={() => onFinished?.()} />
+    <SummaryAnimated lines={summaryLines} animate={animating} onFinished={() => onFinished?.()} onLineRendered={onLineRendered} />
   );
 
   return (

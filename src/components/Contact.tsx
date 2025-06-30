@@ -3,9 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 interface Props {
   animate?: boolean;
   onFinished?: () => void;
+  onLineRendered?: () => void;
 }
 
-const Contact: React.FC<Props> = ({ animate = false, onFinished }) => {
+const Contact: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }) => {
   const lines: React.ReactNode[] = [
     'You can reach me at:',
     <a
@@ -19,14 +20,21 @@ const Contact: React.FC<Props> = ({ animate = false, onFinished }) => {
 
   const [rendered, setRendered] = useState<React.ReactNode[]>(animate ? [] : lines);
   const finishedRef = useRef(onFinished);
+  const lineRenderedRef = useRef(onLineRendered);
   finishedRef.current = onFinished;
+  lineRenderedRef.current = onLineRendered;
 
   useEffect(() => {
     if (!animate) return;
     const interval = setInterval(() => {
       setRendered((prev) => {
         if (prev.length < lines.length) {
-          return [...prev, lines[prev.length]];
+          const newRendered = [...prev, lines[prev.length]];
+          // Trigger scroll after a small delay to ensure DOM is updated
+          setTimeout(() => {
+            lineRenderedRef.current?.();
+          }, 10);
+          return newRendered;
         }
         clearInterval(interval);
         finishedRef.current?.();
