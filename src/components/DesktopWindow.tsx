@@ -26,7 +26,7 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   
   const [position, setPosition] = useState(getInitialPosition);
   const [isPositioned, setIsPositioned] = useState(typeof window !== 'undefined');
-  const resizeStartPosition = useRef<{ x: number; y: number } | null>(null);
+  const resizeStartData = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
 
   useEffect(() => {
     if (!isPositioned && typeof window !== 'undefined') {
@@ -36,35 +36,39 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   }, []);
 
   const handleResizeStart = () => {
-    resizeStartPosition.current = { ...position };
+    resizeStartData.current = { x: position.x, y: position.y, width: size.width, height: size.height };
   };
 
-  const handleResize = (e: any, direction: any, ref: any, d: any) => {
-    if (!resizeStartPosition.current) return;
+  const handleResize = (e: any, direction: any, ref: any) => {
+    if (!resizeStartData.current) return;
 
-    const newSize = {
-      width: parseInt(ref.style.width),
-      height: parseInt(ref.style.height)
-    };
-    setSize(newSize);
+    const newWidth = parseInt(ref.style.width);
+    const newHeight = parseInt(ref.style.height);
 
-    let newPosition = { ...resizeStartPosition.current };
+    setSize({ width: newWidth, height: newHeight });
 
+    let newX = position.x;
+    let newY = position.y;
+
+    // Calculate deltas based on the size difference from the start of resizing
     if (direction.includes('left')) {
-      newPosition.x = resizeStartPosition.current.x - d.width;
+      const deltaWidth = newWidth - resizeStartData.current.width;
+      newX = resizeStartData.current.x - deltaWidth;
     }
 
     if (direction.includes('top')) {
-      newPosition.y = resizeStartPosition.current.y - d.height;
+      const deltaHeight = newHeight - resizeStartData.current.height;
+      newY = resizeStartData.current.y - deltaHeight;
     }
 
-    if (newPosition.x !== resizeStartPosition.current.x || newPosition.y !== resizeStartPosition.current.y) {
-      setPosition(newPosition);
+    // Only update the position if it changed
+    if (newX !== position.x || newY !== position.y) {
+      setPosition({ x: newX, y: newY });
     }
   };
 
   const handleResizeStop = () => {
-    resizeStartPosition.current = null;
+    resizeStartData.current = null;
   };
 
   return (
