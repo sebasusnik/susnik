@@ -40,14 +40,15 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   };
   
   const [position, setPosition] = useState(getInitialPosition);
-  const [isPositioned, setIsPositioned] = useState(typeof window !== 'undefined');
+  // Starts false on both sides of the render: seeding it from `typeof window`
+  // makes the server and the first client render disagree, which React reports
+  // as a hydration mismatch and recovers from by throwing the tree away.
+  const [isPositioned, setIsPositioned] = useState(false);
   const resizeStartData = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
 
   useEffect(() => {
-    if (!isPositioned && typeof window !== 'undefined') {
-      setPosition(getInitialPosition());
-      setIsPositioned(true);
-    }
+    setPosition(getInitialPosition());
+    setIsPositioned(true);
   }, []);
 
   // Shrinking the browser used to strand the window off-screen with no way to
