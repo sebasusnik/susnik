@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import TypedText from './TypedText';
 import useTyping from '../hooks/useTyping';
+import useStaggeredReveal from '../hooks/useStaggeredReveal';
 
 const introLines = [
   'I am Sebastian Susnik',
@@ -20,31 +21,11 @@ const summaryLines: Array<React.ReactNode> = [
 ];
 
 const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boolean; onFinished?: () => void; onLineRendered?: () => void }> = ({ lines, animate = false, onFinished, onLineRendered }) => {
-  const [rendered, setRendered] = useState<Array<React.ReactNode>>(animate ? [] : lines);
-  const finishedRef = useRef(onFinished);
-  const lineRenderedRef = useRef(onLineRendered);
-  finishedRef.current = onFinished;
-  lineRenderedRef.current = onLineRendered;
-
-  useEffect(() => {
-    if (!animate) return;
-    const interval = setInterval(() => {
-      setRendered((prev) => {
-        if (prev.length < lines.length) {
-          const newRendered = [...prev, lines[prev.length]];
-          // Trigger scroll after a small delay to ensure DOM is updated
-          setTimeout(() => {
-            lineRenderedRef.current?.();
-          }, 10);
-          return newRendered;
-        }
-        clearInterval(interval);
-        finishedRef.current?.();
-        return prev;
-      });
-    }, 120);
-    return () => clearInterval(interval);
-  }, [animate, lines]);
+  const rendered = useStaggeredReveal(lines, {
+    animate,
+    onFinished,
+    onItemRendered: onLineRendered,
+  });
 
   return (
     <div className="space-y-2 mt-2">
@@ -120,7 +101,7 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
       <div className="text-lg md:text-xl lg:text-2xl">
         <TypedText
           text={introLines[0]}
-          typed={typed1}
+          typed={typed1.text}
           typing={animating && step === 0}
           showCaret={animating && step === 0}
         />
@@ -129,7 +110,7 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
       <div className="text-lg md:text-xl lg:text-2xl mb-4">
         <TypedText
           text={introLines[1]}
-          typed={typed2}
+          typed={typed2.text}
           typing={animating && step === 1}
           showCaret={animating && step === 1}
         />

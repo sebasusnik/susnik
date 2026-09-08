@@ -1,4 +1,5 @@
 import React from 'react';
+import useStaggeredReveal from '../hooks/useStaggeredReveal';
 
 interface Props {
   command: 'ls' | 'pwd';
@@ -31,43 +32,18 @@ const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished, onLi
   ];
 
   const pwdLines: React.ReactNode[] = [
-    <div key="path" className="text-white mb-2">/home/portfolio/sebastian_usnik</div>,
+    <div key="path" className="text-white mb-2">/home/portfolio/sebastian_susnik</div>,
     <div key="quip1" className="text-amber-200 mt-4">Let me guess, checking if you're in the right directory?</div>,
     <div key="quip2" className="text-gray-400 mt-1">Spoiler alert: you're exactly where you need to be.</div>,
   ];
 
   const lines = command === 'ls' ? lsLines : pwdLines;
 
-  const [rendered, setRendered] = React.useState<React.ReactNode[]>(animate ? [] : lines);
-  const finishedRef = React.useRef(onFinished);
-  const lineRenderedRef = React.useRef(onLineRendered);
-  finishedRef.current = onFinished;
-  lineRenderedRef.current = onLineRendered;
-
-  React.useEffect(() => {
-    if (!animate) {
-      if (finishedRef.current) finishedRef.current();
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setRendered((prev) => {
-        if (prev.length < lines.length) {
-          const newRendered = [...prev, lines[prev.length]];
-          // Trigger scroll after a small delay to ensure DOM is updated
-          setTimeout(() => {
-            lineRenderedRef.current?.();
-          }, 10);
-          return newRendered;
-        }
-        clearInterval(interval);
-        finishedRef.current?.();
-        return prev;
-      });
-    }, 120);
-
-    return () => clearInterval(interval);
-  }, [animate, lines]);
+  const rendered = useStaggeredReveal(lines, {
+    animate,
+    onFinished,
+    onItemRendered: onLineRendered,
+  });
 
   return (
     <div className="mt-2 mb-4 whitespace-pre-wrap break-all">

@@ -3,56 +3,21 @@ import SkillsList from './SkillsList';
 import ExpList from './ExpList';
 import Caret from './Caret';
 import TypedText from './TypedText';
+import useTyping from '../hooks/useTyping';
 
 const introLines = ["I am Sebastian Susnik", "and I like to build stuff..."];
 const expCommand = 'exp';
 const skillsCommand = 'skills';
 
-type TypingState = {
-    text: string;
-    cursor: boolean;
-};
-
-const useTypingEffect = (textToType: string, speed = 50, onFinished?: () => void) => {
-    const [state, setState] = useState<TypingState>({ text: '', cursor: false });
-    const onFinishedRef = useRef(onFinished);
-    onFinishedRef.current = onFinished;
-
-    useEffect(() => {
-        if (!textToType) {
-            setState({ text: '', cursor: false });
-            return;
-        }
-
-        setState({ text: '', cursor: true });
-
-        const intervalId = setInterval(() => {
-            setState(prevState => {
-                if (prevState.text.length < textToType.length) {
-                    return { text: textToType.substring(0, prevState.text.length + 1), cursor: true };
-                }
-                
-                clearInterval(intervalId);
-                if (onFinishedRef.current) onFinishedRef.current();
-                return { ...prevState, cursor: false };
-            });
-        }, speed);
-
-        return () => clearInterval(intervalId);
-    }, [textToType, speed]);
-
-    return state;
-};
-
 const AnimatedPrompt = ({ command, onFinished }: { command: string; onFinished: () => void; }) => {
-    const typedCommand = useTypingEffect(command, 80, onFinished);
+    const typedCommand = useTyping(command, 80, onFinished);
 
     return (
         <div className="flex items-center mb-1">
             <span className="text-fuchsia-400">sebasusnik@portfolio</span><span className="text-gray-500">:</span><span className="text-cyan-400">~</span><span className="text-gray-500">$</span>
             <span className="pl-2">
                 <span className="text-green-400">{typedCommand.text}</span>
-                {typedCommand.cursor && <Caret />}
+                {typedCommand.typing && <Caret />}
             </span>
         </div>
     );
@@ -106,8 +71,8 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
         };
     }, [skipIntro]);
 
-    const typedLine1 = useTypingEffect(step === 0 ? introLines[0] : '', 50, advanceStep);
-    const typedLine2 = useTypingEffect(step === 1 ? introLines[1] : '', 50, advanceStep);
+    const typedLine1 = useTyping(step === 0 ? introLines[0] : '', 50, advanceStep);
+    const typedLine2 = useTyping(step === 1 ? introLines[1] : '', 50, advanceStep);
 
     useEffect(() => {
         let timer: ReturnType<typeof setTimeout>;
@@ -132,7 +97,7 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
                     text={introLines[0]}
                     typed={typedLine1.text}
                     typing={step === 0}
-                    showCaret={typedLine1.cursor}
+                    showCaret={typedLine1.typing}
                 />
             </div>
 
@@ -143,7 +108,7 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
                         text={introLines[1]}
                         typed={typedLine2.text}
                         typing={step === 1}
-                        showCaret={typedLine2.cursor}
+                        showCaret={typedLine2.typing}
                     />
                 </div>
             )}
