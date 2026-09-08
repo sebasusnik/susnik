@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import TerminalCore from './TerminalCore';
 import DesktopWindow from './DesktopWindow';
 import PromptLine from './PromptLine';
 import useHistory from '../hooks/useHistory';
 import useCommands from '../hooks/useCommands';
+import useIsMobile from '../hooks/useIsMobile';
 
 const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat', 'ls', 'pwd'];
 
@@ -31,10 +32,7 @@ const Terminal: React.FC = () => {
     visible?.focus();
   };
 
-  const isMobile = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth < 640;
-  }, []);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const el = scrollRef.current;

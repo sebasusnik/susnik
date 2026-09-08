@@ -15,12 +15,25 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   const draggableRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(initialSize);
   
+  // Keep the title bar reachable: the window may overflow the viewport, but its
+  // top-left corner never leaves it, so there is always something to drag.
+  const clampToViewport = (
+    pos: { x: number; y: number },
+    windowSize: { width: number; height: number }
+  ) => ({
+    x: Math.min(Math.max(pos.x, 0), Math.max(0, window.innerWidth - windowSize.width)),
+    y: Math.min(Math.max(pos.y, 0), Math.max(0, window.innerHeight - windowSize.height)),
+  });
+
   const getInitialPosition = () => {
     if (typeof window !== 'undefined') {
-      return {
-        x: (window.innerWidth - initialSize.width) / 2,
-        y: (window.innerHeight - initialSize.height) / 2,
-      };
+      return clampToViewport(
+        {
+          x: (window.innerWidth - initialSize.width) / 2,
+          y: (window.innerHeight - initialSize.height) / 2,
+        },
+        initialSize
+      );
     }
     return { x: 0, y: 0 };
   };
@@ -35,6 +48,20 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
       setIsPositioned(true);
     }
   }, []);
+
+  // Shrinking the browser used to strand the window off-screen with no way to
+  // drag it back, since its position is absolute and never revisited.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleViewportResize = () => {
+      setPosition((prev) => {
+        const next = clampToViewport(prev, size);
+        return next.x === prev.x && next.y === prev.y ? prev : next;
+      });
+    };
+    window.addEventListener('resize', handleViewportResize);
+    return () => window.removeEventListener('resize', handleViewportResize);
+  }, [size.width, size.height]);
 
   const handleResizeStart = () => {
     resizeStartData.current = { x: position.x, y: position.y, width: size.width, height: size.height };
