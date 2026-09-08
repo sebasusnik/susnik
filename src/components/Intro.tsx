@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import SkillsList from './SkillsList';
 import ExpList from './ExpList';
 import Caret from './Caret';
+import TypedText from './TypedText';
 
 const introLines = ["I am Sebastian Susnik", "and I like to build stuff..."];
 const expCommand = 'exp';
@@ -127,15 +128,23 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
         <div>
             {/* Line 1 */}
             <div className="text-lg md:text-xl lg:text-2xl text-white">
-                <span>{step > 0 ? introLines[0] : typedLine1.text}</span>
-                {step === 0 && typedLine1.cursor && <Caret />}
+                <TypedText
+                    text={introLines[0]}
+                    typed={typedLine1.text}
+                    typing={step === 0}
+                    showCaret={typedLine1.cursor}
+                />
             </div>
 
             {/* Line 2 */}
             {step >= 1 && (
                 <div className="text-lg md:text-xl lg:text-2xl mb-4 text-white">
-                    <span>{step > 1 ? introLines[1] : typedLine2.text}</span>
-                    {step === 1 && typedLine2.cursor && <Caret />}
+                    <TypedText
+                        text={introLines[1]}
+                        typed={typedLine2.text}
+                        typing={step === 1}
+                        showCaret={typedLine2.cursor}
+                    />
                 </div>
             )}
 

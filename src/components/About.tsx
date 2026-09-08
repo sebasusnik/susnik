@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import Caret from './Caret';
+import TypedText from './TypedText';
 import useTyping from '../hooks/useTyping';
 
 const introLines = [
@@ -118,13 +118,21 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
     <>
       {/* line1 */}
       <div className="text-lg md:text-xl lg:text-2xl">
-        <span>{animating ? (step > 0 ? introLines[0] : typed1) : introLines[0]}</span>
-        {animating && step === 0 && <Caret />}
+        <TypedText
+          text={introLines[0]}
+          typed={typed1}
+          typing={animating && step === 0}
+          showCaret={animating && step === 0}
+        />
       </div>
       {/* line2 */}
       <div className="text-lg md:text-xl lg:text-2xl mb-4">
-        <span>{animating ? (step > 1 ? introLines[1] : typed2) : introLines[1]}</span>
-        {animating && step === 1 && <Caret />}
+        <TypedText
+          text={introLines[1]}
+          typed={typed2}
+          typing={animating && step === 1}
+          showCaret={animating && step === 1}
+        />
       </div>
     </>
   );
