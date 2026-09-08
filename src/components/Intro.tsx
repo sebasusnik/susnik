@@ -109,7 +109,7 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
     const typedLine2 = useTypingEffect(step === 1 ? introLines[1] : '', 50, advanceStep);
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
+        let timer: ReturnType<typeof setTimeout>;
         if (step === 2 || step === 4 || step === 6 || step === 8) {
             timer = setTimeout(advanceStep, 500);
         } else if (step === 10) {

@@ -2,7 +2,7 @@ import React from 'react';
 import Caret from './Caret';
 
 const PREFIX_HTML =
-  '<span class="text-fuchsia-400">sebastian@portfolio</span>' +
+  '<span class="text-fuchsia-400">sebasusnik@portfolio</span>' +
   '<span class="text-gray-500">:</span>' +
   '<span class="text-cyan-400">~</span>' +
   '<span class="text-gray-500">$</span>&nbsp;';

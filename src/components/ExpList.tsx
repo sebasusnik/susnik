@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { format, differenceInMonths } from 'date-fns';
+import { format } from 'date-fns';
 import { formatDuration } from '../utils/dates';
 
 export interface Experience {

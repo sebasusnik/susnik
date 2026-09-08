@@ -25,14 +25,18 @@ This is a personal portfolio reimagined as an interactive, draggable terminal wi
 
 All commands are run from the terminal prompt:
 
-| Command    | Action                                      |
-| :--------- | :------------------------------------------ |
-| `about`    | Displays a brief introduction about me.     |
-| `projects` | Lists key projects with descriptions.       |
-| `skills`   | Shows a list of technical skills.           |
-| `contact`  | Provides ways to get in touch.              |
-| `help`     | Shows this list of available commands.      |
-| `clear`    | Clears all output from the terminal screen. |
+| Command   | Action                                      |
+| :-------- | :------------------------------------------ |
+| `about`   | Displays a brief introduction about me.     |
+| `exp`     | Lists my professional experience.           |
+| `skills`  | Shows a list of technical skills.           |
+| `contact` | Provides ways to get in touch.              |
+| `help`    | Shows this list of available commands.      |
+| `repeat`  | Replays the intro animation.                |
+| `clear`   | Clears all output from the terminal screen. |
+
+A couple of undocumented commands are in there too — try the ones you would
+reach for in a real shell.
 
 ## 🛠️ Getting Started
 
