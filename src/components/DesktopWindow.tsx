@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Resizable } from 're-resizable';
+import type { Direction } from 're-resizable/lib/resizer';
 import Draggable from 'react-draggable';
 
 interface DesktopWindowProps {
@@ -39,32 +40,26 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
     resizeStartData.current = { x: position.x, y: position.y, width: size.width, height: size.height };
   };
 
-  const handleResize = (e: any, direction: any, ref: any) => {
-    if (!resizeStartData.current) return;
+  const handleResize = (e: any, direction: Direction, ref: any) => {
+    const start = resizeStartData.current;
+    if (!start) return;
 
     const newWidth = parseInt(ref.style.width);
     const newHeight = parseInt(ref.style.height);
 
     setSize({ width: newWidth, height: newHeight });
 
-    let newX = position.x;
-    let newY = position.y;
+    // re-resizable reports corners in camelCase ('topLeft', 'bottomLeft'), so
+    // match case-insensitively or the corner handles skip the compensation and
+    // the window grows away from the pointer.
+    const dir = direction.toLowerCase();
 
-    // Calculate deltas based on the size difference from the start of resizing
-    if (direction.includes('left')) {
-      const deltaWidth = newWidth - resizeStartData.current.width;
-      newX = resizeStartData.current.x - deltaWidth;
-    }
+    // Compensate against the size at the start of the gesture so the anchored
+    // edge stays put while the dragged edge follows the pointer.
+    const newX = dir.includes('left') ? start.x - (newWidth - start.width) : start.x;
+    const newY = dir.includes('top') ? start.y - (newHeight - start.height) : start.y;
 
-    if (direction.includes('top')) {
-      const deltaHeight = newHeight - resizeStartData.current.height;
-      newY = resizeStartData.current.y - deltaHeight;
-    }
-
-    // Only update the position if it changed
-    if (newX !== position.x || newY !== position.y) {
-      setPosition({ x: newX, y: newY });
-    }
+    setPosition((prev) => (prev.x === newX && prev.y === newY ? prev : { x: newX, y: newY }));
   };
 
   const handleResizeStop = () => {
