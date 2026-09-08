@@ -4,6 +4,7 @@ import ExpList from './ExpList';
 import Caret from './Caret';
 import TypedText from './TypedText';
 import useTyping from '../hooks/useTyping';
+import CommandHints from './CommandHints';
 
 const introLines = ["I am Sebastian Susnik", "and I like to build stuff..."];
 const expCommand = 'exp';
@@ -120,6 +121,8 @@ const Intro = ({ onDone }: { onDone: () => void }) => {
             {/* Skills */}
             {step >= 7 && (step === 7 ? <AnimatedPrompt command={skillsCommand} onFinished={advanceStep} /> : <StaticPrompt command={skillsCommand} />)}
             {step === 9 ? <SkillsList animate onFinished={advanceStep} /> : (step > 9 && <SkillsList />)}
+
+            {step > 9 && <CommandHints />}
         </div>
     );
 };
