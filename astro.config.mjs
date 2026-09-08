@@ -1,11 +1,13 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
 import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',
+  // Every route is fully static; the terminal is client-side React. Serving
+  // from the CDN avoids a serverless invocation and a cold start per visit.
+  output: 'static',
 
   adapter: vercel(),
 
