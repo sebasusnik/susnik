@@ -21,7 +21,19 @@ let idCounter = 0;
 const Terminal: React.FC = () => {
   const [lines, setLines] = useState<Line[]>([]);
   const [input, setInput] = useState('');
-  const { handleKeyDown, addToHistory } = useHistory(setInput, ['about', 'exp', 'skills']);
+
+  // The input a candidate list was last printed for, so holding Tab down does
+  // not stack identical lists.
+  const listedFor = useRef<string | null>(null);
+
+  // Any edit — typing or walking the history — makes the next Tab list again,
+  // so coming back to an input that was already listed still responds.
+  const updateInput: React.Dispatch<React.SetStateAction<string>> = useCallback((value) => {
+    listedFor.current = null;
+    setInput(value);
+  }, []);
+
+  const { handleKeyDown, addToHistory } = useHistory(updateInput, ['about', 'exp', 'skills']);
   const [introDone, setIntroDone] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [cleared, setCleared] = useState(false);
@@ -185,8 +197,16 @@ const Terminal: React.FC = () => {
         if (busy) return;
 
         const { value, suggestions } = completeCommand(inputRef.current, validCommands);
-        if (suggestions.length) addElement(<CompletionHint suggestions={suggestions} />);
+
+        // A shell reprints the candidates on every Tab, but it also redraws the
+        // line in place. Here each list is appended, so reprinting stacks
+        // identical rows that read as a glitch. Print once per distinct input.
+        if (suggestions.length && listedFor.current !== value) {
+          addElement(<CompletionHint suggestions={suggestions} />);
+        }
+
         setInput(value);
+        listedFor.current = suggestions.length ? value : null;
         return;
       }
 
@@ -228,7 +248,7 @@ const Terminal: React.FC = () => {
     onSubmit,
     focusEnableAt,
     focusVisibleInput,
-    setInput,
+    setInput: updateInput,
     handleKeyDown: handleInputKeyDown,
     scrollToBottom,
     scrollRef,

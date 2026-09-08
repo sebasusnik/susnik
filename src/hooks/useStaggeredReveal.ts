@@ -30,13 +30,25 @@ export default function useStaggeredReveal<T>(
   // leaving the output half-written.
   const { interrupted } = useTerminal();
 
+  // A reveal that has already played never plays again. `interrupted` is shared
+  // by every output on screen and flips back to false when the next command
+  // starts; without this latch that dependency change would restart the
+  // animation of everything already written.
+  const settled = useRef(false);
+
   const finishedRef = useRef(onFinished);
   finishedRef.current = onFinished;
   const itemRenderedRef = useRef(onItemRendered);
   itemRenderedRef.current = onItemRendered;
 
   useEffect(() => {
+    if (settled.current) {
+      setRevealed(total);
+      return;
+    }
+
     if (!animate || interrupted) {
+      settled.current = true;
       setRevealed(total);
       finishedRef.current?.();
       return;
@@ -53,6 +65,7 @@ export default function useStaggeredReveal<T>(
         return;
       }
       clearInterval(interval);
+      settled.current = true;
       finishedRef.current?.();
     }, speed);
 
