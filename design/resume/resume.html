@@ -98,8 +98,9 @@
   <b>AWS</b>, with growing focus on integrating LLMs and agentic workflows into
   production systems. I care about shipping fast without breaking things, and making
   technical decisions based on product impact rather than what is fashionable.</p>
-  <p class="about">Currently building an internal creative production platform at Winclap,
-  with a resize module being externalized as B2B SaaS.</p>
+  <p class="about">Currently building <b>PixFit</b> at Winclap: a platform that takes a
+  finished ad and adapts it into every format a brand needs, now being externalized as
+  B2B SaaS.</p>
 </section>
 
 <section>
@@ -112,11 +113,13 @@
     </div>
 
     <div class="project">
-      <div class="project-name">Creative Production Platform
-        <span class="desc">— internal platform, resize module being externalized as B2B SaaS</span></div>
-      <p>Designed and implemented the resize module architecture on Aurora Serverless v2 +
+      <div class="project-name">PixFit
+        <span class="desc">— ad creative adaptation platform, externalized as B2B SaaS</span></div>
+      <p>Designed and implemented the adaptation architecture on Aurora Serverless v2 +
       Kysely + SST v3, with a tRPC BFF on Lambda and async processing via SQS. Owned data
-      modeling, API contracts and service boundaries.</p>
+      modeling, API contracts and service boundaries. Two engines behind one queue: a
+      generative one for any brand, and a deterministic one that applies a configured
+      brand's templates and outputs an editable file.</p>
     </div>
 
     <div class="project">
