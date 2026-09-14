@@ -1,4 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import useStaggeredReveal from '../hooks/useStaggeredReveal';
+import CommandButton from './CommandButton';
+import { suggestCommand } from '../utils/suggest';
+import { validCommands } from '../utils/commands';
 
 interface Props {
   command: string;
@@ -8,36 +12,26 @@ interface Props {
 }
 
 const NotFound: React.FC<Props> = ({ command, animate = false, onFinished, onLineRendered }) => {
+  const suggestion = suggestCommand(command, validCommands);
+
   const lines: React.ReactNode[] = [
     `Command not found: ${command}.`,
-    <span key="suggest">Type <span className="text-cyan-400">help</span>.</span>,
+    suggestion ? (
+      <span key="suggest">
+        Did you mean <CommandButton command={suggestion} />?
+      </span>
+    ) : (
+      <span key="suggest">
+        Type <CommandButton command="help" />.
+      </span>
+    ),
   ];
 
-  const [rendered, setRendered] = useState<React.ReactNode[]>(animate ? [] : lines);
-  const finishedRef = useRef(onFinished);
-  const lineRenderedRef = useRef(onLineRendered);
-  finishedRef.current = onFinished;
-  lineRenderedRef.current = onLineRendered;
-
-  useEffect(() => {
-    if (!animate) return;
-    const interval = setInterval(() => {
-      setRendered((prev) => {
-        if (prev.length < lines.length) {
-          const newRendered = [...prev, lines[prev.length]];
-          // Trigger scroll after a small delay to ensure DOM is updated
-          setTimeout(() => {
-            lineRenderedRef.current?.();
-          }, 10);
-          return newRendered;
-        }
-        clearInterval(interval);
-        finishedRef.current?.();
-        return prev;
-      });
-    }, 120);
-    return () => clearInterval(interval);
-  }, [animate]);
+  const rendered = useStaggeredReveal(lines, {
+    animate,
+    onFinished,
+    onItemRendered: onLineRendered,
+  });
 
   return (
     <div className="mt-2 mb-4 text-sm md:text-base space-y-1 pl-2">
@@ -50,4 +44,4 @@ const NotFound: React.FC<Props> = ({ command, animate = false, onFinished, onLin
   );
 };
 
-export default NotFound; 
+export default NotFound;

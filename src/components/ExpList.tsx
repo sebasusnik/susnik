@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { format, differenceInMonths } from 'date-fns';
+import React from 'react';
+import { format } from 'date-fns';
 import { formatDuration } from '../utils/dates';
+import useStaggeredReveal from '../hooks/useStaggeredReveal';
 
 export interface Experience {
   company: string;
@@ -34,31 +35,12 @@ interface Props {
 }
 
 const ExpList: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }) => {
-  const [rendered, setRendered] = useState<Experience[]>(animate ? [] : experiences);
-  const onFinishedRef = useRef(onFinished);
-  const lineRenderedRef = useRef(onLineRendered);
-  onFinishedRef.current = onFinished;
-  lineRenderedRef.current = onLineRendered;
-
-  useEffect(() => {
-    if (!animate) return;
-    const interval = setInterval(() => {
-      setRendered((prev) => {
-        if (prev.length < experiences.length) {
-          const newRendered = [...prev, experiences[prev.length]];
-          // Trigger scroll after a small delay to ensure DOM is updated
-          setTimeout(() => {
-            lineRenderedRef.current?.();
-          }, 10);
-          return newRendered;
-        }
-        clearInterval(interval);
-        if (onFinishedRef.current) onFinishedRef.current();
-        return prev;
-      });
-    }, 150);
-    return () => clearInterval(interval);
-  }, [animate]);
+  const rendered = useStaggeredReveal(experiences, {
+    animate,
+    speed: 150,
+    onFinished,
+    onItemRendered: onLineRendered,
+  });
 
   return (
     <div className="mt-2 mb-4 whitespace-pre-wrap break-words">
@@ -83,4 +65,4 @@ const ExpList: React.FC<Props> = ({ animate = false, onFinished, onLineRendered 
   );
 };
 
-export default ExpList; 
+export default ExpList;

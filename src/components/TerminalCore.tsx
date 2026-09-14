@@ -1,8 +1,7 @@
 import React from 'react';
 import PromptLine from './PromptLine';
 import Intro from './Intro';
-
-const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat', 'ls', 'pwd'];
+import { validCommands } from '../utils/commands';
 
 interface Line {
   id: number;
@@ -45,8 +44,15 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
   scrollToBottom,
   scrollRef,
 }) => (
+  // `aria-relevant="additions"` announces whole lines as they appear. The
+  // default of "additions text" would also fire on every character of the
+  // typing animation and flood the screen reader.
   <div
     ref={scrollRef}
+    role="log"
+    aria-live="polite"
+    aria-relevant="additions"
+    aria-label="Terminal output"
     className="flex-1 p-4 overflow-y-auto terminal-scroll"
   >
     {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
@@ -70,13 +76,14 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
         </div>
         <input
           data-terminal-input
+          aria-label="Terminal command input"
           className={isMobile 
             ? "absolute left-0 bottom-0 w-full h-full opacity-0 focus:outline-none"
             : "absolute left-0 bottom-0 w-px h-px opacity-0 pointer-events-none focus:outline-none"
           }
           value={input}
           onChange={busy ? () => {} : (e) => setInput(e.target.value)}
-          onKeyDown={busy ? (e) => e.preventDefault() : handleKeyDown}
+          onKeyDown={handleKeyDown}
           onFocus={scrollToBottom}
           onClick={scrollToBottom}
           autoCapitalize="off"

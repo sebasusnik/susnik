@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import Caret from './Caret';
+import React, { useEffect, useState } from 'react';
+import TypedText from './TypedText';
 import useTyping from '../hooks/useTyping';
+import useStaggeredReveal from '../hooks/useStaggeredReveal';
 
 const introLines = [
   'I am Sebastian Susnik',
@@ -20,31 +21,11 @@ const summaryLines: Array<React.ReactNode> = [
 ];
 
 const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boolean; onFinished?: () => void; onLineRendered?: () => void }> = ({ lines, animate = false, onFinished, onLineRendered }) => {
-  const [rendered, setRendered] = useState<Array<React.ReactNode>>(animate ? [] : lines);
-  const finishedRef = useRef(onFinished);
-  const lineRenderedRef = useRef(onLineRendered);
-  finishedRef.current = onFinished;
-  lineRenderedRef.current = onLineRendered;
-
-  useEffect(() => {
-    if (!animate) return;
-    const interval = setInterval(() => {
-      setRendered((prev) => {
-        if (prev.length < lines.length) {
-          const newRendered = [...prev, lines[prev.length]];
-          // Trigger scroll after a small delay to ensure DOM is updated
-          setTimeout(() => {
-            lineRenderedRef.current?.();
-          }, 10);
-          return newRendered;
-        }
-        clearInterval(interval);
-        finishedRef.current?.();
-        return prev;
-      });
-    }, 120);
-    return () => clearInterval(interval);
-  }, [animate, lines]);
+  const rendered = useStaggeredReveal(lines, {
+    animate,
+    onFinished,
+    onItemRendered: onLineRendered,
+  });
 
   return (
     <div className="space-y-2 mt-2">
@@ -65,78 +46,57 @@ interface Props {
 }
 
 const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinished, onLineRendered }) => {
-  const [animating, setAnimating] = useState(animate);
   const [step, setStep] = useState(0); // 0 typing first line, 1 typing second, 2 done typing
 
   const next = () => setStep((s) => s + 1);
 
-  // Skip handler
-  const skip = useCallback(() => {
-    if (!animating) return;
-    setAnimating(false);
-    setStep(2);
-    onFinished?.();
-  }, [animating, onFinished]);
-
-  const typed1 = useTyping(step === 0 && animating ? introLines[0] : '', 50, () => {
+  const typed1 = useTyping(step === 0 && animate ? introLines[0] : '', 50, () => {
     next();
     onLineRendered?.();
   });
-  const typed2 = useTyping(step === 1 && animating ? introLines[1] : '', 50, () => {
+  const typed2 = useTyping(step === 1 && animate ? introLines[1] : '', 50, () => {
     next();
     onLineRendered?.();
   });
 
   useEffect(() => {
-    if (!animating) return;
+    if (!animate) return;
     if (step === 2 && !showSummary) {
       onFinished?.();
     }
-  }, [step, animating, showSummary, onFinished]);
-
-  // Attach key and pointer listeners while animating for skip
-  useEffect(() => {
-    if (!animating) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key.length === 1 || ["Enter", "Tab", "Escape", " "].includes(e.key)) {
-        e.preventDefault();
-        skip();
-      }
-    };
-    const handlePointer = () => skip();
-    window.addEventListener('keydown', handleKey);
-    window.addEventListener('mousedown', handlePointer);
-    window.addEventListener('touchstart', handlePointer, { passive: true });
-    return () => {
-      window.removeEventListener('keydown', handleKey);
-      window.removeEventListener('mousedown', handlePointer);
-      window.removeEventListener('touchstart', handlePointer);
-    };
-  }, [animating, skip]);
+  }, [step, animate, showSummary, onFinished]);
 
   const renderIntro = (
     <>
       {/* line1 */}
       <div className="text-lg md:text-xl lg:text-2xl">
-        <span>{animating ? (step > 0 ? introLines[0] : typed1) : introLines[0]}</span>
-        {animating && step === 0 && <Caret />}
+        <TypedText
+          text={introLines[0]}
+          typed={typed1.text}
+          typing={animate && step === 0}
+          showCaret={animate && step === 0}
+        />
       </div>
       {/* line2 */}
       <div className="text-lg md:text-xl lg:text-2xl mb-4">
-        <span>{animating ? (step > 1 ? introLines[1] : typed2) : introLines[1]}</span>
-        {animating && step === 1 && <Caret />}
+        <TypedText
+          text={introLines[1]}
+          typed={typed2.text}
+          typing={animate && step === 1}
+          showCaret={animate && step === 1}
+        />
       </div>
     </>
   );
 
   const renderSummary = (
-    <SummaryAnimated lines={summaryLines} animate={animating} onFinished={() => onFinished?.()} onLineRendered={onLineRendered} />
+    <SummaryAnimated lines={summaryLines} animate={animate} onFinished={() => onFinished?.()} onLineRendered={onLineRendered} />
   );
 
   return (
     <div>
       {renderIntro}
-      {showSummary && (!animating ? renderSummary : step === 2 && renderSummary)}
+      {showSummary && (!animate ? renderSummary : step === 2 && renderSummary)}
     </div>
   );
 };

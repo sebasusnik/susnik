@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import useStaggeredReveal from '../hooks/useStaggeredReveal';
 
 export const skills = [
   'Typescript',
@@ -16,31 +17,12 @@ interface Props {
 }
 
 const SkillsList: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }) => {
-  const [rendered, setRendered] = useState<string[]>(animate ? [] : skills);
-  const onFinishedRef = useRef(onFinished);
-  const lineRenderedRef = useRef(onLineRendered);
-  onFinishedRef.current = onFinished;
-  lineRenderedRef.current = onLineRendered;
-
-  useEffect(() => {
-    if (!animate) return;
-    const interval = setInterval(() => {
-      setRendered((prev) => {
-        if (prev.length < skills.length) {
-          const newRendered = [...prev, skills[prev.length]];
-          // Trigger scroll after a small delay to ensure DOM is updated
-          setTimeout(() => {
-            lineRenderedRef.current?.();
-          }, 10);
-          return newRendered;
-        }
-        clearInterval(interval);
-        if (onFinishedRef.current) onFinishedRef.current();
-        return prev;
-      });
-    }, 35);
-    return () => clearInterval(interval);
-  }, [animate]);
+  const rendered = useStaggeredReveal(skills, {
+    animate,
+    speed: 35,
+    onFinished,
+    onItemRendered: onLineRendered,
+  });
 
   return (
     <div className="mt-2 mb-4">
@@ -57,4 +39,4 @@ const SkillsList: React.FC<Props> = ({ animate = false, onFinished, onLineRender
   );
 };
 
-export default SkillsList; 
+export default SkillsList;

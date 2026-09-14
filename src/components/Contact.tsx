@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import useStaggeredReveal from '../hooks/useStaggeredReveal';
 
 interface Props {
   animate?: boolean;
@@ -18,31 +19,12 @@ const Contact: React.FC<Props> = ({ animate = false, onFinished, onLineRendered 
     </a>,
   ];
 
-  const [rendered, setRendered] = useState<React.ReactNode[]>(animate ? [] : lines);
-  const finishedRef = useRef(onFinished);
-  const lineRenderedRef = useRef(onLineRendered);
-  finishedRef.current = onFinished;
-  lineRenderedRef.current = onLineRendered;
-
-  useEffect(() => {
-    if (!animate) return;
-    const interval = setInterval(() => {
-      setRendered((prev) => {
-        if (prev.length < lines.length) {
-          const newRendered = [...prev, lines[prev.length]];
-          // Trigger scroll after a small delay to ensure DOM is updated
-          setTimeout(() => {
-            lineRenderedRef.current?.();
-          }, 10);
-          return newRendered;
-        }
-        clearInterval(interval);
-        finishedRef.current?.();
-        return prev;
-      });
-    }, 150);
-    return () => clearInterval(interval);
-  }, [animate]);
+  const rendered = useStaggeredReveal(lines, {
+    animate,
+    speed: 150,
+    onFinished,
+    onItemRendered: onLineRendered,
+  });
 
   return (
     <div className="mt-2 mb-4 text-sm md:text-base">
@@ -61,4 +43,4 @@ const Contact: React.FC<Props> = ({ animate = false, onFinished, onLineRendered 
   );
 };
 
-export default Contact; 
+export default Contact;

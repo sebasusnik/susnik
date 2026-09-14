@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { Resizable } from 're-resizable';
+import type { Direction } from 're-resizable/lib/resizer';
 import Draggable from 'react-draggable';
 
 interface DesktopWindowProps {
@@ -14,57 +16,88 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   const draggableRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(initialSize);
   
+  // Keep the title bar reachable: the window may overflow the viewport, but its
+  // top-left corner never leaves it, so there is always something to drag.
+  const clampToViewport = (
+    pos: { x: number; y: number },
+    windowSize: { width: number; height: number }
+  ) => ({
+    x: Math.min(Math.max(pos.x, 0), Math.max(0, window.innerWidth - windowSize.width)),
+    y: Math.min(Math.max(pos.y, 0), Math.max(0, window.innerHeight - windowSize.height)),
+  });
+
   const getInitialPosition = () => {
     if (typeof window !== 'undefined') {
-      return {
-        x: (window.innerWidth - initialSize.width) / 2,
-        y: (window.innerHeight - initialSize.height) / 2,
-      };
+      return clampToViewport(
+        {
+          x: (window.innerWidth - initialSize.width) / 2,
+          y: (window.innerHeight - initialSize.height) / 2,
+        },
+        initialSize
+      );
     }
     return { x: 0, y: 0 };
   };
   
   const [position, setPosition] = useState(getInitialPosition);
-  const [isPositioned, setIsPositioned] = useState(typeof window !== 'undefined');
+  // Starts false on both sides of the render: seeding it from `typeof window`
+  // makes the server and the first client render disagree, which React reports
+  // as a hydration mismatch and recovers from by throwing the tree away.
+  const [isPositioned, setIsPositioned] = useState(false);
   const resizeStartData = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
 
   useEffect(() => {
-    if (!isPositioned && typeof window !== 'undefined') {
-      setPosition(getInitialPosition());
-      setIsPositioned(true);
-    }
+    setPosition(getInitialPosition());
+    setIsPositioned(true);
   }, []);
+
+  // Shrinking the browser used to strand the window off-screen with no way to
+  // drag it back, since its position is absolute and never revisited.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleViewportResize = () => {
+      setPosition((prev) => {
+        const next = clampToViewport(prev, size);
+        return next.x === prev.x && next.y === prev.y ? prev : next;
+      });
+    };
+    window.addEventListener('resize', handleViewportResize);
+    return () => window.removeEventListener('resize', handleViewportResize);
+  }, [size.width, size.height]);
 
   const handleResizeStart = () => {
     resizeStartData.current = { x: position.x, y: position.y, width: size.width, height: size.height };
   };
 
-  const handleResize = (e: any, direction: any, ref: any) => {
-    if (!resizeStartData.current) return;
+  const handleResize = (e: any, direction: Direction, ref: any) => {
+    const start = resizeStartData.current;
+    if (!start) return;
 
     const newWidth = parseInt(ref.style.width);
     const newHeight = parseInt(ref.style.height);
 
     setSize({ width: newWidth, height: newHeight });
 
-    let newX = position.x;
-    let newY = position.y;
+    // re-resizable reports corners in camelCase ('topLeft', 'bottomLeft'), so
+    // match case-insensitively or the corner handles skip the compensation and
+    // the window grows away from the pointer.
+    const dir = direction.toLowerCase();
 
-    // Calculate deltas based on the size difference from the start of resizing
-    if (direction.includes('left')) {
-      const deltaWidth = newWidth - resizeStartData.current.width;
-      newX = resizeStartData.current.x - deltaWidth;
-    }
+    // Compensate against the size at the start of the gesture so the anchored
+    // edge stays put while the dragged edge follows the pointer.
+    const newX = dir.includes('left') ? start.x - (newWidth - start.width) : start.x;
+    const newY = dir.includes('top') ? start.y - (newHeight - start.height) : start.y;
 
-    if (direction.includes('top')) {
-      const deltaHeight = newHeight - resizeStartData.current.height;
-      newY = resizeStartData.current.y - deltaHeight;
-    }
-
-    // Only update the position if it changed
-    if (newX !== position.x || newY !== position.y) {
-      setPosition({ x: newX, y: newY });
-    }
+    // The size and the position are owned by two different libraries, and the
+    // window is only correct when both land together. re-resizable commits the
+    // size with its own flushSync and *then* calls this, so a plain setState
+    // here is a continuous-priority update that React is free to defer: for a
+    // frame the window has the new size but the old offset, and the anchored
+    // edge visibly snaps out and back. Forcing this commit into the same task
+    // is what makes the pair atomic. Measured at ~0.2ms per pointer move.
+    flushSync(() => {
+      setPosition((prev) => (prev.x === newX && prev.y === newY ? prev : { x: newX, y: newY }));
+    });
   };
 
   const handleResizeStop = () => {
