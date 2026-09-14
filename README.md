@@ -50,10 +50,13 @@ A few fields exist for the ones that do not fit a date and a status:
   point down. Type it again to come back. On a phone, hold the logo.
 - **`▶ drone`**, bottom right, synthesises a sustained sub-bass D. **Scrolling
   disturbs it**: speed opens the filter, so the saws bare their harmonics when
-  you move and sink back when you stop, and a hard scroll stutters the signal
-  like a loose cable. Position is deliberately not mapped to pitch — that reads
-  as a DJ, not as dread. It never autoplays and there is nothing to download.
-  Wear headphones; at rest it all lives below 80 Hz.
+  you move and sink back when you stop. Position is deliberately not mapped to
+  pitch — that reads as a DJ, not as dread. It never autoplays and there is
+  nothing to download. Wear headphones; at rest it all lives below 80 Hz.
+- Turning the world over **stings** — a noise transient, a dissonant cluster
+  sliding flat, a sub thump. Only on the way in, and only ever after you typed
+  `666` or held the logo, so it is never sound nobody asked for. It ducks the
+  drone rather than piling on top of it.
 - The tab **calls you back** when you leave, and there is a note in the console.
 
 All of it is skipped when `prefers-reduced-motion` is set.

@@ -4,19 +4,23 @@
  * seconds. Synthesised here, nothing to download.
  *
  * Scrolling disturbs it. Speed opens the filter, so the saws bare their
- * harmonics when you move and sink back when you stop, and a hard scroll
- * stutters the signal like a loose cable. Position is deliberately not mapped
- * to pitch: that reads as a DJ, not as dread.
+ * harmonics when you move and sink back when you stop. Position is deliberately
+ * not mapped to pitch: that reads as a DJ, not as dread.
+ *
+ * An earlier version also cut the signal in bursts on a hard scroll. It came
+ * out reading as the page stalling rather than as an effect — a dropout on a
+ * website is ambiguous in a way a filter sweep is not, because the sweep is
+ * continuous and follows the hand. The sweep carries it alone.
  *
  * Never autoplays. It is a button because it has to be.
  */
+import { audio, current, close, duckable } from './audio';
+
 const button = document.querySelector<HTMLButtonElement>('#drone');
 
 const BASE_CUTOFF = 160;      // Hz, where the drone sits at rest
 const SCROLL_OPEN = 700;      // Hz it can climb to at full tilt
 const FULL_SPEED = 2600;      // px/s that counts as full tilt
-const STUTTER_AT = 0.62;      // agitation above which the signal drops out
-const STUTTER_REST = 420;     // ms of clean signal between bursts, at minimum
 const TRIM_REST = 0.8;        // level going into the shaper at rest
 const TRIM_DUCK = 0.74;       // how much of that the drive gives back
 
@@ -40,30 +44,25 @@ let master: GainNode | null = null;
 let lowpass: BiquadFilterNode | null = null;
 let drive: GainNode | null = null;
 let trim: GainNode | null = null;
-let gate: GainNode | null = null;
 let frame = 0;
-let stutters = 0;
 
 function start() {
-  const audio = new AudioContext();
-  ctx = audio;
+  const ac = audio();
+  ctx = ac;
 
-  master = audio.createGain();
+  master = ac.createGain();
   master.gain.value = 0;
-  master.connect(audio.destination);
+  master.connect(ac.destination);
+  // The sting pulls this down instead of piling on top of it.
+  duckable(master);
 
-  // Cut by the stutter, so the fades of `master` stay untouched.
-  gate = audio.createGain();
-  gate.gain.value = 1;
-  gate.connect(master);
-
-  lowpass = audio.createBiquadFilter();
+  lowpass = ac.createBiquadFilter();
   lowpass.type = 'lowpass';
   lowpass.frequency.value = BASE_CUTOFF;
   lowpass.Q.value = 0.8;
-  lowpass.connect(gate);
+  lowpass.connect(master);
 
-  const shaper = audio.createWaveShaper();
+  const shaper = ac.createWaveShaper();
   shaper.curve = softClip();
   shaper.connect(lowpass);
 
@@ -71,19 +70,19 @@ function start() {
   // loudness that buys, so agitation changes the tone and not the level. The
   // 0.74 is measured, not guessed: rendered offline, the drone comes out
   // within 7% of its resting loudness at full tilt, against 2.1x without it.
-  trim = audio.createGain();
+  trim = ac.createGain();
   trim.gain.value = TRIM_REST;
   trim.connect(shaper);
 
-  drive = audio.createGain();
+  drive = ac.createGain();
   drive.gain.value = 1;
   drive.connect(trim);
 
   for (const [freq, type, level] of VOICES) {
-    const osc = audio.createOscillator();
+    const osc = ac.createOscillator();
     osc.type = type;
     osc.frequency.value = freq;
-    const gain = audio.createGain();
+    const gain = ac.createGain();
     gain.gain.value = level;
     osc.connect(gain);
     gain.connect(drive);
@@ -91,25 +90,25 @@ function start() {
   }
 
   // The slow breath underneath everything scrolling does.
-  const lfo = audio.createOscillator();
+  const lfo = ac.createOscillator();
   lfo.frequency.value = 0.045;
-  const depth = audio.createGain();
+  const depth = ac.createGain();
   depth.gain.value = 70;
   lfo.connect(depth);
   depth.connect(lowpass.frequency);
   lfo.start();
 
-  master.gain.linearRampToValueAtTime(0.55, audio.currentTime + 4);
+  master.gain.linearRampToValueAtTime(0.55, ac.currentTime + 4);
   listen();
 }
 
 function stop() {
   if (!ctx || !master) return;
-  const closing = ctx;
-  master.gain.linearRampToValueAtTime(0, closing.currentTime + 2.5);
-  window.setTimeout(() => closing.close(), 2700);
+  master.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5);
   cancelAnimationFrame(frame);
-  ctx = null; master = null; lowpass = null; drive = null; trim = null; gate = null;
+  duckable(null);
+  close();
+  ctx = null; master = null; lowpass = null; drive = null; trim = null;
 }
 
 /**
@@ -120,11 +119,9 @@ function listen() {
   let lastY = window.scrollY;
   let lastT = performance.now();
   let agitation = 0;
-  let nextStutter = 0;
-  stutters = 0;
 
   const tick = (now: number) => {
-    if (!ctx || !lowpass || !drive || !trim || !gate) return;
+    if (!ctx || !lowpass || !drive || !trim) return;
     const dt = Math.max(16, now - lastT) / 1000;
     const speed = Math.abs(window.scrollY - lastY) / dt;
     lastY = window.scrollY;
@@ -138,21 +135,6 @@ function listen() {
     lowpass.frequency.setTargetAtTime(BASE_CUTOFF + SCROLL_OPEN * agitation, t, 0.08);
     drive.gain.setTargetAtTime(1 + 3 * agitation, t, 0.12);
     trim.gain.setTargetAtTime(TRIM_REST * (1 - TRIM_DUCK * agitation), t, 0.12);
-
-    if (agitation > STUTTER_AT && now > nextStutter) {
-      stutters++;
-      let at = t;
-      for (let i = 0, n = 2 + Math.floor(Math.random() * 3); i < n; i++) {
-        const len = 0.02 + Math.random() * 0.035;
-        gate.gain.setValueAtTime(0.06, at);
-        gate.gain.setValueAtTime(1, at + len);
-        at += len + 0.015 + Math.random() * 0.05;
-      }
-      // Measured from where this burst actually ends, not from now. A burst can
-      // run 480ms and a fixed 420ms gap let the next one start inside it, so two
-      // sets of gate events interleaved on the same timeline.
-      nextStutter = now + (at - t) * 1000 + STUTTER_REST + Math.random() * 300;
-    }
 
     frame = requestAnimationFrame(tick);
   };
@@ -169,7 +151,8 @@ button?.addEventListener('click', () => {
 // So the tests can read what the scroll is doing to the sound.
 Object.assign(window, {
   __drone: () =>
-    ctx && lowpass && drive && trim
-      ? { cutoff: lowpass.frequency.value, drive: drive.gain.value, trim: trim.gain.value, stutters, gate: gate?.gain.value ?? 1 }
+    ctx && current() && lowpass && drive && trim
+      ? { cutoff: lowpass.frequency.value, drive: drive.gain.value, trim: trim.gain.value }
       : null,
+  __droneMaster: () => master?.gain.value ?? null,
 });

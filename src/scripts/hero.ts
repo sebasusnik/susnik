@@ -1,4 +1,5 @@
 import { createBleed, type Bleed } from './blood';
+import { scare } from './scare';
 
 /**
  * Wires the three things that happen around the logo: it dies for a frame now
@@ -46,7 +47,10 @@ function cross() {
   window.setTimeout(() => {
     const inverted = document.documentElement.classList.toggle('inverted');
     bleed?.reset();
-    if (inverted) bleed?.surge();
+    // Only on the way in. Coming back out is quiet, which is what makes the
+    // descent the event. Typing 666 or holding the logo is a deliberate
+    // gesture, so this is not sound nobody asked for.
+    if (inverted) { bleed?.surge(); scare(); }
   }, calm ? 0 : 50);
   window.setTimeout(() => { img?.classList.remove('animate-cross'); crossing = false; }, 720);
 }
