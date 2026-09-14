@@ -180,6 +180,10 @@ const Terminal: React.FC = () => {
 
       if (busy) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // Tab and Escape are how a keyboard user leaves. Pulling focus back here
+      // made the terminal a trap: seventeen focusable elements on the page and
+      // no way to reach any of them.
+      if (key === 'tab' || key === 'escape') return;
       if (isMobile) return;
       focusVisibleInput();
     };
@@ -190,9 +194,10 @@ const Terminal: React.FC = () => {
 
   const handleInputKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      // Shift+Tab keeps moving focus, so the terminal never traps a keyboard
-      // user inside itself.
-      if (e.key === 'Tab' && !e.shiftKey) {
+      // Tab completes what you have typed. With nothing typed there is nothing
+      // to complete, so it moves focus out instead — along with Shift+Tab,
+      // which always does. Otherwise the prompt would be a trap.
+      if (e.key === 'Tab' && !e.shiftKey && inputRef.current.trim()) {
         e.preventDefault();
         if (busy) return;
 
@@ -207,6 +212,12 @@ const Terminal: React.FC = () => {
 
         setInput(value);
         listedFor.current = suggestions.length ? value : null;
+        return;
+      }
+
+      // The usual way out of a text field.
+      if (e.key === 'Escape') {
+        e.currentTarget.blur();
         return;
       }
 

@@ -17,7 +17,7 @@ const Resume: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }
       key="pdf"
       href={RESUME_PATH}
       download
-      className="text-cyan-400 underline decoration-dotted underline-offset-4 hover:text-cyan-300 hover:decoration-solid focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+      className="text-cyan-400 underline decoration-dotted underline-offset-4 hover:text-cyan-300 hover:decoration-solid"
     >
       resume.pdf
     </a>,

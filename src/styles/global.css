@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* The terminal keeps its own palette, so its ring is cyan rather than the
+     flyer's red — but it is the same rule, and nothing here falls back to the
+     browser's blue either. The prompt's own input is deliberately invisible
+     and opts out with focus:outline-none, which outranks this. */
+  :focus-visible {
+    outline: 2px solid #22d3ee;
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+}
+
 .terminal-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;

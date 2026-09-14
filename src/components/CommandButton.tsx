@@ -24,7 +24,6 @@ const CommandButton: React.FC<Props> = ({ command, className = '', children }) =
       className={
         'text-cyan-400 underline decoration-dotted underline-offset-4 ' +
         'hover:text-cyan-300 hover:decoration-solid ' +
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 ' +
         'disabled:no-underline disabled:opacity-60 disabled:cursor-default ' +
         className
       }
