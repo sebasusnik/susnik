@@ -1,0 +1,47 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { dateLabel, tag } from '../../lib/entries';
+
+// Only entries with something to say get a page. The rest link straight out.
+export async function getStaticPaths() {
+  const entries = await getCollection('projects');
+  return entries
+    .filter((entry) => !entry.data.draft && entry.body?.trim())
+    .map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { kind, dead, status } = tag(entry);
+---
+<Base title={`${entry.data.title} — Susnik`} description={entry.data.summary}>
+  <article class="mx-auto max-w-[760px] px-6 pb-[120px] pt-20">
+    <a
+      class="mb-12 inline-block text-[11px] uppercase tracking-[.2em] text-mute hover:text-fg"
+      href="/"
+    >← setlist</a>
+
+    <h1 class="text-[28px] font-medium uppercase leading-[1.1] tracking-[.04em]">
+      {entry.data.title}
+    </h1>
+    <p class="mt-2.5 text-[11px] uppercase tracking-[.2em] text-mute">
+      {dateLabel(entry)} · {dead ? <s class="text-faint decoration-blood">{kind}</s> : kind}{status && <> · {status}</>}
+    </p>
+
+    <div class="prose mt-10 max-w-[62ch] text-dim"><Content /></div>
+
+    {entry.data.link && (
+      <p class="mt-10">
+        <a
+          class="underline decoration-blood underline-offset-[3px] hover:text-fg"
+          href={entry.data.link}
+          target="_blank"
+          rel="noopener noreferrer"
+        >{entry.data.link}</a>
+      </p>
+    )}
+  </article>
+  <SiteFooter />
+</Base>

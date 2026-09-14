@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Everything Tailwind cannot express in a class sits here, and nothing else.
+ *
+ * Two themes in one set of variables: `666` toggles `.inverted` on <html> and
+ * every `bg-bg` / `text-fg` in the markup follows, because the theme colours in
+ * tailwind.config.cjs point at these.
+ */
+@layer base {
+  :root {
+    --bg: #000;
+    --fg: #fff;
+    --mute: #777;
+    --dim: #aaa;
+    --faint: #444;
+    --line: #1a1a1a;
+    --line-strong: #222;
+  }
+
+  html.inverted {
+    --bg: #fff;
+    --fg: #000;
+    --mute: #8a8a8a;
+    --dim: #555;
+    --faint: #bbb;
+    --line: #e6e6e6;
+    --line-strong: #d9d9d9;
+  }
+
+  /* The only red on the page until you touch something. */
+  ::selection {
+    background: #8b0000;
+    color: #fff;
+  }
+
+  /* The filtered rows are `display: grid`, which outranks the attribute's
+     default. Filtering toggles the attribute, so the attribute has to win. */
+  [hidden] {
+    display: none !important;
+  }
+}
+
+/**
+ * Markdown from a content collection arrives without classes, so its elements
+ * are styled by descent. This is the one place that has no alternative.
+ */
+@layer components {
+  .prose > * + * {
+    margin-top: 1.2em;
+  }
+  .prose h2 {
+    color: var(--fg);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 2.4em;
+  }
+  .prose strong {
+    color: var(--fg);
+    font-weight: 500;
+  }
+  .prose a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: #8b0000;
+  }
+  .prose img {
+    max-width: 100%;
+    height: auto;
+  }
+  .prose code {
+    background: var(--line);
+    padding: 1px 5px;
+  }
+}

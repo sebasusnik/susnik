@@ -1,0 +1,53 @@
+---
+import { dateLabel, href, tag, type Project } from '../lib/entries';
+
+interface Props { entry: Project }
+const { entry } = Astro.props;
+const link = href(entry);
+const { kind, dead, status } = tag(entry);
+const external = link?.startsWith('http');
+const featured = entry.data.featured;
+
+// A row with nowhere to go is still a row.
+const Tag = link ? 'a' : 'div';
+---
+<Tag
+  data-kind={entry.data.kind}
+  href={link}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  class:list={[
+    'row group grid items-baseline border-b border-line transition-colors hover:text-fg',
+    'grid-cols-[auto_1fr] gap-x-3 sm:grid-cols-[72px_1fr_auto] sm:gap-x-6',
+    'focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-blood',
+    featured ? 'py-10 sm:pt-10 sm:pb-9' : 'py-[18px]',
+  ]}
+>
+  <span class="col-start-1 row-start-1 text-xs text-mute sm:row-auto">{dateLabel(entry)}</span>
+
+  <span class="col-span-2 row-start-2 mt-1.5 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:mt-0">
+    <span
+      class:list={[
+        'font-medium uppercase tracking-[.06em]',
+        'group-hover:underline group-focus-visible:underline underline-offset-[5px] decoration-1 decoration-blood',
+        featured && 'text-[24px] leading-[1.1] tracking-[.04em] sm:text-[28px]',
+      ]}
+    >{entry.data.title}</span>
+    <p
+      class:list={[
+        'mt-0.5 text-xs text-mute',
+        featured ? 'sm:mt-2.5 sm:max-w-[56ch] sm:text-[13px] sm:text-dim' : 'sm:max-w-[52ch]',
+      ]}
+    >{entry.data.summary}</p>
+    {featured && entry.data.stack && (
+      <p class="mt-2 text-xs text-mute sm:max-w-[56ch]">{entry.data.stack}</p>
+    )}
+  </span>
+
+  <span
+    class="col-start-2 row-start-1 text-right text-[11px] uppercase tracking-[.12em] text-mute
+           sm:col-start-3 sm:whitespace-nowrap sm:tracking-[.2em]"
+  >
+    {dead ? <s class="text-faint decoration-blood">{kind}</s> : kind}{status && <> · {status}</>}
+  </span>
+</Tag>
