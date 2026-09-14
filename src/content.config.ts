@@ -25,8 +25,15 @@ const projects = defineCollection({
      * alive: still being worked on. undead: never finishes, never dies.
      * deceased: over, and `died` says when.
      */
+    /**
+     * alive: still being worked on. undead: never finishes, never quite dies.
+     * deceased: over, and `died` says when. Leave it off and the entry is
+     * simply done — it works, there is nothing more to say about it.
+     */
     status: z.enum(['alive', 'undead', 'deceased']).optional(),
     died: z.string().optional(),
+    /** Why it stopped. Honest beats polished; it shows under the summary. */
+    cause: z.string().optional(),
     /** The one at the top, set bigger. Exactly one entry should have it. */
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),

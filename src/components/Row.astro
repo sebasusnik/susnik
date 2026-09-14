@@ -42,6 +42,9 @@ const Tag = link ? 'a' : 'div';
     {featured && entry.data.stack && (
       <p class="mt-2 text-xs text-mute sm:max-w-[56ch]">{entry.data.stack}</p>
     )}
+    {entry.data.cause && (
+      <p class="mt-1 text-xs italic text-faint sm:max-w-[52ch]">{entry.data.cause}</p>
+    )}
   </span>
 
   <span
