@@ -16,7 +16,7 @@ const BASE_CUTOFF = 160;      // Hz, where the drone sits at rest
 const SCROLL_OPEN = 700;      // Hz it can climb to at full tilt
 const FULL_SPEED = 2600;      // px/s that counts as full tilt
 const STUTTER_AT = 0.62;      // agitation above which the signal drops out
-const STUTTER_GAP = 420;      // ms between stutters, so it cannot machine-gun
+const STUTTER_REST = 420;     // ms of clean signal between bursts, at minimum
 const TRIM_REST = 0.8;        // level going into the shaper at rest
 const TRIM_DUCK = 0.74;       // how much of that the drive gives back
 
@@ -140,7 +140,6 @@ function listen() {
     trim.gain.setTargetAtTime(TRIM_REST * (1 - TRIM_DUCK * agitation), t, 0.12);
 
     if (agitation > STUTTER_AT && now > nextStutter) {
-      nextStutter = now + STUTTER_GAP + Math.random() * 300;
       stutters++;
       let at = t;
       for (let i = 0, n = 2 + Math.floor(Math.random() * 3); i < n; i++) {
@@ -149,6 +148,10 @@ function listen() {
         gate.gain.setValueAtTime(1, at + len);
         at += len + 0.015 + Math.random() * 0.05;
       }
+      // Measured from where this burst actually ends, not from now. A burst can
+      // run 480ms and a fixed 420ms gap let the next one start inside it, so two
+      // sets of gate events interleaved on the same timeline.
+      nextStutter = now + (at - t) * 1000 + STUTTER_REST + Math.random() * 300;
     }
 
     frame = requestAnimationFrame(tick);
@@ -167,6 +170,6 @@ button?.addEventListener('click', () => {
 Object.assign(window, {
   __drone: () =>
     ctx && lowpass && drive && trim
-      ? { cutoff: lowpass.frequency.value, drive: drive.gain.value, trim: trim.gain.value, stutters }
+      ? { cutoff: lowpass.frequency.value, drive: drive.gain.value, trim: trim.gain.value, stutters, gate: gate?.gain.value ?? 1 }
       : null,
 });
