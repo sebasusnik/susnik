@@ -77,21 +77,46 @@ if (hint && logo) {
 
   let stare: number | undefined;
   let hold: number | undefined;
-  const show = () => { stare = window.setTimeout(() => { hint.dataset.show = ''; }, 1500); };
+  // On a mouse the hint rewards staring. Under a finger it has to arrive while
+  // the press is still building, or the world turns over with no warning at
+  // all — which is what made an accidental press feel like the page misfiring.
+  const show = (delay: number) => { stare = window.setTimeout(() => { hint.dataset.show = ''; }, delay); };
 
-  logo.addEventListener('pointerenter', () => { if (!touch) show(); });
+  logo.addEventListener('pointerenter', () => { if (!touch) show(1500); });
   logo.addEventListener('pointerleave', () => { clearTimeout(stare); delete hint.dataset.show; });
+  // A long press has to be deliberate. At 550ms with nothing but pointerup to
+  // cancel it, a thumb resting on the logo while reading turned the world over
+  // and played the sting — and the logo is 80% of the width of a phone, so
+  // that is most of the screen. It now needs stillness and a full second, and
+  // any of movement, scrolling or lifting calls it off.
+  const HOLD_MS = 900;
+  const SLOP_PX = 10;
+  let from: { x: number; y: number; scroll: number } | null = null;
+
+  const abort = () => { clearTimeout(hold); clearTimeout(stare); from = null; };
+
   logo.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse') return;
-    hold = window.setTimeout(() => { cross(); delete hint.dataset.show; }, 550);
-    show();
+    from = { x: e.clientX, y: e.clientY, scroll: window.scrollY };
+    hold = window.setTimeout(() => { cross(); delete hint.dataset.show; }, HOLD_MS);
+    show(180);   // visible well before HOLD_MS, so the press is never a surprise
   });
+
+  logo.addEventListener('pointermove', (e) => {
+    if (!from) return;
+    if (Math.hypot(e.clientX - from.x, e.clientY - from.y) > SLOP_PX) abort();
+  });
+
+  // Scrolling during the press means the finger was on its way somewhere else.
+  window.addEventListener('scroll', () => {
+    if (from && Math.abs(window.scrollY - from.scroll) > 4) abort();
+  }, { passive: true });
   // Android fires contextmenu on a long press, iOS shows its callout. Both would
   // offer to save the image over the top of the easter egg. Suppressed on touch
   // only, and only here: blocking the right-click menu on a whole page is rude.
   logo.addEventListener('contextmenu', (e) => { if (touch) e.preventDefault(); });
-  for (const ev of ['pointerup', 'pointercancel'] as const) {
-    logo.addEventListener(ev, () => { clearTimeout(hold); clearTimeout(stare); });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave'] as const) {
+    logo.addEventListener(ev, abort);
   }
   // On touch it surfaces once, so they know the logo is worth pressing.
   if (touch) {
