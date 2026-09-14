@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 12mm 15mm; }
+  :root{ --ink:#15161a; --body:#33353c; --mute:#71747d; --rule:#dcdee3; --accent:#8b0000; }
+  *{ box-sizing:border-box; margin:0; padding:0 }
+  html{ -webkit-print-color-adjust:exact; print-color-adjust:exact }
+  body{
+    font-family:Inter,system-ui,sans-serif; font-size:9.3pt; line-height:1.45;
+    color:var(--body); font-feature-settings:"kern","liga","calt";
+  }
+  a{ color:inherit; text-decoration:none }
+  .mono{ font-family:"JetBrains Mono",monospace }
+
+  /* ---- cabecera ---- */
+  header{ border-bottom:2px solid var(--ink); padding-bottom:7px; margin-bottom:12px }
+  h1{ font-size:21pt; font-weight:600; letter-spacing:-.022em; color:var(--ink); line-height:1.05 }
+  .role{
+    font-family:"JetBrains Mono",monospace; font-size:8.2pt; font-weight:500;
+    letter-spacing:.19em; text-transform:uppercase; color:var(--accent); margin-top:6px;
+  }
+  .contact{
+    font-family:"JetBrains Mono",monospace; font-size:7.6pt; color:var(--mute);
+    margin-top:7px; display:flex; flex-wrap:wrap; gap:0 8px;
+  }
+  .contact a{ color:var(--body); border-bottom:.5px solid var(--rule) }
+  .contact .sep{ color:var(--rule) }
+
+  /* ---- secciones ---- */
+  section{ margin-top:11px }
+  h2{
+    font-family:"JetBrains Mono",monospace; font-size:7.6pt; font-weight:500;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--ink);
+    padding-bottom:3px; border-bottom:.75px solid var(--rule); margin-bottom:7px;
+  }
+  .about{ max-width:none }
+  .about + .about{ margin-top:5px }
+  .about b{ color:var(--ink); font-weight:600 }
+
+  /* ---- trabajos ---- */
+  .job{ break-inside:avoid; page-break-inside:avoid }
+  .job + .job{ margin-top:11px }
+  .job-head{ display:flex; justify-content:space-between; align-items:baseline; gap:14px }
+  .job-title{ font-size:10.4pt; font-weight:600; color:var(--ink); letter-spacing:-.005em }
+  .job-title .at{ color:var(--mute); font-weight:400 }
+  .dates{ font-family:"JetBrains Mono",monospace; font-size:7.9pt; color:var(--mute); white-space:nowrap }
+
+  .project{ margin-top:6px }
+  .project-name{ font-size:9.4pt; font-weight:600; color:var(--ink) }
+  .project-name .desc{ font-weight:400; color:var(--mute) }
+  .project p{ margin-top:2px }
+
+  .stack{
+    font-family:"JetBrains Mono",monospace; font-size:7.6pt; color:var(--mute);
+    margin-top:7px; padding-left:9px; border-left:1.5px solid var(--rule); line-height:1.45;
+  }
+
+  /* ---- skills ---- */
+  .skills{ display:grid; grid-template-columns:max-content 1fr; gap:4px 14px }
+  .skills dt{
+    font-family:"JetBrains Mono",monospace; font-size:7.7pt; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--mute); padding-top:.9px;
+  }
+  .skills dd{ color:var(--body) }
+
+  /* ---- educacion ---- */
+  .edu{ display:flex; justify-content:space-between; align-items:baseline; gap:14px }
+  .edu + .edu{ margin-top:4px }
+  .edu b{ color:var(--ink); font-weight:600 }
+  .edu .where{ color:var(--mute) }
+  .langs{ margin-top:8px; color:var(--mute) }
+  .langs b{ color:var(--body); font-weight:500 }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sebastián Susnik</h1>
+  <div class="role">Product Engineer · Full-Stack &amp; AI</div>
+  <div class="contact">
+    <span>Buenos Aires, Argentina</span><span class="sep">·</span>
+    <a href="mailto:sebasusnik@gmail.com">sebasusnik@gmail.com</a><span class="sep">·</span>
+    <a href="https://susnik.dev">susnik.dev</a><span class="sep">·</span>
+    <a href="https://github.com/sebasusnik">github.com/sebasusnik</a><span class="sep">·</span>
+    <a href="https://www.linkedin.com/in/sebasusnik">in/sebasusnik</a>
+  </div>
+</header>
+
+<section>
+  <h2>About</h2>
+  <p class="about">Product engineer focused on building products end-to-end, from cloud
+  architecture to final UX. I work primarily with <b>TypeScript</b>, <b>Go</b> and
+  <b>AWS</b>, with growing focus on integrating LLMs and agentic workflows into
+  production systems. I care about shipping fast without breaking things, and making
+  technical decisions based on product impact rather than what is fashionable.</p>
+  <p class="about">Currently building an internal creative production platform at Winclap,
+  with a resize module being externalized as B2B SaaS.</p>
+</section>
+
+<section>
+  <h2>Experience</h2>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title">Product Engineer <span class="at">· Winclap</span></div>
+      <div class="dates">Jul 2024 — Present</div>
+    </div>
+
+    <div class="project">
+      <div class="project-name">Creative Production Platform
+        <span class="desc">— internal platform, resize module being externalized as B2B SaaS</span></div>
+      <p>Designed and implemented the resize module architecture on Aurora Serverless v2 +
+      Kysely + SST v3, with a tRPC BFF on Lambda and async processing via SQS. Owned data
+      modeling, API contracts and service boundaries.</p>
+    </div>
+
+    <div class="project">
+      <div class="project-name">Creative Pulse
+        <span class="desc">— AI-powered cultural intelligence pipeline</span></div>
+      <p>Built end-to-end an event-driven pipeline that scrapes Reddit, analyzes content with
+      Claude Haiku via Amazon Bedrock, and persists insights into DynamoDB. Architecture:
+      EventBridge → Lambda → S3 → SQS → Analyzer Lambda. Implemented in Go with SST v3.</p>
+    </div>
+
+    <div class="project">
+      <div class="project-name">Internal Admin Tooling</div>
+      <p>Developed internal tools with Next.js and shadcn/ui for operations teams,
+      prioritizing fast iteration based on real user feedback. Evaluated visualization
+      libraries (Nivo, TanStack Table) against actual team needs.</p>
+    </div>
+
+    <p class="stack">Go · TypeScript · AWS (Lambda, Aurora, DynamoDB, SQS, EventBridge, Bedrock, S3) · SST v3 · tRPC · Next.js · React</p>
+  </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title">Cloud Engineer <span class="at">· Sinapsis</span></div>
+      <div class="dates">Feb 2022 — Jul 2024</div>
+    </div>
+
+    <div class="project">
+      <div class="project-name">Self-Realization Fellowship
+        <span class="desc">— global annual event platform, California</span></div>
+      <p>Worked on the backend and cloud architecture of the platform serving SRF's annual
+      global convocation, with tens of thousands of online attendees distributed worldwide.
+      Designed APIs and serverless services on AWS prioritizing scalability under
+      concentrated traffic peaks, and resilience during critical event windows where
+      downtime was not an option.</p>
+    </div>
+
+    <p class="stack">AWS (Lambda, API Gateway, CloudFront, S3) · Node.js · TypeScript · Serverless Framework</p>
+  </div>
+</section>
+
+<section>
+  <h2>Skills</h2>
+  <dl class="skills">
+    <dt>Languages</dt><dd>TypeScript, Go, JavaScript</dd>
+    <dt>Frontend</dt><dd>React, React Native, Next.js, Tailwind, shadcn/ui, Vite</dd>
+    <dt>Backend &amp; Cloud</dt><dd>Node.js, AWS (Lambda, Aurora, DynamoDB, SQS, EventBridge, S3, API Gateway, Bedrock, CloudFront), SST v3, Serverless Framework, tRPC, REST</dd>
+    <dt>Data</dt><dd>PostgreSQL, Aurora Serverless v2, DynamoDB, Kysely</dd>
+    <dt>AI / LLMs</dt><dd>Amazon Bedrock, Claude (Haiku / Sonnet), prompt engineering, agentic pipelines, Claude Code</dd>
+    <dt>Tools</dt><dd>Git, GitHub, CI/CD, Docker</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Education</h2>
+  <div class="edu">
+    <div><b>Full Stack JavaScript</b> <span class="where">· Digital House</span></div>
+    <div class="dates">Aug 2021 — Feb 2022</div>
+  </div>
+  <div class="edu">
+    <div><b>Electronics Technician</b> <span class="where">· ET N°28 “República Francesa”</span></div>
+    <div class="dates">2007 — 2012</div>
+  </div>
+  <p class="langs"><b>Languages:</b> Spanish (native), English (upper-intermediate)</p>
+</section>
+
+</body>
+</html>
