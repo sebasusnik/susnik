@@ -1,33 +1,46 @@
 ---
 import Base from '../layouts/Base.astro';
 
-const title = 'NO SIGNAL — Susnik';
+const title = 'No signal — Susnik';
 ---
 <Base title={title} description="There is nothing on this channel.">
+  <!-- The set is still on, it is just not receiving anything. The type on this
+       page runs one step brighter than the setlist's: static lifts the
+       background off pure black, which is where the quieter grey got its
+       margin, and it fell to 3.40:1 at the worst pixel. -->
   <canvas
     id="static"
     aria-hidden="true"
-    class="fixed inset-0 -z-10 h-full w-full [image-rendering:pixelated] opacity-[.42]"
+    class="fixed inset-0 -z-10 h-full w-full [image-rendering:pixelated] opacity-[.38]"
   ></canvas>
 
-  <main class="relative flex min-h-svh flex-col items-center justify-center gap-8 px-6 text-center">
-    <div id="signal-box" class="border border-fg/70 px-8 py-5 backdrop-blur-[1px]">
-      <h1 class="text-[clamp(28px,7vw,52px)] font-medium uppercase leading-none tracking-[.22em]">
-        No signal
-      </h1>
-      <p class="mt-4 text-[11px] uppercase tracking-[.3em] text-mute">
-        channel <span id="signal-path" class="text-fg">—</span>
-      </p>
+  <main class="mx-auto flex min-h-svh max-w-[760px] flex-col justify-center px-6">
+    <!-- Same bar the setlist wears, so this reads as part of the same site. -->
+    <div
+      class="flex items-baseline justify-between gap-4 border-b border-line-strong pb-3
+             text-[11px] uppercase tracking-[.2em] text-dim"
+    >
+      <h1>no signal</h1>
+      <span>channel · dead</span>
     </div>
 
-    <p class="max-w-[38ch] text-[13px] leading-[1.7] text-dim">
-      Nothing is broadcasting here. Whatever was on this channel is not on it now.
-    </p>
+    <!-- And the same grid a row wears. -->
+    <div
+      class="grid grid-cols-[auto_1fr] items-baseline gap-x-3 border-b border-line py-[18px]
+             sm:grid-cols-[72px_1fr] sm:gap-x-6"
+    >
+      <span class="col-start-1 row-start-1 text-xs text-dim">404</span>
+      <div class="col-span-2 row-start-2 mt-1.5 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:mt-0">
+        <p id="signal-path" class="font-medium uppercase tracking-[.06em] [overflow-wrap:anywhere]">—</p>
+        <p class="mt-0.5 text-xs text-dim sm:max-w-[52ch]">
+          Nothing is broadcasting here. Whatever was on this channel is not on it now.
+        </p>
+      </div>
+    </div>
 
-    <a
-      href="/"
-      class="text-[11px] uppercase tracking-[.2em] text-mute underline decoration-blood underline-offset-4 hover:text-fg"
-    >← back to the setlist</a>
+    <p class="mt-8 text-[11px] uppercase tracking-[.2em] text-dim">
+      <a class="underline decoration-blood underline-offset-4 hover:text-fg" href="/">← back to the setlist</a>
+    </p>
   </main>
 
   <script>

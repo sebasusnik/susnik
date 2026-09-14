@@ -12,7 +12,6 @@
  * than being drawn on top of it.
  */
 const canvas = document.querySelector<HTMLCanvasElement>('#static');
-const box = document.querySelector<HTMLElement>('#signal-box');
 const path = document.querySelector<HTMLElement>('#signal-path');
 
 if (path) path.textContent = location.pathname + location.search;
@@ -117,20 +116,4 @@ if (canvas) {
   } else {
     requestAnimationFrame(frame);
   }
-}
-
-/**
- * The box drifts, the way a real set moved its on-screen display so it would
- * not burn into the phosphor. Nothing on this page is going to burn in, which
- * is exactly why it is worth doing.
- */
-if (box && !calm) {
-  let angle = Math.random() * Math.PI * 2;
-  const drift = () => {
-    angle += 0.0016;
-    box.style.transform =
-      `translate(${Math.cos(angle) * 4.5}vw, ${Math.sin(angle * 0.73) * 5}vh)`;
-    requestAnimationFrame(drift);
-  };
-  requestAnimationFrame(drift);
 }
