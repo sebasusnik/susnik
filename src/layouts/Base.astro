@@ -1,0 +1,37 @@
+---
+import Meta from '../components/Meta.astro';
+import '../styles/site.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Susnik',
+  description =
+    'Sebastián Susnik — product engineer in Buenos Aires. A log of things I build: software, circuits, noise, installations.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <Meta title={title} description={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+  </head>
+  <body class="bg-bg text-fg font-mono text-[13px] leading-relaxed antialiased">
+    <p
+      class="hidden inverted:block fixed top-3.5 inset-x-0 z-10 text-center text-[11px] uppercase tracking-[.3em] text-mute"
+    >
+      the light hurts
+    </p>
+    <slot />
+    <script>
+      import '../scripts/presence.ts';
+    </script>
+  </body>
+</html>

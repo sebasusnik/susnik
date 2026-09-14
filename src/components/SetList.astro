@@ -1,0 +1,60 @@
+---
+import Row from './Row.astro';
+import { KINDS, type Project } from '../lib/entries';
+
+interface Props { entries: Project[] }
+const { entries } = Astro.props;
+
+// Only offer a filter for kinds that actually have something behind them.
+const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
+---
+<main class="mx-auto max-w-[760px] px-6 pb-[120px]">
+  <div
+    class="flex flex-col items-start justify-between gap-2.5 border-b border-line-strong pb-3
+           text-[11px] uppercase tracking-[.2em] text-mute sm:flex-row sm:items-baseline sm:gap-4"
+  >
+    <h2>setlist</h2>
+    <div class="flex flex-wrap gap-4" role="group" aria-label="Filter by kind">
+      <button
+        type="button"
+        data-filter="all"
+        aria-pressed="true"
+        class="uppercase text-mute hover:text-fg aria-pressed:text-fg"
+      >all</button>
+      {present.map((k) => (
+        <button
+          type="button"
+          data-filter={k}
+          aria-pressed="false"
+          class="uppercase text-mute hover:text-fg aria-pressed:text-fg"
+        >{k}</button>
+      ))}
+    </div>
+  </div>
+
+  {entries.map((entry) => <Row entry={entry} />)}
+  <p class="py-10 text-mute" data-empty hidden>nothing of that kind. yet.</p>
+</main>
+
+<script>
+  // Filtering is a class toggle, not a navigation: the setlist is one page and
+  // every entry is already here.
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const rows = document.querySelectorAll<HTMLElement>('.row');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const kind = button.dataset.filter;
+      for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+
+      let shown = 0;
+      for (const row of rows) {
+        const match = kind === 'all' || row.dataset.kind === kind;
+        row.hidden = !match;
+        if (match) shown++;
+      }
+      if (empty) empty.hidden = shown > 0;
+    });
+  }
+</script>

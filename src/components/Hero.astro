@@ -1,0 +1,56 @@
+---
+// The logo is the whole hero. Everything else is one line saying what this is.
+---
+<section
+  class="hero relative min-h-svh flex flex-col items-center justify-center gap-10 text-center"
+>
+  <p
+    id="hint"
+    class="absolute inset-x-0 text-center text-[11px] uppercase tracking-[.3em] text-mute
+           opacity-0 data-[show]:opacity-70 transition-opacity duration-[1200ms] pointer-events-none"
+  >
+    type the number of the beast
+  </p>
+
+  <!-- select-none plus the iOS touch callout keep a long press from turning into
+       "save image" instead of the easter egg. -->
+  <h1 class="logo inline-block leading-[0] touch-manipulation select-none [-webkit-touch-callout:none] inverted:rotate-180">
+    <img
+      id="logo-img"
+      src="/logo.webp"
+      width="976"
+      height="545"
+      alt="Susnik"
+      fetchpriority="high"
+      draggable="false"
+      class="w-[min(520px,80vw)] h-auto inverted:invert inverted:hue-rotate-180
+             motion-reduce:!animate-none"
+    />
+  </h1>
+  <canvas id="blood" class="absolute pointer-events-none [filter:url(#goo)]" aria-hidden="true"></canvas>
+  <canvas id="gloss" class="absolute pointer-events-none" aria-hidden="true"></canvas>
+
+  <!-- Blur plus an alpha threshold fuses the discs into one liquid shape; the
+       trailing blur keeps the edge off a one-pixel staircase. -->
+  <svg width="0" height="0" class="absolute" aria-hidden="true">
+    <filter id="goo">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="blurred" />
+      <feColorMatrix
+        in="blurred"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 13 -5"
+        result="thresholded"
+      />
+      <feGaussianBlur in="thresholded" stdDeviation=".35" />
+    </filter>
+  </svg>
+
+  <p class="max-w-[44ch] px-6 text-[13px] leading-[1.7] text-dim">
+    <b class="font-medium text-fg">Sebastián Susnik</b> — product engineer in Buenos
+    Aires. This is a log of things I build: software, circuits, noise, installations.
+  </p>
+  <p class="text-[11px] uppercase tracking-[.3em] text-mute">est. MMXXI</p>
+</section>
+
+<script>
+  import '../scripts/hero.ts';
+</script>

@@ -1,99 +1,88 @@
-# Portfolio Terminal
+# susnik.dev
 
-This is a personal portfolio reimagined as an interactive, draggable terminal window. Built with Astro, React, and Tailwind CSS, it offers a unique way to explore my projects, skills, and contact information through a command-line interface.
+A log of things I build — software, circuits, noise, installations — laid out
+like a tour poster and set in one monospace typeface. Black, white, and no red
+until you touch something.
 
 <p align="center">
-  <img src="public/screenshot.png" alt="Screenshot of the portfolio terminal" width="600"/>
+  <img src="public/og.png" alt="The Susnik logo, bleeding from two of its tips" width="600"/>
 </p>
 
-## ✨ Features
+## Adding an entry
 
-- **Interactive Terminal UI**: A familiar command-line interface for navigating the portfolio.
-- **Draggable & Resizable Window**: The terminal can be moved and resized like a native application window, thanks to `react-draggable` and `re-resizable`.
-- **macOS-like Controls**: Classic red, yellow, and green window buttons for an authentic feel.
-- **Command-Based Navigation**: Use simple, intuitive commands to explore different sections.
-- **Command History**: Cycle through previously entered commands using the up and down arrow keys.
-- **Tab Completion**: Completes as far as the candidates agree, and lists them when it cannot.
-- **Shell Shortcuts**: `Ctrl+L` clears the screen, `Ctrl+C` interrupts a running command.
-- **Clickable Commands**: Every command the terminal names is also a button, so the whole portfolio is navigable without a keyboard.
-- **Deep Links**: `/#exp` opens straight to a section, skipping the intro.
-- **Responsive Design**: Adapts smoothly to various screen sizes.
+One markdown file per thing, in `src/content/projects/`. Copy `_template.md`,
+rename it, delete `draft: true`. That is the whole workflow.
 
-## 🚀 Tech Stack
-
-- **Framework**: [Astro](https://astro.build/)
-- **UI Library**: [React](https://reactjs.org/) with [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-
-## 🧞 Available Commands
-
-All commands are run from the terminal prompt:
-
-| Command   | Action                                      |
-| :-------- | :------------------------------------------ |
-| `about`   | Displays a brief introduction about me.     |
-| `exp`     | Lists my professional experience.           |
-| `skills`  | Shows a list of technical skills.           |
-| `contact` | Provides ways to get in touch.              |
-| `resume`  | Downloads my CV as a PDF.                   |
-| `help`    | Shows this list of available commands.      |
-| `repeat`  | Replays the intro animation.                |
-| `clear`   | Clears all output from the terminal screen. |
-
-A couple of undocumented commands are in there too — try the ones you would
-reach for in a real shell.
-
-### Keys
-
-| Key      | Action                                                     |
-| :------- | :--------------------------------------------------------- |
-| `Tab`    | Complete the command. Press again to list the candidates.   |
-| `↑` / `↓`| Walk through command history.                               |
-| `Ctrl+L` | Clear the screen, keeping whatever is typed.                |
-| `Ctrl+C` | Interrupt the running command. Falls back to copy when text is selected. |
-
-### Linking to a section
-
-Appending a command as a fragment runs it on load and skips the intro:
-
-```
-/#about   /#exp   /#skills   /#contact   /#resume
+```yaml
+---
+title: Luz galería
+date: 2026-05-30        # sorts the setlist
+kind: hardware          # code | hardware | sound | art | client
+status: alive           # alive | undead | deceased   (optional)
+summary: LED CCT controller board. ESP32-C3, LD2410 radar, encoder.
+link: https://github.com/sebasusnik/luz-galeria
+---
 ```
 
-Running one of those commands updates the fragment, so the address bar is
-always shareable.
+**Leave the body empty and the row links straight out to `link`** — a repo
+README usually says more than a page repeating it. **Write a body and the entry
+gets its own page** at `/projects/<file-name>/`, which is what you want for an
+installation with photos and video.
 
-## 🛠️ Getting Started
+A few fields exist for the ones that do not fit a date and a status:
 
-To run this project locally:
+| Field        | For                                                          |
+| :----------- | :----------------------------------------------------------- |
+| `dateLabel`  | When the date alone lies: `∞`, `2024 —`                       |
+| `died`       | The year, next to `status: deceased`                          |
+| `featured`   | The headliner, set bigger at the top. Only one entry          |
+| `stack`      | A second line under the summary. Headliner only               |
+| `draft`      | Keeps it out of the setlist                                   |
 
-1.  **Clone the repository:**
-    ```sh
-    git clone <your-repo-url>
-    cd <repo-folder>
-    ```
+## What is hiding in it
 
-2.  **Install dependencies:**
-    ```sh
-    npm install
-    ```
+- The logo **dies for a frame** every 15 to 30 seconds, like a neon that is going.
+- It **bleeds from its tips**. The tips are found by reading the logo's alpha
+  channel, so changing the logo changes where it bleeds. Drops hang, neck, fall,
+  hit the floor of the hero and open. They never reach the setlist.
+- Typing **`666`** turns the world over, and it starts to pour. The page inverts,
+  the logo flips — but gravity does not, so it bleeds from the spikes that now
+  point down. Type it again to come back. On a phone, hold the logo.
+- **`▶ drone`**, bottom right, synthesises a sustained sub-bass D. **Scrolling
+  disturbs it**: speed opens the filter, so the saws bare their harmonics when
+  you move and sink back when you stop. Position is deliberately not mapped to
+  pitch — that reads as a DJ, not as dread. It never autoplays and there is
+  nothing to download. Wear headphones; at rest it all lives below 80 Hz.
+- Turning the world over **stings** — a noise transient, a dissonant cluster
+  sliding flat, a sub thump. Only on the way in, and only ever after you typed
+  `666` or held the logo, so it is never sound nobody asked for. It ducks the
+  drone rather than piling on top of it.
+- The tab **calls you back** when you leave, and there is a note in the console.
 
-3.  **Start the development server:**
-    ```sh
-    npm run dev
-    ```
+All of it is skipped when `prefers-reduced-motion` is set.
 
-The application will be available at `http://localhost:4321`.
+## The terminal
 
-## 📄 The resume PDF
+The previous version of this site was a draggable terminal window. It still
+runs, at [`/terminal`](https://susnik.dev/terminal). Type `help`, or press Tab.
 
-The `resume` command serves `public/resume.pdf`. That file is not in the
-repository — drop your own copy there before deploying, or the command will
-hand visitors a 404.
+## Running it
 
-## 🔗 Absolute URLs
+```sh
+npm install
+npm run dev          # http://localhost:4321
+```
 
-The canonical link and the `og:image` need an origin. It comes from
-`VERCEL_PROJECT_PRODUCTION_URL`, which Vercel points at the production domain,
-so attaching a custom domain needs no code change. `PUBLIC_SITE_URL` overrides
-it; local builds fall back to `http://localhost:4321`.
+Astro and Tailwind, with React only on the terminal page. The six theme colours
+are CSS variables that `tailwind.config.cjs` points at, so `666` repaints the
+whole site by swapping six values rather than filtering it — a filter turned the
+blood pink. The blood itself is a few hundred lines of canvas in
+`src/scripts/blood.ts`.
+
+## Two things you have to supply
+
+- **`public/resume.pdf`** — the footer's `cv` link and the terminal's `resume`
+  command both point at it, and 404 without it.
+- **Absolute URLs** for the canonical link and `og:image` come from
+  `VERCEL_PROJECT_PRODUCTION_URL`, which Vercel points at the production domain.
+  `PUBLIC_SITE_URL` overrides it; local builds fall back to localhost.
