@@ -82,6 +82,10 @@ if (hint && logo) {
     hold = window.setTimeout(() => { cross(); delete hint.dataset.show; }, 550);
     show();
   });
+  // Android fires contextmenu on a long press, iOS shows its callout. Both would
+  // offer to save the image over the top of the easter egg. Suppressed on touch
+  // only, and only here: blocking the right-click menu on a whole page is rude.
+  logo.addEventListener('contextmenu', (e) => { if (touch) e.preventDefault(); });
   for (const ev of ['pointerup', 'pointercancel'] as const) {
     logo.addEventListener(ev, () => { clearTimeout(hold); clearTimeout(stare); });
   }

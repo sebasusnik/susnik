@@ -12,7 +12,9 @@
     type the number of the beast
   </p>
 
-  <span class="logo inline-block leading-[0] touch-manipulation inverted:rotate-180">
+  <!-- select-none plus the iOS touch callout keep a long press from turning into
+       "save image" instead of the easter egg. -->
+  <span class="logo inline-block leading-[0] touch-manipulation select-none [-webkit-touch-callout:none] inverted:rotate-180">
     <img
       id="logo-img"
       src="/logo.webp"
@@ -20,6 +22,7 @@
       height="545"
       alt="Susnik"
       fetchpriority="high"
+      draggable="false"
       class="w-[min(520px,80vw)] h-auto inverted:invert inverted:hue-rotate-180
              motion-reduce:!animate-none"
     />
