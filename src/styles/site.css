@@ -13,9 +13,9 @@
   :root {
     --bg: #000;
     --fg: #fff;
-    --mute: #777;
+    --mute: #777;    /* 4.69:1 on black */
     --dim: #aaa;
-    --faint: #444;
+    --faint: #757575;
     --line: #1a1a1a;
     --line-strong: #222;
   }
@@ -23,9 +23,9 @@
   html.inverted {
     --bg: #fff;
     --fg: #000;
-    --mute: #8a8a8a;
+    --mute: #767676; /* #8a8a8a was 3.45:1 on white, under AA */
     --dim: #555;
-    --faint: #bbb;
+    --faint: #767676;
     --line: #e6e6e6;
     --line-strong: #d9d9d9;
   }

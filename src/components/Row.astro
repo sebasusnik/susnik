@@ -26,13 +26,13 @@ const Tag = link ? 'a' : 'div';
   <span class="col-start-1 row-start-1 text-xs text-mute sm:row-auto">{dateLabel(entry)}</span>
 
   <span class="col-span-2 row-start-2 mt-1.5 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:mt-0">
-    <span
+    <h3
       class:list={[
         'font-medium uppercase tracking-[.06em]',
         'group-hover:underline group-focus-visible:underline underline-offset-[5px] decoration-1 decoration-blood',
         featured && 'text-[24px] leading-[1.1] tracking-[.04em] sm:text-[28px]',
       ]}
-    >{entry.data.title}</span>
+    >{entry.data.title}</h3>
     <p
       class:list={[
         'mt-0.5 text-xs text-mute',
@@ -43,7 +43,7 @@ const Tag = link ? 'a' : 'div';
       <p class="mt-2 text-xs text-mute sm:max-w-[56ch]">{entry.data.stack}</p>
     )}
     {entry.data.cause && (
-      <p class="mt-1 text-xs italic text-faint sm:max-w-[52ch]">{entry.data.cause}</p>
+      <p class="mt-1 text-xs italic text-mute sm:max-w-[52ch]">{entry.data.cause}</p>
     )}
   </span>
 
