@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTerminal } from '../context/TerminalContext';
 
 export interface TypingState {
   /** The portion of `text` revealed so far. */
@@ -21,9 +22,30 @@ export default function useTyping(text: string, speed = 50, onDone?: () => void)
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
 
+  // Ctrl+C interrupts the reveal; show the whole line instead of freezing
+  // mid-word.
+  const { interrupted } = useTerminal();
+
+  // Latched per line: once a line has been typed out it never retypes.
+  // `interrupted` is shared by every output on screen and flips back to false
+  // when the next command starts, which would otherwise replay finished text.
+  const settledFor = useRef<string | null>(null);
+
   useEffect(() => {
     if (!text) {
       setState({ text: '', typing: false });
+      return;
+    }
+
+    if (settledFor.current === text) {
+      setState({ text, typing: false });
+      return;
+    }
+
+    if (interrupted) {
+      settledFor.current = text;
+      setState({ text, typing: false });
+      doneRef.current?.();
       return;
     }
 
@@ -36,12 +58,13 @@ export default function useTyping(text: string, speed = 50, onDone?: () => void)
         return;
       }
       clearInterval(interval);
+      settledFor.current = text;
       setState({ text, typing: false });
       doneRef.current?.();
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed]);
+  }, [text, speed, interrupted]);
 
   return state;
 }

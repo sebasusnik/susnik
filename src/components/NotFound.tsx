@@ -1,5 +1,8 @@
 import React from 'react';
 import useStaggeredReveal from '../hooks/useStaggeredReveal';
+import CommandButton from './CommandButton';
+import { suggestCommand } from '../utils/suggest';
+import { validCommands } from '../utils/commands';
 
 interface Props {
   command: string;
@@ -9,9 +12,19 @@ interface Props {
 }
 
 const NotFound: React.FC<Props> = ({ command, animate = false, onFinished, onLineRendered }) => {
+  const suggestion = suggestCommand(command, validCommands);
+
   const lines: React.ReactNode[] = [
     `Command not found: ${command}.`,
-    <span key="suggest">Type <span className="text-cyan-400">help</span>.</span>,
+    suggestion ? (
+      <span key="suggest">
+        Did you mean <CommandButton command={suggestion} />?
+      </span>
+    ) : (
+      <span key="suggest">
+        Type <CommandButton command="help" />.
+      </span>
+    ),
   ];
 
   const rendered = useStaggeredReveal(lines, {

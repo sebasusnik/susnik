@@ -1,8 +1,7 @@
 import React from 'react';
 import PromptLine from './PromptLine';
 import Intro from './Intro';
-
-const validCommands = ['about', 'exp', 'skills', 'contact', 'clear', 'help', 'repeat', 'ls', 'pwd'];
+import { validCommands } from '../utils/commands';
 
 interface Line {
   id: number;
@@ -84,7 +83,7 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
           }
           value={input}
           onChange={busy ? () => {} : (e) => setInput(e.target.value)}
-          onKeyDown={busy ? (e) => e.preventDefault() : handleKeyDown}
+          onKeyDown={handleKeyDown}
           onFocus={scrollToBottom}
           onClick={scrollToBottom}
           autoCapitalize="off"
