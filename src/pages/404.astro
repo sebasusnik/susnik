@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+
+const title = 'NO SIGNAL — Susnik';
+---
+<Base title={title} description="There is nothing on this channel.">
+  <canvas
+    id="static"
+    aria-hidden="true"
+    class="fixed inset-0 -z-10 h-full w-full [image-rendering:pixelated] opacity-[.42]"
+  ></canvas>
+
+  <main class="relative flex min-h-svh flex-col items-center justify-center gap-8 px-6 text-center">
+    <div id="signal-box" class="border border-fg/70 px-8 py-5 backdrop-blur-[1px]">
+      <h1 class="text-[clamp(28px,7vw,52px)] font-medium uppercase leading-none tracking-[.22em]">
+        No signal
+      </h1>
+      <p class="mt-4 text-[11px] uppercase tracking-[.3em] text-mute">
+        channel <span id="signal-path" class="text-fg">—</span>
+      </p>
+    </div>
+
+    <p class="max-w-[38ch] text-[13px] leading-[1.7] text-dim">
+      Nothing is broadcasting here. Whatever was on this channel is not on it now.
+    </p>
+
+    <a
+      href="/"
+      class="text-[11px] uppercase tracking-[.2em] text-mute underline decoration-blood underline-offset-4 hover:text-fg"
+    >← back to the setlist</a>
+  </main>
+
+  <script>
+    import '../scripts/nosignal.ts';
+  </script>
+</Base>
