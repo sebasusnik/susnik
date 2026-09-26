@@ -94,18 +94,24 @@ corners, and the no-signal page. Entry counts are read from the collection, so
 adding or cutting a project does not break it. CI runs it on every pull
 request.
 
-## Lint
+## Lint and format
 
 ```sh
-npm run lint              # biome: lint and import order
-npm run lint:fix          # and apply the safe fixes
+npm run lint              # biome: lint, format and import order
+npm run lint:fix          # and apply the safe fixes, formatting included
 ```
 
 Biome reads `.astro` files whole, so a variable used only in the markup is not
-reported as unused; the editor needs the Biome extension, which
-`.vscode/extensions.json` recommends. The formatter is off: the code is aligned
-by hand in places. The warnings left are the terminal's React code, kept apart
-as their own piece of work. CI fails on errors.
+reported as unused. It formats everything except `.astro`, whose HTML
+formatter is still experimental and moves whitespace inside inline elements.
+Zed formats on save through `.zed/settings.json`; VS Code needs the Biome
+extension, which `.vscode/extensions.json` recommends. The warnings left are
+the terminal's React code, kept apart as their own piece of work. CI fails on
+errors and on anything unformatted.
+
+The commit that formatted the codebase is in `.git-blame-ignore-revs`, so blame
+skips it; GitHub reads the file on its own, and locally
+`git config blame.ignoreRevsFile .git-blame-ignore-revs` does the same.
 
 Astro and Tailwind, with React only on the terminal page. The six theme colours
 are CSS variables that `tailwind.config.cjs` points at, so `666` repaints the
