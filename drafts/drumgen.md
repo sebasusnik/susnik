@@ -11,7 +11,7 @@ soon: true
 summary: >-
   A deterministic drum generator that tries to sound alive. Rules and
   probability over curated pattern banks, not a model.
-cause: Never crossed from experiment into product. The loops are good anyway.
+cause: On hold until I can buy MIDI banks played by a real drummer.
 ---
 
 A rules-and-probability engine over hand-written banks, on purpose: predictable,
