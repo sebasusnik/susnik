@@ -39,13 +39,13 @@ for (const [name, path, color] of [
   });
 }
 
-test('under 666 the ring turns to the deep red, still above 3:1', async ({ page }) => {
+test('under 666 the ring turns a brighter red, still above 3:1', async ({ page }) => {
   await page.goto('/');
   await page.waitForTimeout(600);
   await page.keyboard.type('666');
   await page.waitForTimeout(900);
   const [s] = await rings(page, 1);
-  expect(s.color).toBe('rgb(139, 0, 0)');
+  expect(s.color).toBe('rgb(230, 0, 0)');
   expect(contrast(s.color, s.bg)).toBeGreaterThanOrEqual(3);
 });
 

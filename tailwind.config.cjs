@@ -16,6 +16,7 @@ module.exports = {
         faint: 'var(--faint)',
         line: 'var(--line)',
         'line-strong': 'var(--line-strong)',
+        lift: 'var(--lift)',
         blood: '#8b0000',
         // The terminal at /terminal.
         'term-bg': '#140623',
