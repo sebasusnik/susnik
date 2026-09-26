@@ -18,11 +18,11 @@ import { audio, close, current, duckable } from './audio';
 
 const button = document.querySelector<HTMLButtonElement>('#drone');
 
-const BASE_CUTOFF = 160;      // Hz, where the drone sits at rest
-const SCROLL_OPEN = 700;      // Hz it can climb to at full tilt
-const FULL_SPEED = 2600;      // px/s that counts as full tilt
-const TRIM_REST = 0.8;        // level going into the shaper at rest
-const TRIM_DUCK = 0.74;       // how much of that the drive gives back
+const BASE_CUTOFF = 160; // Hz, where the drone sits at rest
+const SCROLL_OPEN = 700; // Hz it can climb to at full tilt
+const FULL_SPEED = 2600; // px/s that counts as full tilt
+const TRIM_REST = 0.8; // level going into the shaper at rest
+const TRIM_DUCK = 0.74; // how much of that the drive gives back
 
 // biome-ignore format: a table, read down the columns
 const VOICES: Array<[number, OscillatorType, number]> = [
@@ -109,7 +109,11 @@ function stop() {
   cancelAnimationFrame(frame);
   duckable(null);
   close();
-  ctx = null; master = null; lowpass = null; drive = null; trim = null;
+  ctx = null;
+  master = null;
+  lowpass = null;
+  drive = null;
+  trim = null;
 }
 
 /**
@@ -130,7 +134,8 @@ function listen() {
 
     const target = Math.min(1, speed / FULL_SPEED);
     // Rises with the scroll, falls back over about a second.
-    agitation = target > agitation ? target : agitation + (target - agitation) * Math.min(1, dt * 3.5);
+    agitation =
+      target > agitation ? target : agitation + (target - agitation) * Math.min(1, dt * 3.5);
 
     const t = ctx.currentTime;
     lowpass.frequency.setTargetAtTime(BASE_CUTOFF + SCROLL_OPEN * agitation, t, 0.08);

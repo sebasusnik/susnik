@@ -16,12 +16,12 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
 }) => {
   const draggableRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(initialSize);
-  
+
   // Keep the title bar reachable: the window may overflow the viewport, but its
   // top-left corner never leaves it, so there is always something to drag.
   const clampToViewport = (
     pos: { x: number; y: number },
-    windowSize: { width: number; height: number }
+    windowSize: { width: number; height: number },
   ) => ({
     x: Math.min(Math.max(pos.x, 0), Math.max(0, window.innerWidth - windowSize.width)),
     y: Math.min(Math.max(pos.y, 0), Math.max(0, window.innerHeight - windowSize.height)),
@@ -34,18 +34,20 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
           x: (window.innerWidth - initialSize.width) / 2,
           y: (window.innerHeight - initialSize.height) / 2,
         },
-        initialSize
+        initialSize,
       );
     }
     return { x: 0, y: 0 };
   };
-  
+
   const [position, setPosition] = useState(getInitialPosition);
   // Starts false on both sides of the render: seeding it from `typeof window`
   // makes the server and the first client render disagree, which React reports
   // as a hydration mismatch and recovers from by throwing the tree away.
   const [isPositioned, setIsPositioned] = useState(false);
-  const resizeStartData = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
+  const resizeStartData = useRef<{ x: number; y: number; width: number; height: number } | null>(
+    null,
+  );
 
   useEffect(() => {
     setPosition(getInitialPosition());
@@ -67,7 +69,12 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   }, [size.width, size.height]);
 
   const handleResizeStart = () => {
-    resizeStartData.current = { x: position.x, y: position.y, width: size.width, height: size.height };
+    resizeStartData.current = {
+      x: position.x,
+      y: position.y,
+      width: size.width,
+      height: size.height,
+    };
   };
 
   const handleResize = (_e: unknown, direction: Direction, ref: HTMLElement) => {
@@ -142,4 +149,4 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   );
 };
 
-export default DesktopWindow; 
+export default DesktopWindow;

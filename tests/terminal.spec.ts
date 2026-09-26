@@ -64,10 +64,12 @@ for (const corner of ['bottomLeft', 'topLeft', 'bottomRight', 'topRight'] as con
     await page.locator('.terminal-handle').waitFor();
     const win = page.locator('.react-draggable').first();
     const before = (await win.boundingBox())!;
-    const left = corner.includes('Left'), bottom = corner.startsWith('bottom');
+    const left = corner.includes('Left'),
+      bottom = corner.startsWith('bottom');
     const x = left ? before.x + 3 : before.x + before.width - 3;
     const y = bottom ? before.y + before.height - 3 : before.y + 3;
-    const dx = left ? -110 : 110, dy = bottom ? 80 : -80;
+    const dx = left ? -110 : 110,
+      dy = bottom ? 80 : -80;
     await page.mouse.move(x, y);
     await page.mouse.down();
     await page.mouse.move(x + dx, y + dy, { steps: 12 });
@@ -77,7 +79,9 @@ for (const corner of ['bottomLeft', 'topLeft', 'bottomRight', 'topRight'] as con
     expect(Math.abs(after.width - before.width - 110)).toBeLessThan(22);
     expect(Math.abs(after.height - before.height - 80)).toBeLessThan(22);
     const fixedX = left ? after.x + after.width - (before.x + before.width) : after.x - before.x;
-    const fixedY = bottom ? after.y - before.y : after.y + after.height - (before.y + before.height);
+    const fixedY = bottom
+      ? after.y - before.y
+      : after.y + after.height - (before.y + before.height);
     expect(Math.abs(fixedX)).toBeLessThan(14);
     expect(Math.abs(fixedY)).toBeLessThan(14);
   });

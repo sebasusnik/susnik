@@ -9,7 +9,7 @@ import { useCallback, useState } from 'react';
  */
 function useHistory(
   setInput: React.Dispatch<React.SetStateAction<string>>,
-  initialHistory: string[] = []
+  initialHistory: string[] = [],
 ) {
   const [history, setHistory] = useState<string[]>(initialHistory);
   const [historyIdx, setHistoryIdx] = useState(-1);
@@ -35,7 +35,7 @@ function useHistory(
         }
       }
     },
-    [history, historyIdx, setInput]
+    [history, historyIdx, setInput],
   );
 
   const addToHistory = useCallback((command: string) => {
@@ -49,4 +49,4 @@ function useHistory(
   };
 }
 
-export default useHistory; 
+export default useHistory;

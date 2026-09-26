@@ -10,7 +10,9 @@ interface Props {
 
 const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished, onLineRendered }) => {
   const lsLines: React.ReactNode[] = [
-    <div key="total" className="text-gray-400 mb-2">total 8</div>,
+    <div key="total" className="text-gray-400 mb-2">
+      total 8
+    </div>,
     <div key="skills" className="mb-1">
       <span className="text-blue-400">drwx------</span>
       <span className="ml-2 text-white">skills/</span>
@@ -27,14 +29,24 @@ const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished, onLi
       <span className="text-green-400">-rw-------</span>
       <span className="ml-2 text-white">contact_info.txt</span>
     </div>,
-    <div key="quip1" className="text-amber-200 mt-4">Oh, you tried 'ls'?</div>,
-    <div key="quip2" className="text-gray-400 mt-1">This isn't actually a shell, but I appreciate the muscle memory.</div>,
+    <div key="quip1" className="text-amber-200 mt-4">
+      Oh, you tried 'ls'?
+    </div>,
+    <div key="quip2" className="text-gray-400 mt-1">
+      This isn't actually a shell, but I appreciate the muscle memory.
+    </div>,
   ];
 
   const pwdLines: React.ReactNode[] = [
-    <div key="path" className="text-white mb-2">/home/portfolio/sebastian_susnik</div>,
-    <div key="quip1" className="text-amber-200 mt-4">Let me guess, checking if you're in the right directory?</div>,
-    <div key="quip2" className="text-gray-400 mt-1">Spoiler alert: you're exactly where you need to be.</div>,
+    <div key="path" className="text-white mb-2">
+      /home/portfolio/sebastian_susnik
+    </div>,
+    <div key="quip1" className="text-amber-200 mt-4">
+      Let me guess, checking if you're in the right directory?
+    </div>,
+    <div key="quip2" className="text-gray-400 mt-1">
+      Spoiler alert: you're exactly where you need to be.
+    </div>,
   ];
 
   const lines = command === 'ls' ? lsLines : pwdLines;
@@ -56,4 +68,4 @@ const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished, onLi
   );
 };
 
-export default EasterEgg; 
+export default EasterEgg;

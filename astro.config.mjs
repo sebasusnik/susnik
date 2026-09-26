@@ -29,7 +29,7 @@ export default defineConfig({
       // Each entry stylesheet declares its own @tailwind directives, so the
       // integration injecting a second copy on every page is pure weight.
       applyBaseStyles: false,
-    })
+    }),
   ],
 
   // no custom Vite plugins needed; Astro's Tailwind integration wires them up for us

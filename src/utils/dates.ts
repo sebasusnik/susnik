@@ -1,5 +1,5 @@
-import { differenceInMonths } from "date-fns";
-import type { Experience } from "../components/ExpList";
+import { differenceInMonths } from 'date-fns';
+import type { Experience } from '../components/ExpList';
 
 export function formatDuration(exp: Experience) {
   const end = exp.to === 'present' ? new Date() : exp.to;

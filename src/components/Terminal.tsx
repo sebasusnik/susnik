@@ -48,7 +48,9 @@ const Terminal: React.FC = () => {
   inputRef.current = input;
 
   const focusVisibleInput = () => {
-    const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[data-terminal-input]'));
+    const inputs = Array.from(
+      document.querySelectorAll<HTMLInputElement>('input[data-terminal-input]'),
+    );
     const visible = inputs.find((el) => el.offsetParent !== null);
     visible?.focus();
   };
@@ -69,7 +71,7 @@ const Terminal: React.FC = () => {
 
   const addElement = useCallback(
     (element: React.ReactNode) => setLines((prev) => [...prev, { id: ++idCounter, element }]),
-    []
+    [],
   );
 
   const scrollToBottom = useCallback(() => {
@@ -120,7 +122,7 @@ const Terminal: React.FC = () => {
         window.history.replaceState(null, '', window.location.pathname);
       }
     },
-    [addElement, handleCommand, addToHistory]
+    [addElement, handleCommand, addToHistory],
   );
 
   const onSubmit = (e: React.FormEvent) => {
@@ -232,7 +234,7 @@ const Terminal: React.FC = () => {
 
       handleKeyDown(e);
     },
-    [busy, addElement, handleKeyDown]
+    [busy, addElement, handleKeyDown],
   );
 
   useEffect(() => {
@@ -246,7 +248,7 @@ const Terminal: React.FC = () => {
 
   const terminalContext = useMemo(
     () => ({ runCommand, interrupted, busy }),
-    [runCommand, interrupted, busy]
+    [runCommand, interrupted, busy],
   );
 
   const baseTerminalProps = {

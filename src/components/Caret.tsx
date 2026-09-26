@@ -12,4 +12,4 @@ const Caret: React.FC<CaretProps> = ({ className = '', ...rest }) => (
   />
 );
 
-export default Caret; 
+export default Caret;

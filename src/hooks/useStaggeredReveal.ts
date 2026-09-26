@@ -21,7 +21,7 @@ interface Options {
  */
 export default function useStaggeredReveal<T>(
   items: T[],
-  { animate = false, speed = 120, onFinished, onItemRendered }: Options = {}
+  { animate = false, speed = 120, onFinished, onItemRendered }: Options = {},
 ): T[] {
   const total = items.length;
   const [revealed, setRevealed] = useState(animate ? 0 : total);

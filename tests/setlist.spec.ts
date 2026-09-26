@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { entries , phone } from './helpers';
+import { entries, phone } from './helpers';
 
 const all = entries();
 
@@ -14,13 +14,16 @@ test.describe('setlist', () => {
   test('the headliner comes first and is set bigger', async ({ page }) => {
     const first = page.locator('.row').first();
     await expect(first.locator('h3')).toHaveText(/pixfit/i);
-    const size = await first.locator('h3').evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
+    const size = await first
+      .locator('h3')
+      .evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
     expect(size).toBeGreaterThan(20);
   });
 
   test('has one h1, one h2 and an h3 per entry', async ({ page }) => {
     const counts = await page.evaluate(() =>
-      ['h1', 'h2', 'h3'].map((t) => document.body.querySelectorAll(t).length));
+      ['h1', 'h2', 'h3'].map((t) => document.body.querySelectorAll(t).length),
+    );
     expect(counts).toEqual([1, 1, all.length]);
   });
 
@@ -32,7 +35,9 @@ test.describe('setlist', () => {
     const kinds = [...new Set(all.map((e) => e.kind))];
     for (const kind of kinds) {
       await page.getByRole('button', { name: kind!, exact: true }).click();
-      await expect(page.locator('.row:visible')).toHaveCount(all.filter((e) => e.kind === kind).length);
+      await expect(page.locator('.row:visible')).toHaveCount(
+        all.filter((e) => e.kind === kind).length,
+      );
     }
     await page.getByRole('button', { name: 'all', exact: true }).click();
     await expect(page.locator('.row:visible')).toHaveCount(all.length);
@@ -71,8 +76,9 @@ for (const width of [320, 390, 430]) {
     const ctx = await browser.newContext({ ...phone, viewport: { width, height: 844 } });
     const page = await ctx.newPage();
     await page.goto('/');
-    const over = await page.evaluate(() =>
-      document.documentElement.scrollWidth > document.documentElement.clientWidth);
+    const over = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    );
     expect(over).toBe(false);
     await ctx.close();
   });

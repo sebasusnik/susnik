@@ -23,10 +23,13 @@ export function tag(p: Project) {
   const kind = p.data.featured ? 'headliner' : p.data.kind;
   const dead = p.data.status === 'deceased';
   const status =
-    p.data.status === 'alive' ? 'still alive'
-    : p.data.status === 'undead' ? 'undead'
-    : dead ? ['deceased', p.data.died].filter(Boolean).join(' ')
-    : null;
+    p.data.status === 'alive'
+      ? 'still alive'
+      : p.data.status === 'undead'
+        ? 'undead'
+        : dead
+          ? ['deceased', p.data.died].filter(Boolean).join(' ')
+          : null;
   return { kind, dead, status };
 }
 

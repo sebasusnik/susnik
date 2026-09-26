@@ -22,7 +22,18 @@ if (!input || !name) {
 }
 
 const mp3 = `public/audio/${name}.mp3`;
-execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', input, '-c:a', 'libmp3lame', '-q:a', '2', mp3]);
+execFileSync('ffmpeg', [
+  '-loglevel',
+  'error',
+  '-y',
+  '-i',
+  input,
+  '-c:a',
+  'libmp3lame',
+  '-q:a',
+  '2',
+  mp3,
+]);
 
 const raw = execFileSync(
   'ffmpeg',
