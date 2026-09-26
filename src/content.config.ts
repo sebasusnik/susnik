@@ -34,6 +34,8 @@ const projects = defineCollection({
     died: z.string().optional(),
     /** Why it stopped. Honest beats polished; it shows under the summary. */
     cause: z.string().optional(),
+    /** The source is private for now and about to be published; says so under the summary. */
+    soon: z.boolean().default(false),
     /**
      * Something it made, to listen to on its page. `src` names a pair in
      * public/audio, made by `node scripts/track.mjs <in.wav> <src>`.
