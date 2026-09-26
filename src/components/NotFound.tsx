@@ -1,8 +1,8 @@
-import React from 'react';
+import type React from 'react';
 import useStaggeredReveal from '../hooks/useStaggeredReveal';
-import CommandButton from './CommandButton';
-import { suggestCommand } from '../utils/suggest';
 import { validCommands } from '../utils/commands';
+import { suggestCommand } from '../utils/suggest';
+import CommandButton from './CommandButton';
 
 interface Props {
   command: string;

@@ -1,7 +1,7 @@
-import React from 'react';
-import PromptLine from './PromptLine';
-import Intro from './Intro';
+import type React from 'react';
 import { validCommands } from '../utils/commands';
+import Intro from './Intro';
+import PromptLine from './PromptLine';
 
 interface Line {
   id: number;

@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import SkillsList from './SkillsList';
-import ExpList from './ExpList';
-import Caret from './Caret';
-import TypedText from './TypedText';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useTyping from '../hooks/useTyping';
+import Caret from './Caret';
 import CommandHints from './CommandHints';
+import ExpList from './ExpList';
+import SkillsList from './SkillsList';
+import TypedText from './TypedText';
 
 const introLines = ["I am Sebastian Susnik", "and I like to build stuff..."];
 const expCommand = 'exp';

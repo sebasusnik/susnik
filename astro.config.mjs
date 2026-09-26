@@ -1,7 +1,7 @@
-import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import vercel from '@astrojs/vercel';
 import tailwind from '@astrojs/tailwind';
+import vercel from '@astrojs/vercel';
+import { defineConfig } from 'astro/config';
 
 // Absolute URLs (canonical, og:image) need an origin. Vercel injects the
 // project's production domain, so this picks up a custom domain by itself once

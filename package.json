@@ -10,6 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "test:e2e": "playwright test",
     "test:e2e:prod": "BASE_URL=https://susnik.dev playwright test"
   },
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
+    "@biomejs/biome": "2.5.14",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.21"

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import CommandButton from './CommandButton';
 
 const hints = ['about', 'exp', 'skills', 'contact', 'resume', 'help'];

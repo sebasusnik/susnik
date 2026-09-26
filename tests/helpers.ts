@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { devices, type Page, type CDPSession } from '@playwright/test';
+import { type CDPSession, devices, type Page } from '@playwright/test';
 
 /**
  * A phone's viewport, touch and user agent, without the preset's

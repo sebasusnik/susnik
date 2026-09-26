@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { contrast, terminalReady } from './helpers';
 
 /** Tabs through a page and returns the outline of every distinct stop. */

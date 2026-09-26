@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 // Tatum's row on the setlist; the entry has no page of its own yet.
 const PAGE = '/';

@@ -1,6 +1,6 @@
-import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { setlist, href } from '../lib/entries';
+import type { APIRoute } from 'astro';
+import { href, setlist } from '../lib/entries';
 
 /**
  * Three or four URLs is not worth a dependency. Entries only appear here when

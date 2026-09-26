@@ -60,6 +60,7 @@
 @media (max-width: 640px) {
   .terminal-mobile {
     height: 100dvh;
+    /* biome-ignore lint/suspicious/noDuplicateProperties: two on purpose, the later one wins where it is supported */
     height: 100svh; /* Fallback for older browsers */
     padding-bottom: env(keyboard-inset-height, 0px);
   }

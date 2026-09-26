@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import TerminalCore from './TerminalCore';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { TerminalProvider } from '../context/TerminalContext';
+import useCommands from '../hooks/useCommands';
+import useHistory from '../hooks/useHistory';
+import useIsMobile from '../hooks/useIsMobile';
+import { deepLinkCommands, validCommands } from '../utils/commands';
+import { completeCommand } from '../utils/completion';
+import CompletionHint from './CompletionHint';
 import DesktopWindow from './DesktopWindow';
 import PromptLine from './PromptLine';
-import CompletionHint from './CompletionHint';
-import useHistory from '../hooks/useHistory';
-import useCommands from '../hooks/useCommands';
-import useIsMobile from '../hooks/useIsMobile';
-import { TerminalProvider } from '../context/TerminalContext';
-import { completeCommand } from '../utils/completion';
-import { validCommands, deepLinkCommands } from '../utils/commands';
+import TerminalCore from './TerminalCore';
 
 interface Line {
   id: number;

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import Caret from './Caret';
 
 const PREFIX_HTML =

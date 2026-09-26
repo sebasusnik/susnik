@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { terminalReady } from './helpers';
 
 const log = (page: import('@playwright/test').Page) => page.locator('[role="log"]').nth(1);

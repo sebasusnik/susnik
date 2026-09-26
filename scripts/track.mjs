@@ -41,9 +41,9 @@ const top = Math.max(...rms);
 
 writeFileSync(
   `public/audio/${name}.json`,
-  JSON.stringify({
+  `${JSON.stringify({
     duration: Math.round((samples.length / RATE) * 10) / 10,
     shape: rms.map((v) => Math.round((v / top) * 100) / 100),
-  }) + '\n',
+  })}\n`,
 );
 console.log(`${mp3}, public/audio/${name}.json`);

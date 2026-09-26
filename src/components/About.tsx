@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import TypedText from './TypedText';
-import useTyping from '../hooks/useTyping';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import useStaggeredReveal from '../hooks/useStaggeredReveal';
+import useTyping from '../hooks/useTyping';
+import TypedText from './TypedText';
 
 const introLines = [
   'I am Sebastian Susnik',
