@@ -73,6 +73,22 @@ npm install
 npm run dev          # http://localhost:4321
 ```
 
+### Tests
+
+```sh
+npm run test:e2e          # builds, serves with astro preview, runs the suite
+npm run test:e2e:prod     # the same suite against https://susnik.dev
+```
+
+Playwright, against the built site rather than the dev server — the dev toolbar
+adds headings and focusable elements of its own, and a 404 has to come back
+with a real 404 status. It covers the setlist, the blood and 666, the long
+press on a phone and the gestures that must *not* trigger it, the drone and the
+sting, focus rings and contrast in both themes, the terminal's keyboard, resize
+corners, and the no-signal page. Entry counts are read from the collection, so
+adding or cutting a project does not break it. CI runs it on every pull
+request.
+
 Astro and Tailwind, with React only on the terminal page. The six theme colours
 are CSS variables that `tailwind.config.cjs` points at, so `666` repaints the
 whole site by swapping six values rather than filtering it — a filter turned the

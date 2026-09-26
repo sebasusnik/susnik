@@ -25,3 +25,8 @@ pnpm-debug.log*
 
 # vercel adapter output
 .vercel/
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
