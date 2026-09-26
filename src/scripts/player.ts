@@ -74,6 +74,11 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
     frame = requestAnimationFrame(loop);
   };
 
+  // Drawn at zero before anything plays, and redrawn if the pixel ratio
+  // changes, when the window moves to another screen.
+  paint();
+  window.addEventListener('resize', () => audio.paused && paint());
+
   const to = (t: number) => {
     audio.currentTime = Math.max(0, Math.min(duration, t));
     paint();
