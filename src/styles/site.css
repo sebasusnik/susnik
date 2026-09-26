@@ -23,6 +23,7 @@
        themes: 3:1 on black needs a luminance above .175 and 3:1 on white needs
        one below it. */
     --focus: #ff2d2d;   /* 5.67:1 on black */
+    --wave: #8b0000;    /* what has played, in the player */
   }
 
   html.inverted {
@@ -34,6 +35,7 @@
     --line: #e6e6e6;
     --line-strong: #d9d9d9;
     --focus: #8b0000;   /* 10.01:1 on white — the blood red works here */
+    --wave: #d90000;    /* the dark red goes brown on white; fresh blood does not */
   }
 
   /* One ring for everything focusable, so nothing falls back to the browser's

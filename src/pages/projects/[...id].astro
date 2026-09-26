@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
+import Player from '../../components/Player.astro';
 import { dateLabel, tag } from '../../lib/entries';
 
 // Only entries with something to say get a page. The rest link straight out.
@@ -29,6 +30,8 @@ const { kind, dead, status } = tag(entry);
     <p class="mt-2.5 text-[11px] uppercase tracking-[.2em] text-mute">
       {dateLabel(entry)} · {dead ? <s class="text-faint decoration-blood">{kind}</s> : kind}{status && <> · {status}</>}
     </p>
+
+    {entry.data.track && <Player {...entry.data.track} />}
 
     <div class="prose mt-10 max-w-[62ch] text-dim"><Content /></div>
 

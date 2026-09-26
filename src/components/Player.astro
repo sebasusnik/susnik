@@ -1,0 +1,105 @@
+---
+import { readFileSync } from 'node:fs';
+
+/**
+ * One track, one button. The loudness curve comes from the JSON next to the
+ * MP3, so it is drawn at build time and nothing is fetched until play is
+ * pressed. What has played turns blood red, and a line walks across it.
+ */
+interface Props { src: string; title: string; class?: string }
+const { src, title, class: className = 'mt-10' } = Astro.props;
+
+const { duration, shape } = JSON.parse(
+  readFileSync(`public/audio/${src}.json`, 'utf8'),
+) as { duration: number; shape: number[] };
+
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+// The curve in a 1000×100 box, stretched to fit. Catmull-Rom through the
+// points, written out as cubic Béziers, so it reads as one line and not as
+// a hundred and twenty segments.
+const W = 1000;
+const H = 100;
+const pts = shape.map((v, i) => [(i / (shape.length - 1)) * W, H - 4 - v * (H - 12)]);
+const at = (i: number) => pts[Math.max(0, Math.min(pts.length - 1, i))];
+const f = (n: number) => n.toFixed(1);
+let line = `M${f(pts[0][0])},${f(pts[0][1])}`;
+for (let i = 0; i < pts.length - 1; i++) {
+  const [p0, p1, p2, p3] = [at(i - 1), at(i), at(i + 1), at(i + 2)];
+  const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+  const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+  line += `C${f(c1[0])},${f(c1[1])} ${f(c2[0])},${f(c2[1])} ${f(p2[0])},${f(p2[1])}`;
+}
+const area = `${line}L${W},${H}L0,${H}Z`;
+const clip = `played-${src}`;
+---
+<figure class:list={['player flex items-center gap-4', className]} data-duration={duration}>
+  <audio src={`/audio/${src}.mp3`} preload="none"></audio>
+
+  <button
+    type="button"
+    data-play
+    aria-label={`Play ${title}`}
+    class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-line-strong text-dim transition-colors
+           hover:bg-[#333] hover:text-fg inverted:hover:bg-[#c8c8c8]"
+  >
+    <svg data-icon="play" viewBox="0 0 16 16" class="ml-0.5 h-5 w-5" aria-hidden="true">
+      <path d="M3 1.5v13l11-6.5z" fill="currentColor" />
+    </svg>
+    <svg data-icon="pause" viewBox="0 0 16 16" class="h-5 w-5" aria-hidden="true" hidden>
+      <path d="M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z" fill="currentColor" />
+    </svg>
+  </button>
+
+  <div class="min-w-0 flex-1">
+    <div class="flex items-baseline gap-4 text-[11px] uppercase leading-[18px] tracking-[.2em] text-mute">
+      <span class="min-w-0 flex-1 truncate">{title}</span>
+      <span class="shrink-0 tabular-nums"><span data-now>0:00</span> / {clock(duration)}</span>
+    </div>
+
+    <div
+      data-seek
+      role="slider"
+      tabindex="0"
+      aria-label="Seek"
+      aria-valuemin="0"
+      aria-valuemax={Math.round(duration)}
+      aria-valuenow="0"
+      aria-valuetext={`0:00 of ${clock(duration)}`}
+      class="relative mt-2 h-[30px] cursor-pointer"
+    >
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        class="absolute inset-0 h-full w-full"
+        aria-hidden="true"
+      >
+        <defs>
+          <clipPath id={clip}><rect data-clip width="0" height={H} /></clipPath>
+        </defs>
+        <path d={area} class="fill-line-strong" fill-opacity=".7" />
+        <path d={line} fill="none" stroke="var(--faint)" stroke-width="1" vector-effect="non-scaling-stroke" />
+        <g clip-path={`url(#${clip})`}>
+          <path d={area} fill="var(--wave)" fill-opacity=".38" />
+          <path d={line} fill="none" stroke="var(--wave)" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+        </g>
+      </svg>
+      <!-- The playhead is a text caret, an I-beam: a stem with a tick either
+           side at each end, and one screen pixel of nothing where they would
+           meet. One pixel is less than one CSS pixel on most screens, and
+           separate boxes round it apart, so the script draws the caret as one
+           SVG in screen pixels. -->
+      <svg
+        data-head
+        width="0"
+        height="0"
+        class="pointer-events-none absolute -top-1 left-0 overflow-visible text-fg opacity-40"
+        aria-hidden="true"
+      ></svg>
+    </div>
+  </div>
+</figure>
+
+<script>
+  import '../scripts/player.ts';
+</script>
