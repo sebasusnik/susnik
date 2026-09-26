@@ -1,3 +1,11 @@
 # The end-to-end suite builds the site and takes about half a minute, which is
 # a lot for every commit and nothing for a push.
-npm run test:e2e
+#
+# Git lists each ref being pushed on stdin. A push that only deletes branches
+# sends nothing to test, so it skips the suite.
+zero=0000000000000000000000000000000000000000
+while read -r _local_ref local_sha _remote_ref _remote_sha; do
+  if [ "$local_sha" != "$zero" ]; then
+    exec npm run test:e2e
+  fi
+done
