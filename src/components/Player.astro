@@ -41,7 +41,7 @@ const clip = `played-${src}`;
     data-play
     aria-label={`Play ${title}`}
     class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-line-strong text-dim transition-colors
-           hover:text-fg"
+           hover:bg-[#333] hover:text-fg inverted:hover:bg-[#c8c8c8]"
   >
     <svg data-icon="play" viewBox="0 0 16 16" class="ml-0.5 h-5 w-5" aria-hidden="true">
       <path d="M3 1.5v13l11-6.5z" fill="currentColor" />
@@ -84,7 +84,15 @@ const clip = `played-${src}`;
           <path d={line} fill="none" stroke="#8b0000" stroke-width="1.5" vector-effect="non-scaling-stroke" />
         </g>
       </svg>
-      <span data-head class="pointer-events-none absolute -inset-y-1 left-0 w-px bg-fg"></span>
+      <!-- The playhead is a text caret, an I-beam: a stem with a tick either
+           side at each end, and nothing where they would meet. -->
+      <span data-head class="pointer-events-none absolute -inset-y-1 left-0 w-px opacity-40" aria-hidden="true">
+        <span class="absolute inset-x-0 inset-y-[2px] bg-fg"></span>
+        <span class="absolute right-[2px] top-0 h-px w-[3px] bg-fg"></span>
+        <span class="absolute left-[2px] top-0 h-px w-[3px] bg-fg"></span>
+        <span class="absolute bottom-0 right-[2px] h-px w-[3px] bg-fg"></span>
+        <span class="absolute bottom-0 left-[2px] h-px w-[3px] bg-fg"></span>
+      </span>
     </div>
   </div>
 </figure>

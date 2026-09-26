@@ -15,15 +15,15 @@ test('the waveform is there before the track is, and the track waits for play', 
   await page.waitForTimeout(1000);
   expect(fetched.some((u) => MP3.test(u))).toBe(false);
 
-  await page.getByRole('button', { name: 'Play Belle Isle After Midnight' }).click();
-  await expect(page.getByRole('button', { name: 'Pause Belle Isle After Midnight' })).toBeVisible();
+  await page.getByRole('button', { name: 'Play After Midnight' }).click();
+  await expect(page.getByRole('button', { name: 'Pause After Midnight' })).toBeVisible();
   await expect
     .poll(() => page.locator('audio').evaluate((a: HTMLAudioElement) => a.currentTime), { timeout: 8000 })
     .toBeGreaterThan(0.3);
   expect(fetched.some((u) => MP3.test(u))).toBe(true);
 
-  await page.getByRole('button', { name: 'Pause Belle Isle After Midnight' }).click();
-  await expect(page.getByRole('button', { name: 'Play Belle Isle After Midnight' })).toBeVisible();
+  await page.getByRole('button', { name: 'Pause After Midnight' }).click();
+  await expect(page.getByRole('button', { name: 'Play After Midnight' })).toBeVisible();
 });
 
 test('the waveform seeks by click and by keyboard', async ({ page }) => {

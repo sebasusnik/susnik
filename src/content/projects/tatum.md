@@ -9,5 +9,5 @@ summary: >-
   changes on the next bar; plug in a MIDI controller and the knobs move it live.
 track:
   src: tatum-detroit
-  title: Belle Isle After Midnight
+  title: After Midnight
 ---
