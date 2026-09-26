@@ -1,9 +1,20 @@
-<!--
-  A base to rewrite in my own words, not something to publish as it is.
-  Once it is mine, it goes under the frontmatter of
-  src/content/projects/tatum.md, and the row gets its own page again.
-  Nothing in drafts/ is built.
--->
+---
+# A base to rewrite in my own words, not something to publish as it is.
+# Once it is mine, this file replaces src/content/projects/tatum.md as it is,
+# and the row gets its own page again. These comments can stay.
+# Nothing in drafts/ is built.
+title: Tatum
+date: 2026-09-01
+dateLabel: ∞
+kind: sound
+status: alive
+summary: >-
+  A synth engine in Rust that plays songs written as text. Edit the file and it
+  changes on the next bar; plug in a MIDI controller and the knobs move it live.
+track:
+  src: tatum-detroit
+  title: Belle Isle After Midnight
+---
 
 It was called synth-core, and it was on this list as undead: it had grown
 faster than I could hold it, and I had stopped. It came back smaller, stricter
