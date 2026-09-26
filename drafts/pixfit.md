@@ -4,15 +4,15 @@
 # and the row gets its own page again. These comments can stay.
 # Nothing in drafts/ is built.
 title: PixFit
-date: 2024-07-01
-dateLabel: 2024 —
+date: 2026-03-01
+dateLabel: 2026 —
 kind: code
 featured: true
 status: alive
 summary: >-
   One finished ad in, every format the brand needs out. A generative engine when
   there's nothing to go on; a deterministic, editable one when the brand is set up.
-stack: SST v3 · tRPC · SQS · Fargate · Aurora · Gemini · fal.ai · Bedrock — @ Winclap
+stack: SST v3 · tRPC · SQS · Fargate · Aurora · OpenAI · Gemini · Seedream · Seedance · fal.ai · Bedrock — @ Winclap
 ---
 
 A campaign gets made once and then has to exist in eighteen shapes. Someone
