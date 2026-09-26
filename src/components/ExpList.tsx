@@ -17,14 +17,16 @@ export const experiences: Experience[] = [
     role: 'Software Engineer',
     from: new Date(2024, 6, 1),
     to: 'present',
-    description: 'Part of the engineering team, building solutions that enable growth transformation for our clients.',
+    description:
+      'Part of the engineering team, building solutions that enable growth transformation for our clients.',
   },
   {
     company: 'Sinapsis',
     role: 'Cloud Engineer',
     from: new Date(2022, 1, 1),
     to: new Date(2024, 6, 1),
-    description: 'Built proof-of-concepts and enhanced existing client products, delivering tangible value and cloud-native solutions.',
+    description:
+      'Built proof-of-concepts and enhanced existing client products, delivering tangible value and cloud-native solutions.',
   },
 ];
 
@@ -53,7 +55,8 @@ const ExpList: React.FC<Props> = ({ animate = false, onFinished, onLineRendered 
           </div>
           <div className="text-gray-400 flex flex-wrap gap-x-2">
             <span className="text-amber-200">
-              {format(exp.from, 'LLL yyyy')} – {exp.to === 'present' ? 'Present' : format(exp.to, 'LLL yyyy')}
+              {format(exp.from, 'LLL yyyy')} –{' '}
+              {exp.to === 'present' ? 'Present' : format(exp.to, 'LLL yyyy')}
             </span>
             <span>·</span>
             <span>{formatDuration(exp)}</span>

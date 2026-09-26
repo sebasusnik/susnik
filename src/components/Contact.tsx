@@ -10,11 +10,7 @@ interface Props {
 const Contact: React.FC<Props> = ({ animate = false, onFinished, onLineRendered }) => {
   const lines: React.ReactNode[] = [
     'You can reach me at:',
-    <a
-      href="mailto:sebasusnik@gmail.com"
-      className="text-cyan-400 underline"
-      key="email"
-    >
+    <a href="mailto:sebasusnik@gmail.com" className="text-cyan-400 underline" key="email">
       sebasusnik@gmail.com
     </a>,
   ];
@@ -31,10 +27,7 @@ const Contact: React.FC<Props> = ({ animate = false, onFinished, onLineRendered 
       <div className="text-cyan-400 mb-2">Running: "contact"...</div>
       <div className="space-y-1 pl-2">
         {rendered.map((line, idx) => (
-          <p
-            key={idx}
-            className={idx === 0 ? 'text-white' : 'text-gray-400'}
-          >
+          <p key={idx} className={idx === 0 ? 'text-white' : 'text-gray-400'}>
             {line}
           </p>
         ))}

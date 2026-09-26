@@ -65,11 +65,15 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
       <form
         className="flex items-center whitespace-pre relative"
         onSubmit={busy ? (e) => e.preventDefault() : onSubmit}
-        onPointerDown={isMobile ? undefined : () => {
-          if (!busy && introDone && Date.now() >= focusEnableAt.current) {
-            focusVisibleInput();
-          }
-        }}
+        onPointerDown={
+          isMobile
+            ? undefined
+            : () => {
+                if (!busy && introDone && Date.now() >= focusEnableAt.current) {
+                  focusVisibleInput();
+                }
+              }
+        }
       >
         <div className={busy ? 'invisible' : 'visible transition-all duration-200'}>
           <PromptLine input={input} live valid={validCommands} />
@@ -77,9 +81,10 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
         <input
           data-terminal-input
           aria-label="Terminal command input"
-          className={isMobile 
-            ? "absolute left-0 bottom-0 w-full h-full opacity-0 focus:outline-none"
-            : "absolute left-0 bottom-0 w-px h-px opacity-0 pointer-events-none focus:outline-none"
+          className={
+            isMobile
+              ? 'absolute left-0 bottom-0 w-full h-full opacity-0 focus:outline-none'
+              : 'absolute left-0 bottom-0 w-px h-px opacity-0 pointer-events-none focus:outline-none'
           }
           value={input}
           onChange={busy ? () => {} : (e) => setInput(e.target.value)}
@@ -97,4 +102,4 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
   </div>
 );
 
-export default TerminalCore; 
+export default TerminalCore;

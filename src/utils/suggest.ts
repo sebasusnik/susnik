@@ -14,11 +14,7 @@ const distance = (a: string, b: string) => {
 
     for (let j = 1; j <= b.length; j += 1) {
       const substitution = a[i - 1] === b[j - 1] ? 0 : 1;
-      current[j] = Math.min(
-        previous[j] + 1,
-        current[j - 1] + 1,
-        previous[j - 1] + substitution
-      );
+      current[j] = Math.min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + substitution);
 
       if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
         current[j] = Math.min(current[j], beforePrevious[j - 2] + 1);

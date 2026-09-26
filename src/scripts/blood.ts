@@ -12,12 +12,44 @@
  *    the spikes that now point down.
  */
 
-interface Tip { x: number; y: number }
-interface RawTip extends Tip { fill: number }
-interface Hanging { tip: Tip; r: number; stretch: number; age: number; grow: number }
-interface Falling { x: number; y: number; vy: number; r: number; tip: Tip; age: number }
-interface Satellite { x: number; y: number; vx: number; vy: number; r: number }
-interface Puddle { x: number; w0: number; w: number; wt: number; h: number; age: number; life: number }
+interface Tip {
+  x: number;
+  y: number;
+}
+interface RawTip extends Tip {
+  fill: number;
+}
+interface Hanging {
+  tip: Tip;
+  r: number;
+  stretch: number;
+  age: number;
+  grow: number;
+}
+interface Falling {
+  x: number;
+  y: number;
+  vy: number;
+  r: number;
+  tip: Tip;
+  age: number;
+}
+interface Satellite {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  r: number;
+}
+interface Puddle {
+  x: number;
+  w0: number;
+  w: number;
+  wt: number;
+  h: number;
+  age: number;
+  life: number;
+}
 
 export interface Bleed {
   /** 666: a clean cut. Whatever hung, fell or stained belongs to the old world. */
@@ -44,7 +76,7 @@ export function createBleed(
   logo: HTMLElement,
   img: HTMLImageElement,
   blood: HTMLCanvasElement,
-  gloss: HTMLCanvasElement
+  gloss: HTMLCanvasElement,
 ): Bleed {
   const bc = blood.getContext('2d')!;
   const gc = gloss.getContext('2d')!;
@@ -58,18 +90,28 @@ export function createBleed(
   let falling: Falling[] = [];
   let satellites: Satellite[] = [];
   let puddles: Puddle[] = [];
-  let scale = 1, W = 0, H = 0, floorY = 0;
-  let running = false, last = 0, t = 0;
+  let scale = 1,
+    W = 0,
+    H = 0,
+    floorY = 0;
+  let running = false,
+    last = 0,
+    t = 0;
 
   const tips = () => (inverted() ? tipsFlipped : tipsUpright);
 
   // ---------------------------------------------------------------- tips --
   function findTips(flip: boolean): RawTip[] {
-    const w = img.naturalWidth, h = img.naturalHeight;
+    const w = img.naturalWidth,
+      h = img.naturalHeight;
     const c = document.createElement('canvas');
-    c.width = w; c.height = h;
+    c.width = w;
+    c.height = h;
     const x = c.getContext('2d')!;
-    if (flip) { x.translate(w, h); x.rotate(Math.PI); }
+    if (flip) {
+      x.translate(w, h);
+      x.rotate(Math.PI);
+    }
     x.drawImage(img, 0, 0);
     const data = x.getImageData(0, 0, w, h).data;
 
@@ -85,29 +127,35 @@ export function createBleed(
     for (let py = 1; py <= h; py++) {
       for (let px = 1; px <= w; px++) {
         const a = opaque[(py - 1) * w + (px - 1)];
-        const i = py * W1 + px, up = i - W1, left = i - 1, ul = up - 1;
+        const i = py * W1 + px,
+          up = i - W1,
+          left = i - 1,
+          ul = up - 1;
         S[i] = a + S[up] + S[left] - S[ul];
         SX[i] = a * (px - 1) + SX[up] + SX[left] - SX[ul];
         SY[i] = a * (py - 1) + SY[up] + SY[left] - SY[ul];
       }
     }
     const box = (T: Int32Array | Float64Array, px: number, py: number, R: number) => {
-      const x0 = Math.max(0, px - R), y0 = Math.max(0, py - R);
-      const x1 = Math.min(w, px + R + 1), y1 = Math.min(h, py + R + 1);
+      const x0 = Math.max(0, px - R),
+        y0 = Math.max(0, py - R);
+      const x1 = Math.min(w, px + R + 1),
+        y1 = Math.min(h, py + R + 1);
       return T[y1 * W1 + x1] - T[y0 * W1 + x1] - T[y1 * W1 + x0] + T[y0 * W1 + x0];
     };
 
-    const R = 7, cells = (2 * R + 1) ** 2;
+    const R = 7,
+      cells = (2 * R + 1) ** 2;
     const found: RawTip[] = [];
     for (let py = 1; py < h - 1; py++) {
       for (let px = 1; px < w - 1; px++) {
-        if (!opaque[py * w + px] || opaque[(py + 1) * w + px]) continue;   // bottom edge
+        if (!opaque[py * w + px] || opaque[(py + 1) * w + px]) continue; // bottom edge
         const n = box(S, px, py, R);
         const fill = n / cells;
-        if (fill >= 0.24) continue;                                        // too much material: a belly
+        if (fill >= 0.24) continue; // too much material: a belly
         const dx = box(SX, px, py, R) / n - px;
         const dy = box(SY, px, py, R) / n - py;
-        if (dy > -2.2 || Math.abs(dx) > 1.2 * -dy) continue;               // must point down, within ~50°
+        if (dy > -2.2 || Math.abs(dx) > 1.2 * -dy) continue; // must point down, within ~50°
         found.push({ x: px, y: py, fill });
       }
     }
@@ -116,7 +164,10 @@ export function createBleed(
     for (const c of found.sort((a, b) => b.y - a.y)) {
       if (!picked.some((u) => Math.hypot(u.x - c.x, u.y - c.y) < 30)) picked.push(c);
     }
-    return picked.sort((a, b) => a.fill - b.fill).slice(0, 14).sort((a, b) => a.x - b.x);
+    return picked
+      .sort((a, b) => a.fill - b.fill)
+      .slice(0, 14)
+      .sort((a, b) => a.x - b.x);
   }
 
   function layout() {
@@ -126,12 +177,12 @@ export function createBleed(
     scale = r.width / img.naturalWidth;
     W = Math.round(r.width);
     H = Math.round(hr.bottom - r.top);
-    floorY = H - 26;                       // the floor is the bottom of the hero, never the setlist
+    floorY = H - 26; // the floor is the bottom of the hero, never the setlist
 
     for (const cv of [blood, gloss]) {
-      cv.width = W; cv.height = H;
-      cv.style.cssText =
-        `left:${Math.round(r.left - hr.left)}px;top:${Math.round(r.top - hr.top)}px;width:${W}px;height:${H}px`;
+      cv.width = W;
+      cv.height = H;
+      cv.style.cssText = `left:${Math.round(r.left - hr.left)}px;top:${Math.round(r.top - hr.top)}px;width:${W}px;height:${H}px`;
     }
     if (!rawUpright.length) rawUpright = findTips(false);
     rawFlipped ||= findTips(true);
@@ -157,14 +208,20 @@ export function createBleed(
 
   function splat(x: number, r: number, scatter: boolean) {
     puddles.push({
-      x, w0: r * 1.1, w: r * 1.1, wt: r * (2.6 + Math.random() * 1.2),
-      h: r * 0.5, age: 0, life: 25 + Math.random() * 25,
+      x,
+      w0: r * 1.1,
+      w: r * 1.1,
+      wt: r * (2.6 + Math.random() * 1.2),
+      h: r * 0.5,
+      age: 0,
+      life: 25 + Math.random() * 25,
     });
     if (!scatter) return;
     const n = 2 + Math.floor(Math.random() * 3);
     for (let i = 0; i < n; i++) {
       satellites.push({
-        x, y: floorY - 1,
+        x,
+        y: floorY - 1,
         vx: (Math.random() < 0.5 ? -1 : 1) * (30 + Math.random() * 90),
         vy: -(50 + Math.random() * 110),
         r: 0.9 + Math.random() * 0.8,
@@ -192,30 +249,48 @@ export function createBleed(
       h.age += dt;
       const k = Math.min(1, h.age / h.grow);
       h.r = 1.6 + 4.4 * k;
-      h.stretch = 16 * k * k;                      // the neck gives under the weight
+      h.stretch = 16 * k * k; // the neck gives under the weight
       if (k >= 1) {
-        falling.push({ x: h.tip.x, y: h.tip.y + h.stretch + h.r, vy: 12, r: h.r, tip: h.tip, age: 0 });
+        falling.push({
+          x: h.tip.x,
+          y: h.tip.y + h.stretch + h.r,
+          vy: 12,
+          r: h.r,
+          tip: h.tip,
+          age: 0,
+        });
         hanging.splice(i, 1);
       }
     }
 
     for (let i = falling.length - 1; i >= 0; i--) {
       const f = falling[i];
-      f.vy += GRAVITY * dt; f.y += f.vy * dt; f.age += dt;
-      if (f.y + f.r * 0.6 >= floorY) { splat(f.x, f.r, true); falling.splice(i, 1); }
+      f.vy += GRAVITY * dt;
+      f.y += f.vy * dt;
+      f.age += dt;
+      if (f.y + f.r * 0.6 >= floorY) {
+        splat(f.x, f.r, true);
+        falling.splice(i, 1);
+      }
     }
 
     for (let i = satellites.length - 1; i >= 0; i--) {
       const s = satellites[i];
-      s.vy += GRAVITY * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.vx *= 1 - dt * 0.6;
-      if (s.y >= floorY && s.vy > 0) { splat(s.x, s.r * 1.3, false); satellites.splice(i, 1); }
+      s.vy += GRAVITY * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.vx *= 1 - dt * 0.6;
+      if (s.y >= floorY && s.vy > 0) {
+        splat(s.x, s.r * 1.3, false);
+        satellites.splice(i, 1);
+      }
     }
 
     for (let i = puddles.length - 1; i >= 0; i--) {
       const p = puddles[i];
       p.age += dt;
       const k = Math.min(1, p.age / 0.28);
-      const eased = 1 - (1 - k) ** 3;              // opens fast, then settles
+      const eased = 1 - (1 - k) ** 3; // opens fast, then settles
       p.w = p.w0 + (p.wt - p.w0) * eased;
       p.h *= 1 - dt * 0.15;
       if (p.age > p.life + 10) puddles.splice(i, 1);
@@ -224,7 +299,9 @@ export function createBleed(
 
   // -------------------------------------------------------------- render --
   const dot = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number) => {
-    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
   };
 
   function render() {
@@ -232,7 +309,8 @@ export function createBleed(
     gc.clearRect(0, 0, W, H);
     bc.fillStyle = RED;
 
-    for (const p of puddles) {                     // they dry: fade over the last 10s
+    for (const p of puddles) {
+      // they dry: fade over the last 10s
       bc.globalAlpha = p.age > p.life ? Math.max(0, 1 - (p.age - p.life) / 10) : 1;
       bc.beginPath();
       bc.ellipse(p.x, floorY, p.w, Math.max(0.6, p.h), 0, 0, Math.PI * 2);
@@ -263,8 +341,12 @@ export function createBleed(
         const q = i / steps;
         dot(bc, f.x, f.y - tail * q, f.r * (0.82 * (1 - q) ** 1.4 + 0.1));
       }
-      const stretch = Math.min(1.22, 1 + f.vy / 1100);   // a real drop barely deforms
-      bc.save(); bc.translate(f.x, f.y); bc.scale(1, stretch); dot(bc, 0, 0, f.r); bc.restore();
+      const stretch = Math.min(1.22, 1 + f.vy / 1100); // a real drop barely deforms
+      bc.save();
+      bc.translate(f.x, f.y);
+      bc.scale(1, stretch);
+      dot(bc, 0, 0, f.r);
+      bc.restore();
       gc.fillStyle = SHINE;
       dot(gc, f.x - f.r * 0.3, f.y - f.r * 0.45, f.r * 0.25);
 
@@ -274,7 +356,10 @@ export function createBleed(
         const k = f.age / LIFE;
         gc.globalAlpha = 1 - k * 0.6;
         gc.lineWidth = 1.5 - k * 0.9;
-        gc.beginPath(); gc.moveTo(f.tip.x, f.tip.y); gc.lineTo(f.x, f.y - tail); gc.stroke();
+        gc.beginPath();
+        gc.moveTo(f.tip.x, f.tip.y);
+        gc.lineTo(f.x, f.y - tail);
+        gc.stroke();
         gc.globalAlpha = 1;
       }
     }
@@ -287,13 +372,24 @@ export function createBleed(
     if (!running) return;
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
-    update(dt); render();
+    update(dt);
+    render();
     requestAnimationFrame(frame);
   }
-  const resume = () => { if (running) return; running = true; last = performance.now(); requestAnimationFrame(frame); };
-  const pause = () => { running = false; };
+  const resume = () => {
+    if (running) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(frame);
+  };
+  const pause = () => {
+    running = false;
+  };
 
-  const init = () => { layout(); resume(); };
+  const init = () => {
+    layout();
+    resume();
+  };
   if (img.complete && img.naturalWidth) init();
   else img.addEventListener('load', init);
   window.addEventListener('resize', layout);
@@ -310,7 +406,10 @@ export function createBleed(
 
   return {
     reset() {
-      hanging = []; falling = []; satellites = []; puddles = [];
+      hanging = [];
+      falling = [];
+      satellites = [];
+      puddles = [];
       nextDropAt = t + (inverted() ? 0.5 : 3 + Math.random() * 5);
       render();
     },
@@ -325,11 +424,19 @@ export function createBleed(
     },
     tips,
     state: () => ({
-      t: +t.toFixed(1), nextDropAt: +nextDropAt.toFixed(1),
-      hanging: hanging.length, falling: falling.length, puddles: puddles.length, running,
+      t: +t.toFixed(1),
+      nextDropAt: +nextDropAt.toFixed(1),
+      hanging: hanging.length,
+      falling: falling.length,
+      puddles: puddles.length,
+      running,
     }),
-    pause, resume,
-    warp(seconds) { for (let i = 0; i < seconds * 60; i++) update(1 / 60); render(); },
+    pause,
+    resume,
+    warp(seconds) {
+      for (let i = 0; i < seconds * 60; i++) update(1 / 60);
+      render();
+    },
     floor: () => floorY,
   };
 }

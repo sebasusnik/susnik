@@ -4,24 +4,25 @@ import useStaggeredReveal from '../hooks/useStaggeredReveal';
 import useTyping from '../hooks/useTyping';
 import TypedText from './TypedText';
 
-const introLines = [
-  'I am Sebastian Susnik',
-  'and I like to build stuff...'
-];
+const introLines = ['I am Sebastian Susnik', 'and I like to build stuff...'];
 
 const summaryLines: Array<React.ReactNode> = [
-  (
-    <>
-      👋 Hi, I'm a <span className="text-cyan-400">full-stack developer</span> who loves transforming ideas into reliable, elegant software.
-    </>
-  ),
+  <>
+    👋 Hi, I'm a <span className="text-cyan-400">full-stack developer</span> who loves transforming
+    ideas into reliable, elegant software.
+  </>,
   '• Focus : TypeScript, React, Node, and cloud-native architectures.',
   '• Philosophy : Clean code, meaningful UX, and shipping fast without breaking things.',
   '• Currently : Building side-projects, contributing to open source and always learning.',
-  ' '
+  ' ',
 ];
 
-const SummaryAnimated: React.FC<{ lines: Array<React.ReactNode>; animate?: boolean; onFinished?: () => void; onLineRendered?: () => void }> = ({ lines, animate = false, onFinished, onLineRendered }) => {
+const SummaryAnimated: React.FC<{
+  lines: Array<React.ReactNode>;
+  animate?: boolean;
+  onFinished?: () => void;
+  onLineRendered?: () => void;
+}> = ({ lines, animate = false, onFinished, onLineRendered }) => {
   const rendered = useStaggeredReveal(lines, {
     animate,
     onFinished,
@@ -46,7 +47,12 @@ interface Props {
   onLineRendered?: () => void;
 }
 
-const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinished, onLineRendered }) => {
+const About: React.FC<Props> = ({
+  animate = false,
+  showSummary = false,
+  onFinished,
+  onLineRendered,
+}) => {
   const [step, setStep] = useState(0); // 0 typing first line, 1 typing second, 2 done typing
 
   const next = () => setStep((s) => s + 1);
@@ -91,7 +97,12 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
   );
 
   const renderSummary = (
-    <SummaryAnimated lines={summaryLines} animate={animate} onFinished={() => onFinished?.()} onLineRendered={onLineRendered} />
+    <SummaryAnimated
+      lines={summaryLines}
+      animate={animate}
+      onFinished={() => onFinished?.()}
+      onLineRendered={onLineRendered}
+    />
   );
 
   return (
@@ -102,4 +113,4 @@ const About: React.FC<Props> = ({ animate = false, showSummary = false, onFinish
   );
 };
 
-export default About; 
+export default About;

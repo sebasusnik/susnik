@@ -4,7 +4,9 @@ import { expect, test } from '@playwright/test';
 const PAGE = '/';
 const MP3 = /\/audio\/tatum-detroit\.mp3$/;
 
-test('the waveform is there before the track is, and the track waits for play', async ({ page }) => {
+test('the waveform is there before the track is, and the track waits for play', async ({
+  page,
+}) => {
   const fetched: string[] = [];
   page.on('request', (r) => fetched.push(r.url()));
   await page.goto(PAGE);
@@ -18,7 +20,9 @@ test('the waveform is there before the track is, and the track waits for play', 
   await page.getByRole('button', { name: 'Play After Midnight' }).click();
   await expect(page.getByRole('button', { name: 'Pause After Midnight' })).toBeVisible();
   await expect
-    .poll(() => page.locator('audio').evaluate((a: HTMLAudioElement) => a.currentTime), { timeout: 8000 })
+    .poll(() => page.locator('audio').evaluate((a: HTMLAudioElement) => a.currentTime), {
+      timeout: 8000,
+    })
     .toBeGreaterThan(0.3);
   expect(fetched.some((u) => MP3.test(u))).toBe(true);
 

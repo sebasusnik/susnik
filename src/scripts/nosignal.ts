@@ -21,7 +21,8 @@ const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 if (canvas) {
   const ctx = canvas.getContext('2d', { alpha: false })!;
   const SCALE = 3;
-  let w = 0, h = 0;
+  let w = 0,
+    h = 0;
   let image: ImageData | null = null;
   /** The logo's alpha, resampled onto the noise grid. */
   let ghost: Uint8Array | null = null;
@@ -41,11 +42,12 @@ if (canvas) {
 
   function bakeGhost() {
     const scratch = document.createElement('canvas');
-    scratch.width = w; scratch.height = h;
+    scratch.width = w;
+    scratch.height = h;
     const s = scratch.getContext('2d')!;
     // Same size and place the real logo sits in the hero, so the shape that
     // surfaces is the one people already know.
-    const drawW = Math.min(w * 0.62, (520 / SCALE));
+    const drawW = Math.min(w * 0.62, 520 / SCALE);
     const drawH = drawW * (logo.naturalHeight / logo.naturalWidth);
     s.drawImage(logo, (w - drawW) / 2, (h - drawH) / 2, drawW, drawH);
     const a = s.getImageData(0, 0, w, h).data;
@@ -54,12 +56,14 @@ if (canvas) {
     ghost = out;
   }
 
-  logo.addEventListener('load', () => { if (w) bakeGhost(); });
+  logo.addEventListener('load', () => {
+    if (w) bakeGhost();
+  });
   sizeUp();
   window.addEventListener('resize', sizeUp);
 
-  let tear = Math.random() * h;      // the band where vertical hold gives out
-  let surfacing = 0;                 // 0 to 1, how far the signal has come back
+  let tear = Math.random() * h; // the band where vertical hold gives out
+  let surfacing = 0; // 0 to 1, how far the signal has come back
   let nextSurface = 5 + Math.random() * 6;
   let t = 0;
   let last = performance.now();
@@ -73,13 +77,13 @@ if (canvas) {
       surfacing = 1;
       nextSurface = t + 8 + Math.random() * 8;
     }
-    surfacing = Math.max(0, surfacing - dt * 2.2);   // about half a second
+    surfacing = Math.max(0, surfacing - dt * 2.2); // about half a second
 
     tear -= dt * 22;
     if (tear < -20) tear = h + 20;
 
     const d = image!.data;
-    const bias = ghost ? surfacing * surfacing * 190 : 0;   // eases in, snaps out
+    const bias = ghost ? surfacing * surfacing * 190 : 0; // eases in, snaps out
 
     for (let y = 0; y < h; y++) {
       // Scanlines, plus a brighter band around the tear.
@@ -101,7 +105,11 @@ if (canvas) {
   }
 
   // For the tests, and for anyone who wants to see it without waiting.
-  Object.assign(window, { __surface: () => { surfacing = 1; } });
+  Object.assign(window, {
+    __surface: () => {
+      surfacing = 1;
+    },
+  });
 
   if (calm) {
     // One still frame of snow. No movement, no surfacing.

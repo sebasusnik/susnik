@@ -1,0 +1,5 @@
+# Commits that only reformatted. GitHub skips these in blame on its own;
+# locally: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: format everything with Biome
+34847ea45309e3420a6451c9519a6b73d16468ca

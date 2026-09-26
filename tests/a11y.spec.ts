@@ -12,7 +12,8 @@ async function rings(page: import('@playwright/test').Page, tabs = 20) {
       const c = getComputedStyle(a);
       return {
         key: a.tagName + (a.textContent || a.getAttribute('aria-label') || '').trim().slice(0, 20),
-        color: c.outlineColor, style: c.outlineStyle,
+        color: c.outlineColor,
+        style: c.outlineStyle,
         bg: getComputedStyle(document.body).backgroundColor,
       };
     });
@@ -55,7 +56,9 @@ test('the quietest text on the page clears AA, in both themes', async ({ page })
     page.evaluate(() => {
       const bg = getComputedStyle(document.body).backgroundColor;
       return [...document.querySelectorAll('p,span,h1,h2,h3,a,button')]
-        .filter((e) => e.textContent!.trim() && !e.children.length && (e as HTMLElement).offsetParent)
+        .filter(
+          (e) => e.textContent!.trim() && !e.children.length && (e as HTMLElement).offsetParent,
+        )
         .map((e) => [getComputedStyle(e).color, bg]);
     });
   for (const [fg, bg] of await worst()) expect(contrast(fg, bg)).toBeGreaterThanOrEqual(4.5);
@@ -72,11 +75,14 @@ test.describe('terminal keyboard', () => {
     expect(keys.length).toBeGreaterThanOrEqual(4);
     for (const s of stops) expect(s.color).toBe('rgb(34, 211, 238)');
     const labels = await page.evaluate(() =>
-      [...document.querySelectorAll('a[aria-label]')].map((a) => a.getAttribute('aria-label')));
+      [...document.querySelectorAll('a[aria-label]')].map((a) => a.getAttribute('aria-label')),
+    );
     expect(labels.join(' ')).toMatch(/LinkedIn/);
   });
 
-  test('Tab still completes when something is typed; Escape releases the prompt', async ({ page }) => {
+  test('Tab still completes when something is typed; Escape releases the prompt', async ({
+    page,
+  }) => {
     const input = await terminalReady(page);
     await input.focus();
     await page.keyboard.type('ski');

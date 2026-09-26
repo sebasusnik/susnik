@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { countAudio, inverted, phone, touch  } from './helpers';
+import { countAudio, inverted, phone, touch } from './helpers';
 
 test.describe('blood', () => {
   test('finds the tips and the first drop hangs within seconds', async ({ page }) => {
@@ -12,7 +12,9 @@ test.describe('blood', () => {
 });
 
 test.describe('666', () => {
-  test('typed, it inverts, bleeds from the flipped tips, and comes back clean', async ({ page }) => {
+  test('typed, it inverts, bleeds from the flipped tips, and comes back clean', async ({
+    page,
+  }) => {
     await page.goto('/');
     await page.waitForTimeout(600);
     await page.keyboard.type('666');
@@ -52,12 +54,17 @@ test.describe('hold the beast', () => {
     await page.goto('/');
     await page.waitForTimeout(1200);
     const box = (await page.locator('.logo').boundingBox())!;
-    const x = box.x + box.width / 2, y = box.y + box.height / 2;
+    const x = box.x + box.width / 2,
+      y = box.y + box.height / 2;
     const t = await touch(page);
     const start = Date.now();
     await t.down(x, y);
     while (Date.now() - start < ms) {
-      if (tremorPx) await t.move(x + (Math.random() - 0.5) * tremorPx * 2, y + (Math.random() - 0.5) * tremorPx * 2);
+      if (tremorPx)
+        await t.move(
+          x + (Math.random() - 0.5) * tremorPx * 2,
+          y + (Math.random() - 0.5) * tremorPx * 2,
+        );
       await page.waitForTimeout(40);
     }
     await t.up();
@@ -110,6 +117,7 @@ test('on a desktop, right-click is never blocked', async ({ page }) => {
       const e = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
       document.querySelector(sel)!.dispatchEvent(e);
       return e.defaultPrevented;
-    }));
+    }),
+  );
   expect(prevented).toEqual([false, false]);
 });

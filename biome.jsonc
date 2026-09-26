@@ -7,9 +7,17 @@
   // the markup is not reported as unused.
   "html": { "experimentalFullSupportEnabled": true },
 
-  // Lint only. The code is hand-aligned in places (the constants in drone.ts,
-  // the one-line resets in blood.ts) and a formatter would undo it.
-  "formatter": { "enabled": false },
+  // One format for everything, checked in CI. A table worth aligning by hand
+  // says so with `biome-ignore format`. .astro files are left out: Biome's
+  // HTML formatter is experimental, and it moves whitespace inside inline
+  // elements, which changes what renders.
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": { "formatter": { "quoteStyle": "single" } },
   "assist": { "enabled": true, "actions": { "source": { "organizeImports": "on" } } },
 
   // @apply and friends; @tailwind is v3's and has to be named.

@@ -34,7 +34,12 @@ interface UseCommandsParams {
   scrollToBottom: () => void;
 }
 
-const useCommands = ({ addElement, clearScreen, resetIntro, scrollToBottom }: UseCommandsParams) => {
+const useCommands = ({
+  addElement,
+  clearScreen,
+  resetIntro,
+  scrollToBottom,
+}: UseCommandsParams) => {
   const [busy, setBusy] = useState(false);
 
   const handleCommand = useCallback(
@@ -60,7 +65,7 @@ const useCommands = ({ addElement, clearScreen, resetIntro, scrollToBottom }: Us
 
       if (Output) {
         addElement(
-          <Output animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />
+          <Output animate onFinished={() => setBusy(false)} onLineRendered={scrollToBottom} />,
         );
         return;
       }
@@ -71,10 +76,10 @@ const useCommands = ({ addElement, clearScreen, resetIntro, scrollToBottom }: Us
           animate
           onFinished={() => setBusy(false)}
           onLineRendered={scrollToBottom}
-        />
+        />,
       );
     },
-    [addElement, clearScreen, resetIntro, scrollToBottom]
+    [addElement, clearScreen, resetIntro, scrollToBottom],
   );
 
   /** Frees the prompt when the visitor interrupts with Ctrl+C. */

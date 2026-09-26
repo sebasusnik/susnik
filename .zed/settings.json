@@ -1,0 +1,11 @@
+// Biome formats and sorts imports on save, the same as CI checks.
+// .astro files are not formatted (see biome.jsonc); if an import there ends
+// up out of order, `npm run lint:fix` sorts it.
+{
+  "formatter": { "language_server": { "name": "biome" } },
+  "code_actions_on_format": { "source.organizeImports.biome": true },
+  "format_on_save": "on",
+  "languages": {
+    "Astro": { "format_on_save": "off" }
+  }
+}

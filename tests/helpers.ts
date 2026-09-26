@@ -25,7 +25,12 @@ export function entries() {
       title: e.text.match(/^title:\s*(.+)$/m)?.[1].trim() ?? e.id,
       kind: e.text.match(/^kind:\s*(\w+)/m)?.[1],
       link: e.text.match(/^link:\s*(\S+)/m)?.[1],
-      hasBody: e.text.split(/^---\s*$/m).slice(2).join('').trim().length > 0,
+      hasBody:
+        e.text
+          .split(/^---\s*$/m)
+          .slice(2)
+          .join('')
+          .trim().length > 0,
       cause: /^cause:/m.test(e.text),
     }));
 }
@@ -44,7 +49,10 @@ export async function terminalReady(page: Page) {
 export async function touch(page: Page) {
   const cdp: CDPSession = await page.context().newCDPSession(page);
   const send = (type: 'touchStart' | 'touchMove' | 'touchEnd', x?: number, y?: number) =>
-    cdp.send('Input.dispatchTouchEvent', { type, touchPoints: x === undefined ? [] : [{ x, y: y! }] });
+    cdp.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints: x === undefined ? [] : [{ x, y: y! }],
+    });
   return {
     down: (x: number, y: number) => send('touchStart', x, y),
     move: (x: number, y: number) => send('touchMove', x, y),
@@ -73,10 +81,14 @@ export const inverted = (page: Page) =>
 /** WCAG relative-luminance contrast between two rgb() strings. */
 export function contrast(a: string, b: string) {
   const lum = (c: string) => {
-    const [r, g, bl] = c.match(/[\d.]+/g)!.slice(0, 3).map(Number).map((v) => {
-      v /= 255;
-      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-    });
+    const [r, g, bl] = c
+      .match(/[\d.]+/g)!
+      .slice(0, 3)
+      .map(Number)
+      .map((v) => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+      });
     return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
   };
   const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);

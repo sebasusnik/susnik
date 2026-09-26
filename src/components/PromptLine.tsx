@@ -18,12 +18,17 @@ interface Props {
 
 const colourCmd = (cmd: string, valid?: string[]) => {
   const isValid = valid?.includes(cmd.toLowerCase());
-  return (
-    <span className={isValid ? 'text-green-400' : 'text-red-500'}>{cmd}</span>
-  );
+  return <span className={isValid ? 'text-green-400' : 'text-red-500'}>{cmd}</span>;
 };
 
-const PromptLine: React.FC<Props> = ({ input, live = false, html, children, className, valid = [] }) => {
+const PromptLine: React.FC<Props> = ({
+  input,
+  live = false,
+  html,
+  children,
+  className,
+  valid = [],
+}) => {
   if (html) {
     return (
       <div

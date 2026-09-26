@@ -16,8 +16,8 @@ const STEP = 5; // seconds an arrow key moves
  */
 function caret(svg: SVGSVGElement, dpr: number, height: number): number {
   const s = Math.max(1, Math.round(dpr)); // stem and tick thickness
-  const g = 1;                            // the gap
-  const t = 3 * s;                        // tick length
+  const g = 1; // the gap
+  const t = 3 * s; // tick length
   const key = `${dpr}:${height}`;
   if (svg.dataset.key !== key) {
     svg.dataset.key = key;
@@ -30,9 +30,16 @@ function caret(svg: SVGSVGElement, dpr: number, height: number): number {
     svg.style.height = `${h / dpr}px`;
     svg.innerHTML = [
       [t + g, s + g, s, h - 2 * (s + g)],
-      [0, 0, t, s], [r, 0, t, s],
-      [0, h - s, t, s], [r, h - s, t, s],
-    ].map(([x, y, rw, rh]) => `<rect x="${x}" y="${y}" width="${rw}" height="${rh}" fill="currentColor"/>`).join('');
+      [0, 0, t, s],
+      [r, 0, t, s],
+      [0, h - s, t, s],
+      [r, h - s, t, s],
+    ]
+      .map(
+        ([x, y, rw, rh]) =>
+          `<rect x="${x}" y="${y}" width="${rw}" height="${rh}" fill="currentColor"/>`,
+      )
+      .join('');
   }
   return (t + g) / dpr;
 }
@@ -110,9 +117,12 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
   seek.addEventListener('keydown', (e) => {
     const t = audio.currentTime;
     const jump: Record<string, number> = {
-      ArrowRight: t + STEP, ArrowUp: t + STEP,
-      ArrowLeft: t - STEP, ArrowDown: t - STEP,
-      Home: 0, End: duration,
+      ArrowRight: t + STEP,
+      ArrowUp: t + STEP,
+      ArrowLeft: t - STEP,
+      ArrowDown: t - STEP,
+      Home: 0,
+      End: duration,
     };
     if (e.key in jump) {
       e.preventDefault();
