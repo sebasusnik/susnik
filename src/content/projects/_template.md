@@ -7,6 +7,9 @@ status: alive        # alive | undead | deceased  (optional)
 # died: "2025"       # only with status: deceased
 summary: One sentence. It sits under the title in the setlist.
 # link: https://...  # with no body below, the row links straight here
+# track:            # a player on the entry's page; see scripts/track.mjs
+#   src: name-of-the-file
+#   title: The song
 # featured: true     # the big one at the top. only one entry should have it
 draft: true
 ---

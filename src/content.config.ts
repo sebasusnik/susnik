@@ -34,6 +34,11 @@ const projects = defineCollection({
     died: z.string().optional(),
     /** Why it stopped. Honest beats polished; it shows under the summary. */
     cause: z.string().optional(),
+    /**
+     * Something it made, to listen to on its page. `src` names a pair in
+     * public/audio, made by `node scripts/track.mjs <in.wav> <src>`.
+     */
+    track: z.object({ src: z.string(), title: z.string() }).optional(),
     /** The one at the top, set bigger. Exactly one entry should have it. */
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
