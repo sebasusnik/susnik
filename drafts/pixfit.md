@@ -12,7 +12,7 @@ status: alive
 summary: >-
   One finished ad in, every format the brand needs out. A generative engine when
   there's nothing to go on; a deterministic, editable one when the brand is set up.
-stack: SST v3 · tRPC · SQS · Fargate · Aurora · Gemini · fal.ai · Bedrock — @ Winclap
+stack: SST v3 · tRPC · SQS · Fargate · Aurora · OpenAI · Gemini · Seedream · Seedance · fal.ai · Bedrock — @ Winclap
 ---
 
 A campaign gets made once and then has to exist in eighteen shapes. Someone
