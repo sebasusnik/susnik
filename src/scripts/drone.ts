@@ -24,6 +24,7 @@ const FULL_SPEED = 2600;      // px/s that counts as full tilt
 const TRIM_REST = 0.8;        // level going into the shaper at rest
 const TRIM_DUCK = 0.74;       // how much of that the drive gives back
 
+// biome-ignore format: a table, read down the columns
 const VOICES: Array<[number, OscillatorType, number]> = [
   [36.7, 'sawtooth', 0.22],   // D1
   [36.95, 'sawtooth', 0.22],  // and again, off by a quarter of a hertz, so it beats
