@@ -38,7 +38,7 @@ test('the waveform seeks by click and by keyboard', async ({ page }) => {
   // Half of it red, and the line halfway across.
   expect(Number(await page.locator('[data-clip]').getAttribute('width'))).toBeCloseTo(500, -1);
   const head = (await page.locator('[data-head]').boundingBox())!;
-  expect(Math.abs(head.x - (box.x + box.width / 2))).toBeLessThan(3);
+  expect(Math.abs(head.x + head.width / 2 - (box.x + box.width / 2))).toBeLessThan(2);
 
   await seek.press('End');
   await expect(seek).toHaveAttribute('aria-valuenow', '177');

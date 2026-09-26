@@ -8,6 +8,35 @@
  */
 const STEP = 5; // seconds an arrow key moves
 
+/**
+ * Draws the playhead in screen pixels: a stem one CSS pixel wide, ticks three
+ * long, and a gap of exactly one screen pixel between them. Redrawn only when
+ * the pixel ratio or the height changes. Returns how far the stem sits from
+ * the SVG's left edge, in CSS pixels.
+ */
+function caret(svg: SVGSVGElement, dpr: number, height: number): number {
+  const s = Math.max(1, Math.round(dpr)); // stem and tick thickness
+  const g = 1;                            // the gap
+  const t = 3 * s;                        // tick length
+  const key = `${dpr}:${height}`;
+  if (svg.dataset.key !== key) {
+    svg.dataset.key = key;
+    const h = Math.round((height + 8) * dpr);
+    const w = 2 * t + 2 * g + s;
+    const r = t + 2 * g + s;
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.setAttribute('shape-rendering', 'crispEdges');
+    svg.style.width = `${w / dpr}px`;
+    svg.style.height = `${h / dpr}px`;
+    svg.innerHTML = [
+      [t + g, s + g, s, h - 2 * (s + g)],
+      [0, 0, t, s], [r, 0, t, s],
+      [0, h - s, t, s], [r, h - s, t, s],
+    ].map(([x, y, rw, rh]) => `<rect x="${x}" y="${y}" width="${rw}" height="${rh}" fill="currentColor"/>`).join('');
+  }
+  return (t + g) / dpr;
+}
+
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
 for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
@@ -16,7 +45,7 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
   const now = figure.querySelector<HTMLElement>('[data-now]')!;
   const seek = figure.querySelector<HTMLElement>('[data-seek]')!;
   const clip = seek.querySelector('[data-clip]')!;
-  const head = seek.querySelector<HTMLElement>('[data-head]')!;
+  const head = seek.querySelector<SVGSVGElement>('[data-head]')!;
   const icons = {
     play: play.querySelector<SVGElement>('[data-icon="play"]')!,
     pause: play.querySelector<SVGElement>('[data-icon="pause"]')!,
@@ -33,7 +62,9 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
     const t = audio.currentTime;
     const at = Math.min(1, t / duration);
     clip.setAttribute('width', String(at * 1000));
-    head.style.left = `${at * 100}%`;
+    const dpr = window.devicePixelRatio || 1;
+    const reach = caret(head, dpr, seek.clientHeight);
+    head.style.left = `${Math.round(at * seek.clientWidth * dpr) / dpr - reach}px`;
     now.textContent = clock(t);
     seek.setAttribute('aria-valuenow', String(Math.round(t)));
     seek.setAttribute('aria-valuetext', `${clock(t)} of ${clock(duration)}`);
