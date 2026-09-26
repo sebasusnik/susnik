@@ -24,6 +24,7 @@
        one below it. */
     --focus: #ff2d2d; /* 5.67:1 on black */
     --wave: #8b0000; /* what has played, in the player */
+    --lift: #111; /* an entry under the pointer */
   }
 
   html.inverted {
@@ -34,8 +35,9 @@
     --faint: #767676;
     --line: #e6e6e6;
     --line-strong: #d9d9d9;
-    --focus: #8b0000; /* 10.01:1 on white — the blood red works here */
+    --focus: #e60000; /* 4.81:1 on white; the blood red passed, and looked dull */
     --wave: #d90000; /* the dark red goes brown on white; fresh blood does not */
+    --lift: #f3f3f3;
   }
 
   /* One ring for everything focusable, so nothing falls back to the browser's

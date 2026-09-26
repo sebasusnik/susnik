@@ -14,17 +14,26 @@ const track = entry.data.track;
 // A row with nowhere to go is still a row.
 const Tag = link ? 'a' : 'div';
 ---
-<Tag
+<!-- The whole entry lights up on hover, the player under it included. It
+     reaches 12px past the text on each side so the grey has room to breathe;
+     the setlist header reaches as far, so the rules still line up. -->
+<div
+  data-entry
   data-kind={entry.data.kind}
+  class="-mx-3 border-b border-line transition-colors hover:bg-lift focus-within:bg-lift"
+>
+<Tag
   href={link}
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener noreferrer' : undefined}
   class:list={[
-    'row group grid items-baseline transition-colors hover:text-fg',
+    // The padding is the 12px the entry reaches past the text, so the link
+    // fills the grey and its focus ring can sit just inside it.
+    'row grid items-baseline px-3 transition-colors hover:text-fg focus-visible:outline-offset-[-2px]',
     'grid-cols-[auto_1fr] gap-x-3 sm:grid-cols-[72px_1fr_auto] sm:gap-x-6',
     featured ? 'py-10 sm:pt-10 sm:pb-9' : 'py-[18px]',
-    // A track sits under the row, outside the link, and the rule moves under it.
-    track ? 'pb-0 sm:pb-0' : 'border-b border-line',
+    // A track sits under the row, outside the link.
+    track && 'pb-0 sm:pb-0',
   ]}
 >
   <span
@@ -39,7 +48,6 @@ const Tag = link ? 'a' : 'div';
     <h3
       class:list={[
         'font-medium uppercase tracking-[.06em]',
-        'group-hover:underline group-focus-visible:underline underline-offset-[5px] decoration-1 decoration-blood',
         featured && 'text-[24px] leading-[1.1] tracking-[.04em] sm:text-[28px]',
       ]}
     >{entry.data.title}</h3>
@@ -66,7 +74,8 @@ const Tag = link ? 'a' : 'div';
 </Tag>
 
 {track && (
-  <div data-kind={entry.data.kind} data-track class="border-b border-line pb-[18px] sm:pl-[96px]">
+  <div data-track class="px-3 pb-[18px] sm:pl-[108px]">
     <Player {...track} class="mt-4" />
   </div>
 )}
+</div>
