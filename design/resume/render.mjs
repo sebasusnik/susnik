@@ -1,6 +1,6 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const out = resolve(here, '../../public/resume.pdf');

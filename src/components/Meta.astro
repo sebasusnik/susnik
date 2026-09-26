@@ -40,4 +40,8 @@ const ogImage = new URL(image, Astro.site);
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<!-- The S of the logo on black. The whole wordmark is a smudge at 16px, and
+     the S alone still reads as the spikes. -->
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />

@@ -44,12 +44,17 @@ const clip = `played-${src}`;
     class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-line-strong text-dim transition-colors
            hover:bg-[#333] hover:text-fg inverted:hover:bg-[#c8c8c8]"
   >
-    <svg data-icon="play" viewBox="0 0 16 16" class="ml-0.5 h-5 w-5" aria-hidden="true">
-      <path d="M3 1.5v13l11-6.5z" fill="currentColor" />
-    </svg>
-    <svg data-icon="pause" viewBox="0 0 16 16" class="h-5 w-5" aria-hidden="true" hidden>
-      <path d="M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z" fill="currentColor" />
-    </svg>
+    <!-- Each icon in a span: `hidden` is an HTML attribute, not an SVG one. -->
+    <span data-icon="play">
+      <svg viewBox="0 0 16 16" class="ml-0.5 h-5 w-5" aria-hidden="true">
+        <path d="M3 1.5v13l11-6.5z" fill="currentColor" />
+      </svg>
+    </span>
+    <span data-icon="pause" hidden>
+      <svg viewBox="0 0 16 16" class="h-5 w-5" aria-hidden="true">
+        <path d="M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z" fill="currentColor" />
+      </svg>
+    </span>
   </button>
 
   <div class="min-w-0 flex-1">

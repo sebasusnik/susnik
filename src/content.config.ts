@@ -1,5 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 
 /**
  * One file per thing I made. Code, circuits, noise, installations — the list
@@ -20,7 +21,7 @@ const projects = defineCollection({
     summary: z.string(),
     /** Second line, for the headliner only: what it is built out of. */
     stack: z.string().optional(),
-    link: z.string().url().optional(),
+    link: z.url().optional(),
     /**
      * alive: still being worked on. undead: never finishes, never dies.
      * deceased: over, and `died` says when.

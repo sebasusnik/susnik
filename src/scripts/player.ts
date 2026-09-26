@@ -54,8 +54,8 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
   const clip = seek.querySelector('[data-clip]')!;
   const head = seek.querySelector<SVGSVGElement>('[data-head]')!;
   const icons = {
-    play: play.querySelector<SVGElement>('[data-icon="play"]')!,
-    pause: play.querySelector<SVGElement>('[data-icon="pause"]')!,
+    play: play.querySelector<HTMLElement>('[data-icon="play"]')!,
+    pause: play.querySelector<HTMLElement>('[data-icon="pause"]')!,
   };
   const title = play.getAttribute('aria-label')!.replace(/^Play /, '');
   // Known before the file is, so the slider works before anything loads.

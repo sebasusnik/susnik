@@ -5,7 +5,7 @@ Edit the HTML, re-render, and the PDF is reproducible instead of being a binary
 someone has to open Word to change.
 
 ```sh
-node render.mjs      # needs playwright; writes ../../public/resume.pdf
+node render.mjs      # uses @playwright/test from the repo; writes ../../public/resume.pdf
 ```
 
 It has to stay **one page** and it has to stay **one column** — most companies

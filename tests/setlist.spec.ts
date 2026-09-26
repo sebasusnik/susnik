@@ -74,8 +74,16 @@ test('entries with a body render their own page', async ({ page }) => {
   }
 });
 
-test('the CV, robots and sitemap are served', async ({ request }) => {
-  for (const path of ['/resume.pdf', '/robots.txt', '/sitemap.xml', '/og.png']) {
+test('the CV, robots, sitemap and icons are served', async ({ request }) => {
+  for (const path of [
+    '/resume.pdf',
+    '/robots.txt',
+    '/sitemap.xml',
+    '/og.png',
+    '/favicon.ico',
+    '/favicon-32.png',
+    '/apple-touch-icon.png',
+  ]) {
     expect((await request.get(path)).status(), path).toBe(200);
   }
 });
