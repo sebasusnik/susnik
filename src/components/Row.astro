@@ -1,4 +1,5 @@
 ---
+import Player from './Player.astro';
 import { dateLabel, href, tag, type Project } from '../lib/entries';
 
 interface Props { entry: Project }
@@ -7,6 +8,7 @@ const link = href(entry);
 const { kind, dead, status } = tag(entry);
 const external = link?.startsWith('http');
 const featured = entry.data.featured;
+const track = entry.data.track;
 
 // A row with nowhere to go is still a row.
 const Tag = link ? 'a' : 'div';
@@ -17,9 +19,11 @@ const Tag = link ? 'a' : 'div';
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener noreferrer' : undefined}
   class:list={[
-    'row group grid items-baseline border-b border-line transition-colors hover:text-fg',
+    'row group grid items-baseline transition-colors hover:text-fg',
     'grid-cols-[auto_1fr] gap-x-3 sm:grid-cols-[72px_1fr_auto] sm:gap-x-6',
     featured ? 'py-10 sm:pt-10 sm:pb-9' : 'py-[18px]',
+    // A track sits under the row, outside the link, and the rule moves under it.
+    track ? 'pb-0 sm:pb-0' : 'border-b border-line',
   ]}
 >
   <span class="col-start-1 row-start-1 text-xs text-mute sm:row-auto">{dateLabel(entry)}</span>
@@ -53,3 +57,9 @@ const Tag = link ? 'a' : 'div';
     {dead ? <s class="text-faint decoration-blood">{kind}</s> : kind}{status && <> · {status}</>}
   </span>
 </Tag>
+
+{track && (
+  <div data-kind={entry.data.kind} data-track class="border-b border-line pb-[18px] sm:pl-[96px]">
+    <Player {...track} class="mt-4" />
+  </div>
+)}

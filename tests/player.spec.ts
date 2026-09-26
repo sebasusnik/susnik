@@ -58,3 +58,26 @@ test('the track and the drone never play together', async ({ page }) => {
   await expect(page.locator('#drone')).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(paused).toBe(true);
 });
+
+test.describe('on the setlist', () => {
+  test('it sits under its row and filters with it', async ({ page }) => {
+    await page.goto('/');
+    const player = page.locator('[data-track] .player');
+    await expect(player).toBeVisible();
+    await expect(page.locator('[data-track] audio')).toHaveAttribute('preload', 'none');
+
+    await page.locator('[data-filter="code"]').click();
+    await expect(player).toBeHidden();
+    await page.locator('[data-filter="sound"]').click();
+    await expect(player).toBeVisible();
+  });
+
+  test('play turns the drone off', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#drone').click();
+    await expect(page.locator('#drone')).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: /^Play / }).click();
+    await expect(page.locator('#drone')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('#drone')).toHaveText('▶ drone');
+  });
+});

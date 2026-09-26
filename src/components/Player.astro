@@ -5,8 +5,8 @@ import { readFileSync } from 'node:fs';
  * One track, one button. The waveform comes from the JSON next to the MP3, so
  * it is drawn at build time and nothing is fetched until play is pressed.
  */
-interface Props { src: string; title: string }
-const { src, title } = Astro.props;
+interface Props { src: string; title: string; class?: string }
+const { src, title, class: className = 'mt-10' } = Astro.props;
 
 const { duration, shape } = JSON.parse(
   readFileSync(`public/audio/${src}.json`, 'utf8'),
@@ -14,7 +14,7 @@ const { duration, shape } = JSON.parse(
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 ---
-<figure class="player mt-10" data-duration={duration}>
+<figure class:list={['player', className]} data-duration={duration}>
   <audio src={`/audio/${src}.mp3`} preload="none"></audio>
 
   <figcaption class="flex items-baseline gap-4 text-[11px] uppercase tracking-[.2em] text-mute">

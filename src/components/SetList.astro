@@ -40,7 +40,8 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
   // Filtering is a class toggle, not a navigation: the setlist is one page and
   // every entry is already here.
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
-  const rows = document.querySelectorAll<HTMLElement>('.row');
+  // A row and the player under it carry the same kind, and go together.
+  const rows = document.querySelectorAll<HTMLElement>('.row, [data-track]');
   const empty = document.querySelector<HTMLElement>('[data-empty]');
 
   for (const button of buttons) {
@@ -52,7 +53,7 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
       for (const row of rows) {
         const match = kind === 'all' || row.dataset.kind === kind;
         row.hidden = !match;
-        if (match) shown++;
+        if (match && row.matches('.row')) shown++;
       }
       if (empty) empty.hidden = shown > 0;
     });
