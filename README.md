@@ -113,6 +113,18 @@ The commit that formatted the codebase is in `.git-blame-ignore-revs`, so blame
 skips it; GitHub reads the file on its own, and locally
 `git config blame.ignoreRevsFile .git-blame-ignore-revs` does the same.
 
+## Hooks
+
+Husky installs them on `npm install`.
+
+- **pre-commit**: Biome checks what is staged and applies the safe fixes
+  (format, import order) into the commit; a lint error stops it. Then the
+  whole project typechecks. A few seconds.
+- **pre-push**: the end-to-end suite, which builds the site. About half a minute.
+
+Warnings do not stop either, the same as in CI. `git commit --no-verify` and
+`git push --no-verify` skip them when you mean to.
+
 Astro and Tailwind, with React only on the terminal page. The six theme colours
 are CSS variables that `tailwind.config.cjs` points at, so `666` repaints the
 whole site by swapping six values rather than filtering it — a filter turned the
