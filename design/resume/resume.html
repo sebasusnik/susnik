@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  @page { size: A4; margin: 12mm 15mm; }
+  @page { size: A4; margin: 11mm 15mm; }
   :root{ --ink:#15161a; --body:#33353c; --mute:#71747d; --rule:#dcdee3; --accent:#8b0000; }
   *{ box-sizing:border-box; margin:0; padding:0 }
   html{ -webkit-print-color-adjust:exact; print-color-adjust:exact }
@@ -32,7 +32,14 @@
   .contact .sep{ color:var(--rule) }
 
   /* ---- secciones ---- */
-  section{ margin-top:11px }
+  section{ margin-top:12px }
+  ul.bullets{ margin-top:3px; padding-left:11px }
+  ul.bullets li{ margin-top:2px; list-style:none; position:relative }
+  ul.bullets li::before{ content:"–"; position:absolute; left:-10px; color:var(--mute) }
+  .trail{ font-family:"JetBrains Mono",monospace; font-size:7.6pt; color:var(--mute); margin-top:1px }
+  .side{ margin-top:4px }
+  .side b{ color:var(--ink); font-weight:600 }
+  .side .desc{ color:var(--mute) }
   h2{
     font-family:"JetBrains Mono",monospace; font-size:7.6pt; font-weight:500;
     letter-spacing:.2em; text-transform:uppercase; color:var(--ink);
@@ -81,7 +88,7 @@
 
 <header>
   <h1>Sebastián Susnik</h1>
-  <div class="role">Product Engineer · Full-Stack &amp; AI</div>
+  <div class="role">Product Engineer · AI &amp; Cloud</div>
   <div class="contact">
     <span>Buenos Aires, Argentina</span><span class="sep">·</span>
     <a href="mailto:sebasusnik@gmail.com">sebasusnik@gmail.com</a><span class="sep">·</span>
@@ -93,14 +100,8 @@
 
 <section>
   <h2>About</h2>
-  <p class="about">Product engineer focused on building products end-to-end, from cloud
-  architecture to final UX. I work primarily with <b>TypeScript</b>, <b>Go</b> and
-  <b>AWS</b>, with growing focus on integrating LLMs and agentic workflows into
-  production systems. I care about shipping fast without breaking things, and making
-  technical decisions based on product impact rather than what is fashionable.</p>
-  <p class="about">Currently building <b>PixFit</b> at Winclap: a platform that takes a
-  finished ad and adapts it into every format a brand needs, now being externalized as
-  B2B SaaS.</p>
+  <p class="about">Product engineer building <b>PixFit</b> from its first commit to production. I work in <b>TypeScript</b>,
+  <b>Go</b> and <b>AWS</b>, and came to software after ten years of other work, from repairing printers to building roofs.</p>
 </section>
 
 <section>
@@ -108,36 +109,29 @@
 
   <div class="job">
     <div class="job-head">
-      <div class="job-title">Product Engineer <span class="at">· Winclap</span></div>
+      <div class="job-title">Software Engineer <span class="at">· Winclap</span></div>
       <div class="dates">Jul 2024 — Present</div>
     </div>
+    <div class="trail">Performance (2024–25) → Creative operations (Dec 2025) → Founding engineer on PixFit (Mar 2026 —)</div>
 
     <div class="project">
       <div class="project-name">PixFit
-        <span class="desc">— ad creative adaptation platform, externalized as B2B SaaS</span></div>
-      <p>Designed and implemented the adaptation architecture on Aurora Serverless v2 +
-      Kysely + SST v3, with a tRPC BFF on Lambda and async processing via SQS. Owned data
-      modeling, API contracts and service boundaries. Two engines behind one queue: a
-      generative one for any brand, and a deterministic one that applies a configured
-      brand's templates and outputs an editable file.</p>
+        <span class="desc">— generative ad production platform, in production. First enterprise customer: one of the largest food companies in Latin America.</span></div>
+      <ul class="bullets">
+        <li>Designed it end to end on AWS, with two engines behind one queue: a generative one that redraws a finished ad in any format, and a deterministic one that applies a brand's templates and outputs an editable, layered file.</li>
+        <li>Turns ~30 minutes of a designer's work into ~5 minutes of unattended processing: a full set of 8 formats from one finished ad. Tried by 100+ companies; weekly external users up 4× since August.</li>
+        <li>Taking a video suite from proof of concept to product: a finished ad becomes a GPT-generated storyboard the user iterates on (frames, timing, copy) before the video renders. The open problem across all of it: output a designer can still edit.</li>
+      </ul>
     </div>
 
     <div class="project">
-      <div class="project-name">Creative Pulse
-        <span class="desc">— AI-powered cultural intelligence pipeline</span></div>
-      <p>Built end-to-end an event-driven pipeline that scrapes Reddit, analyzes content with
-      Claude Haiku via Amazon Bedrock, and persists insights into DynamoDB. Architecture:
-      EventBridge → Lambda → S3 → SQS → Analyzer Lambda. Implemented in Go with SST v3.</p>
+      <div class="project-name">Brkaway acquisition <span class="desc">— Dec 2025</span></div>
+      <ul class="bullets">
+        <li>Led the engineering handover of Brkaway, a creator platform Winclap acquired after being its largest customer: code, data, docs and external services, in English with the team that built it and alongside DevOps. Still in use, run by a dedicated team.</li>
+      </ul>
     </div>
 
-    <div class="project">
-      <div class="project-name">Internal Admin Tooling</div>
-      <p>Developed internal tools with Next.js and shadcn/ui for operations teams,
-      prioritizing fast iteration based on real user feedback. Evaluated visualization
-      libraries (Nivo, TanStack Table) against actual team needs.</p>
-    </div>
-
-    <p class="stack">Go · TypeScript · AWS (Lambda, Aurora, DynamoDB, SQS, EventBridge, Bedrock, S3) · SST v3 · tRPC · Next.js · React</p>
+    <p class="stack">TypeScript · Go · AWS · SST v3 · tRPC · OpenAI · Gemini · Seedream · Seedance · fal.ai</p>
   </div>
 
   <div class="job">
@@ -145,30 +139,39 @@
       <div class="job-title">Cloud Engineer <span class="at">· Sinapsis</span></div>
       <div class="dates">Feb 2022 — Jul 2024</div>
     </div>
-
     <div class="project">
       <div class="project-name">Self-Realization Fellowship
         <span class="desc">— global annual event platform, California</span></div>
-      <p>Worked on the backend and cloud architecture of the platform serving SRF's annual
-      global convocation, with tens of thousands of online attendees distributed worldwide.
-      Designed APIs and serverless services on AWS prioritizing scalability under
-      concentrated traffic peaks, and resilience during critical event windows where
-      downtime was not an option.</p>
+      <ul class="bullets">
+        <li>Serverless backend for SRF's annual global convocation: tens of thousands of attendees online at once, in event windows where downtime was not an option. In English with the client's team.</li>
+      </ul>
     </div>
-
     <p class="stack">AWS (Lambda, API Gateway, CloudFront, S3) · Node.js · TypeScript · Serverless Framework</p>
   </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title">Before software</div>
+      <div class="dates">2012 — 2022</div>
+    </div>
+    <p class="side">Printer repair technician · Administration, then purchasing and logistics, at a construction company · Timber roofing</p>
+  </div>
+</section>
+
+<section>
+  <h2>Selected projects</h2>
+  <p class="side"><b>Tatum</b> <span class="desc">— Rust</span> · A synth engine for songs written as text, played live from a MIDI controller; MCP server for Claude.</p>
+  <p class="side"><b>CRT sound visualizer</b> <span class="desc">— C++ · ESP32</span> · A music visualizer on an old TV, listening through a microphone.</p>
+  <p class="side"><b>drumgen</b> <span class="desc">— Python</span> · A deterministic drum generator, humanized against Magenta's Groove MIDI Dataset.</p>
 </section>
 
 <section>
   <h2>Skills</h2>
   <dl class="skills">
-    <dt>Languages</dt><dd>TypeScript, Go, JavaScript</dd>
-    <dt>Frontend</dt><dd>React, React Native, Next.js, Tailwind, shadcn/ui, Vite</dd>
-    <dt>Backend &amp; Cloud</dt><dd>Node.js, AWS (Lambda, Aurora, DynamoDB, SQS, EventBridge, S3, API Gateway, Bedrock, CloudFront), SST v3, Serverless Framework, tRPC, REST</dd>
-    <dt>Data</dt><dd>PostgreSQL, Aurora Serverless v2, DynamoDB, Kysely</dd>
-    <dt>AI / LLMs</dt><dd>Amazon Bedrock, Claude (Haiku / Sonnet), prompt engineering, agentic pipelines, Claude Code</dd>
-    <dt>Tools</dt><dd>Git, GitHub, CI/CD, Docker</dd>
+    <dt>Languages</dt><dd>TypeScript, Go, JavaScript, Rust, Python, C++</dd>
+    <dt>Backend &amp; Cloud</dt><dd>Node.js, AWS (Lambda, Fargate, Aurora, DynamoDB, SQS, EventBridge, S3), SST v3, tRPC, PostgreSQL, Kysely</dd>
+    <dt>Frontend</dt><dd>React, Next.js, Tailwind, Astro</dd>
+    <dt>AI</dt><dd>OpenAI, Gemini, Amazon Bedrock, Claude, fal.ai, MCP, agentic pipelines, Claude Code</dd>
   </dl>
 </section>
 
@@ -182,7 +185,7 @@
     <div><b>Electronics Technician</b> <span class="where">· ET N°28 “República Francesa”</span></div>
     <div class="dates">2007 — 2012</div>
   </div>
-  <p class="langs"><b>Languages:</b> Spanish (native), English (upper-intermediate)</p>
+  <p class="langs"><b>Languages:</b> Spanish (native), English (upper-intermediate; worked in English at Sinapsis and Winclap)</p>
 </section>
 
 </body>
