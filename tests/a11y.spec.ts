@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { contrast, terminalReady } from './helpers';
+import { contrast, entries, terminalReady } from './helpers';
 
 /** Tabs through a page and returns the outline of every distinct stop. */
 async function rings(page: import('@playwright/test').Page, tabs = 20) {
@@ -22,9 +22,12 @@ async function rings(page: import('@playwright/test').Page, tabs = 20) {
   return [...seen.values()];
 }
 
+// An entry page, if any entry has one: they come and go as bodies are written.
+const withPage = entries().find((e) => e.hasBody);
+
 for (const [name, path, color] of [
   ['home', '/', 'rgb(255, 45, 45)'],
-  ['an entry page', '/projects/pixfit/', 'rgb(255, 45, 45)'],
+  ...(withPage ? [['an entry page', `/projects/${withPage.id}/`, 'rgb(255, 45, 45)']] : []),
 ] as const) {
   test(`${name}: every focusable wears the custom ring, at 3:1 or better`, async ({ page }) => {
     await page.goto(path);
