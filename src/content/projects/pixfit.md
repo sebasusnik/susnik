@@ -1,7 +1,7 @@
 ---
 title: PixFit
-date: 2024-07-01
-dateLabel: 2024 —
+date: 2026-03-01
+dateLabel: 2026 —
 kind: code
 featured: true
 link: https://pixfit.ai

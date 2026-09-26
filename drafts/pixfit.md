@@ -4,8 +4,8 @@
 # and the row gets its own page again. These comments can stay.
 # Nothing in drafts/ is built.
 title: PixFit
-date: 2024-07-01
-dateLabel: 2024 —
+date: 2026-03-01
+dateLabel: 2026 —
 kind: code
 featured: true
 status: alive
