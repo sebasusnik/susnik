@@ -9,24 +9,26 @@
     "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:e2e": "playwright test",
+    "test:e2e:prod": "BASE_URL=https://susnik.dev playwright test"
   },
   "dependencies": {
     "@astrojs/node": "^9.2.2",
     "@astrojs/react": "^4.3.0",
     "@astrojs/vercel": "^8.2.0",
-    "@tailwindcss/vite": "^4.1.11",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "astro": "^5.10.1",
+    "date-fns": "^3.6.0",
     "re-resizable": "^6.9.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-draggable": "^4.4.5",
-    "date-fns": "^3.6.0"
+    "react-draggable": "^4.4.5"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.21"
   }
