@@ -1,0 +1,5 @@
+# What is staged gets formatted, linted and its imports sorted, with the safe
+# fixes applied and re-staged. Then the whole project typechecks, since a
+# change in one file can break the types of another.
+npx lint-staged
+npm run typecheck

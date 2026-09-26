@@ -12,8 +12,10 @@
     "astro": "astro",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
+    "typecheck": "astro sync && tsc --noEmit",
     "test:e2e": "playwright test",
-    "test:e2e:prod": "BASE_URL=https://susnik.dev playwright test"
+    "test:e2e:prod": "BASE_URL=https://susnik.dev playwright test",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/node": "^9.2.2",
@@ -33,6 +35,8 @@
     "@biomejs/biome": "2.5.14",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/typography": "^0.5.16",
-    "autoprefixer": "^10.4.21"
+    "autoprefixer": "^10.4.21",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0"
   }
 }
