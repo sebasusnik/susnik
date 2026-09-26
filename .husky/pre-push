@@ -1,0 +1,3 @@
+# The end-to-end suite builds the site and takes about half a minute, which is
+# a lot for every commit and nothing for a push.
+npm run test:e2e
