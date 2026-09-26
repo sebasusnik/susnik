@@ -42,11 +42,14 @@
 
   /* One ring for everything focusable, so nothing falls back to the browser's
      blue. Two pixels rather than a hairline: an indicator has to be findable,
-     which is the one place this design does not get to whisper. */
+     which is the one place this design does not get to whisper. A small
+     radius always: the outline follows it, and a square ring reads as a box
+     drawn around the thing rather than the thing lighting up. Elements with
+     their own radius (the round play button) keep theirs. */
   :focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 3px;
-    border-radius: 1px;
+    border-radius: 4px;
   }
 
   /* The only red on the page until you touch something. */
