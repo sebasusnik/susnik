@@ -15,22 +15,32 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
   const play = figure.querySelector<HTMLButtonElement>('[data-play]')!;
   const now = figure.querySelector<HTMLElement>('[data-now]')!;
   const seek = figure.querySelector<HTMLElement>('[data-seek]')!;
-  const bars = [...seek.children] as HTMLElement[];
+  const clip = seek.querySelector('[data-clip]')!;
+  const head = seek.querySelector<HTMLElement>('[data-head]')!;
+  const icons = {
+    play: play.querySelector<SVGElement>('[data-icon="play"]')!,
+    pause: play.querySelector<SVGElement>('[data-icon="pause"]')!,
+  };
   const title = play.getAttribute('aria-label')!.replace(/^Play /, '');
   // Known before the file is, so the slider works before anything loads.
   const duration = Number(figure.dataset.duration);
   const drone = document.querySelector<HTMLButtonElement>('#drone');
 
-  let lit = 0;
+  // timeupdate fires four times a second, which walks the line in steps; a
+  // frame loop while playing moves it smoothly, and the text keeps to seconds.
+  let frame = 0;
   const paint = () => {
     const t = audio.currentTime;
+    const at = Math.min(1, t / duration);
+    clip.setAttribute('width', String(at * 1000));
+    head.style.left = `${at * 100}%`;
     now.textContent = clock(t);
     seek.setAttribute('aria-valuenow', String(Math.round(t)));
     seek.setAttribute('aria-valuetext', `${clock(t)} of ${clock(duration)}`);
-    const next = Math.round((t / duration) * bars.length);
-    if (next === lit) return;
-    bars.forEach((bar, i) => (bar.style.background = i < next ? 'var(--fg)' : ''));
-    lit = next;
+  };
+  const loop = () => {
+    paint();
+    frame = requestAnimationFrame(loop);
   };
 
   const to = (t: number) => {
@@ -38,16 +48,21 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
     paint();
   };
 
+  const playing = (on: boolean) => {
+    icons.play.toggleAttribute('hidden', on);
+    icons.pause.toggleAttribute('hidden', !on);
+    play.setAttribute('aria-label', `${on ? 'Pause' : 'Play'} ${title}`);
+    cancelAnimationFrame(frame);
+    if (on) loop();
+    else paint();
+  };
+
   audio.addEventListener('play', () => {
-    play.textContent = '■';
-    play.setAttribute('aria-label', `Pause ${title}`);
+    playing(true);
     if (drone?.getAttribute('aria-pressed') === 'true') drone.click();
   });
-  audio.addEventListener('pause', () => {
-    play.textContent = '▶';
-    play.setAttribute('aria-label', `Play ${title}`);
-  });
-  audio.addEventListener('timeupdate', paint);
+  audio.addEventListener('pause', () => playing(false));
+  audio.addEventListener('timeupdate', () => audio.paused && paint());
   audio.addEventListener('ended', () => to(0));
 
   play.addEventListener('click', () => (audio.paused ? audio.play() : audio.pause()));

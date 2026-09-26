@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-const PAGE = '/projects/tatum/';
+// Tatum's row on the setlist; the entry has no page of its own yet.
+const PAGE = '/';
 const MP3 = /\/audio\/tatum-detroit\.mp3$/;
 
 test('the waveform is there before the track is, and the track waits for play', async ({ page }) => {
@@ -8,7 +9,8 @@ test('the waveform is there before the track is, and the track waits for play', 
   page.on('request', (r) => fetched.push(r.url()));
   await page.goto(PAGE);
 
-  await expect(page.locator('[data-seek] > span')).toHaveCount(120);
+  await expect(page.locator('[data-seek] svg path')).toHaveCount(4);
+  await expect(page.locator('[data-clip]')).toHaveAttribute('width', '0');
   await expect(page.locator('[data-seek]')).toHaveAttribute('aria-valuetext', '0:00 of 2:57');
   await page.waitForTimeout(1000);
   expect(fetched.some((u) => MP3.test(u))).toBe(false);
@@ -27,11 +29,16 @@ test('the waveform is there before the track is, and the track waits for play', 
 test('the waveform seeks by click and by keyboard', async ({ page }) => {
   await page.goto(PAGE);
   const seek = page.getByRole('slider', { name: 'Seek' });
+  await seek.scrollIntoViewIfNeeded();
 
   const box = (await seek.boundingBox())!;
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   await expect(seek).toHaveAttribute('aria-valuenow', /^(88|89)$/);
   await expect(page.locator('[data-now]')).toHaveText(/^1:2[89]$/);
+  // Half of it red, and the line halfway across.
+  expect(Number(await page.locator('[data-clip]').getAttribute('width'))).toBeCloseTo(500, -1);
+  const head = (await page.locator('[data-head]').boundingBox())!;
+  expect(Math.abs(head.x - (box.x + box.width / 2))).toBeLessThan(3);
 
   await seek.press('End');
   await expect(seek).toHaveAttribute('aria-valuenow', '177');
