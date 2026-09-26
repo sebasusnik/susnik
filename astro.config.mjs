@@ -1,5 +1,4 @@
 import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
 import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
 
@@ -22,15 +21,8 @@ export default defineConfig({
 
   adapter: vercel(),
 
-  integrations: [
-    react(),
-    tailwind({
-      config: './tailwind.config.cjs',
-      // Each entry stylesheet declares its own @tailwind directives, so the
-      // integration injecting a second copy on every page is pure weight.
-      applyBaseStyles: false,
-    }),
-  ],
+  // Tailwind runs through PostCSS: see postcss.config.cjs.
+  integrations: [react()],
 
   // no custom Vite plugins needed; Astro's Tailwind integration wires them up for us
 });
