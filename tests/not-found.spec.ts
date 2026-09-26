@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { phone } from './helpers';
 
 test('an unknown path is a real 404 that says no signal', async ({ page }) => {

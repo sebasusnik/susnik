@@ -94,6 +94,19 @@ corners, and the no-signal page. Entry counts are read from the collection, so
 adding or cutting a project does not break it. CI runs it on every pull
 request.
 
+## Lint
+
+```sh
+npm run lint              # biome: lint and import order
+npm run lint:fix          # and apply the safe fixes
+```
+
+Biome reads `.astro` files whole, so a variable used only in the markup is not
+reported as unused; the editor needs the Biome extension, which
+`.vscode/extensions.json` recommends. The formatter is off: the code is aligned
+by hand in places. The warnings left are the terminal's React code, kept apart
+as their own piece of work. CI fails on errors.
+
 Astro and Tailwind, with React only on the terminal page. The six theme colours
 are CSS variables that `tailwind.config.cjs` points at, so `666` repaints the
 whole site by swapping six values rather than filtering it — a filter turned the

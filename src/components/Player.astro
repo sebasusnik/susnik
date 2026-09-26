@@ -34,6 +34,7 @@ const area = `${line}L${W},${H}L0,${H}Z`;
 const clip = `played-${src}`;
 ---
 <figure class:list={['player flex items-center gap-4', className]} data-duration={duration}>
+  <!-- biome-ignore lint/a11y/useMediaCaption: an instrumental track, there is nothing to caption -->
   <audio src={`/audio/${src}.mp3`} preload="none"></audio>
 
   <button

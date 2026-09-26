@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from 'react';
+import type React from 'react';
+import { useCallback, useState } from 'react';
 import About from '../components/About';
-import ExpList from '../components/ExpList';
-import SkillsList from '../components/SkillsList';
-import HelpList from '../components/HelpList';
 import Contact from '../components/Contact';
-import Resume from '../components/Resume';
-import NotFound from '../components/NotFound';
 import EasterEgg from '../components/EasterEgg';
+import ExpList from '../components/ExpList';
+import HelpList from '../components/HelpList';
+import NotFound from '../components/NotFound';
+import Resume from '../components/Resume';
+import SkillsList from '../components/SkillsList';
 
 interface OutputProps {
   animate?: boolean;

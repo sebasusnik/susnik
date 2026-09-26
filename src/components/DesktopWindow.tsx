@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { flushSync } from 'react-dom';
 import { Resizable } from 're-resizable';
 import type { Direction } from 're-resizable/lib/resizer';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import Draggable from 'react-draggable';
 
 interface DesktopWindowProps {
@@ -69,12 +70,12 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
     resizeStartData.current = { x: position.x, y: position.y, width: size.width, height: size.height };
   };
 
-  const handleResize = (e: any, direction: Direction, ref: any) => {
+  const handleResize = (_e: unknown, direction: Direction, ref: HTMLElement) => {
     const start = resizeStartData.current;
     if (!start) return;
 
-    const newWidth = parseInt(ref.style.width);
-    const newHeight = parseInt(ref.style.height);
+    const newWidth = parseInt(ref.style.width, 10);
+    const newHeight = parseInt(ref.style.height, 10);
 
     setSize({ width: newWidth, height: newHeight });
 
@@ -111,7 +112,7 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
           handle=".terminal-handle"
           nodeRef={draggableRef}
           position={position}
-          onStop={(e, data) => setPosition({ x: data.x, y: data.y })}
+          onStop={(_e, data) => setPosition({ x: data.x, y: data.y })}
         >
           <div ref={draggableRef} style={{ position: 'absolute', zIndex: 10 }}>
             <Resizable

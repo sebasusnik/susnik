@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { countAudio, inverted, touch , phone } from './helpers';
+import { expect, test } from '@playwright/test';
+import { countAudio, inverted, phone, touch  } from './helpers';
 
 test.describe('blood', () => {
   test('finds the tips and the first drop hangs within seconds', async ({ page }) => {

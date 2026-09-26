@@ -1,4 +1,4 @@
-import { createBleed, type Bleed } from './blood';
+import { type Bleed, createBleed } from './blood';
 import { scare } from './scare';
 
 /**

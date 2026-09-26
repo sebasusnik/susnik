@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import type React from 'react';
+import { useCallback, useState } from 'react';
 
 /**
  * Hook to manage command history navigation (ArrowUp / ArrowDown) for an input field.

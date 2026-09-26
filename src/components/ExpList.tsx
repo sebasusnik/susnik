@@ -1,7 +1,7 @@
-import React from 'react';
 import { format } from 'date-fns';
-import { formatDuration } from '../utils/dates';
+import type React from 'react';
 import useStaggeredReveal from '../hooks/useStaggeredReveal';
+import { formatDuration } from '../utils/dates';
 
 export interface Experience {
   company: string;

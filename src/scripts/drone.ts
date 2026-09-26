@@ -14,7 +14,7 @@
  *
  * Never autoplays. It is a button because it has to be.
  */
-import { audio, current, close, duckable } from './audio';
+import { audio, close, current, duckable } from './audio';
 
 const button = document.querySelector<HTMLButtonElement>('#drone');
 

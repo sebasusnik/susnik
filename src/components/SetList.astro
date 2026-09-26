@@ -1,6 +1,6 @@
 ---
-import Row from './Row.astro';
 import { KINDS, type Project } from '../lib/entries';
+import Row from './Row.astro';
 
 interface Props { entries: Project[] }
 const { entries } = Astro.props;
@@ -14,6 +14,7 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
            text-[11px] uppercase tracking-[.2em] text-mute sm:flex-row sm:items-baseline sm:gap-4"
   >
     <h2>setlist</h2>
+    <!-- biome-ignore lint/a11y/useSemanticElements: a fieldset is for a form; these buttons filter the list below -->
     <div class="flex flex-wrap gap-4" role="group" aria-label="Filter by kind">
       <button
         type="button"
