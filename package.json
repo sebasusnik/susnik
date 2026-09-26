@@ -1,5 +1,6 @@
 {
   "name": "susnik",
+  "private": true,
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -12,7 +13,7 @@
     "astro": "astro",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "typecheck": "astro sync && tsc --noEmit",
+    "typecheck": "astro sync && astro check && tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:prod": "BASE_URL=https://susnik.dev playwright test",
     "prepare": "husky"
@@ -20,8 +21,6 @@
   "dependencies": {
     "@astrojs/react": "^7.0.0",
     "@astrojs/vercel": "^11.0.11",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
     "astro": "^7.3.5",
     "date-fns": "^3.6.0",
     "re-resizable": "^6.9.3",
@@ -30,15 +29,18 @@
     "react-draggable": "^4.4.5"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@biomejs/biome": "2.5.14",
     "@playwright/test": "^1.63.0",
-    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.20.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "@vercel/routing-utils": {
