@@ -18,6 +18,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # astro:content types live in .astro/, which is gitignored.
+      - run: npx astro sync
       - run: npx tsc --noEmit
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
