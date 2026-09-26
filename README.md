@@ -38,6 +38,7 @@ A few fields exist for the ones that do not fit a date and a status:
 | `featured`   | The headliner, set bigger at the top. Only one entry          |
 | `stack`      | A second line under the summary. Headliner only               |
 | `draft`      | Keeps it out of the setlist                                   |
+| `soon`       | The repo is private for now and about to go public; the row says so |
 | `track`      | A player on the entry's page: `{ src, title }`. See below     |
 
 A track starts as a WAV. `node scripts/track.mjs <in.wav> <src>` (needs ffmpeg)

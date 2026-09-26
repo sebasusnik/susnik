@@ -6,6 +6,7 @@ kind: art            # code | hardware | sound | art | client
 status: alive        # alive | undead | deceased  (optional)
 # died: "2025"       # only with status: deceased
 summary: One sentence. It sits under the title in the setlist.
+# soon: true         # the repo is private for now and about to go public
 # link: https://...  # with no body below, the row links straight here
 # track:            # a player on the entry's page; see scripts/track.mjs
 #   src: name-of-the-file

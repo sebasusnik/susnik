@@ -56,6 +56,15 @@ test.describe('setlist', () => {
   });
 });
 
+test('entries whose source is about to go public say so', async ({ page }) => {
+  await page.goto('/');
+  for (const e of all) {
+    const entry = page.locator('[data-entry]', { has: page.locator('h3', { hasText: e.title }) });
+    const note = entry.getByText('Source goes public soon.');
+    await expect(note).toHaveCount(e.soon ? 1 : 0);
+  }
+});
+
 test('entries with a body render their own page', async ({ page }) => {
   for (const e of all.filter((x) => x.hasBody)) {
     const res = await page.goto(`/projects/${e.id}/`);

@@ -32,6 +32,7 @@ export function entries() {
           .join('')
           .trim().length > 0,
       cause: /^cause:/m.test(e.text),
+      soon: /^soon:\s*true/m.test(e.text),
     }));
 }
 
