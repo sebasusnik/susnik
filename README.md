@@ -111,8 +111,7 @@ Biome reads `.astro` files whole, so a variable used only in the markup is not
 reported as unused. It formats everything except `.astro`, whose HTML
 formatter is still experimental and moves whitespace inside inline elements.
 Zed formats on save through `.zed/settings.json`; VS Code needs the Biome
-extension, which `.vscode/extensions.json` recommends. The warnings left are
-the terminal's React code, kept apart as their own piece of work. CI fails on
+extension, which `.vscode/extensions.json` recommends. CI fails on
 errors and on anything unformatted.
 
 The commit that formatted the codebase is in `.git-blame-ignore-revs`, so blame

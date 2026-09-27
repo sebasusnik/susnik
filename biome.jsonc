@@ -41,19 +41,6 @@
       // The tests reach into the page through debug hooks on window.
       "includes": ["tests/**"],
       "linter": { "rules": { "suspicious": { "noExplicitAny": "off" } } }
-    },
-    {
-      // The /terminal React app. What is left here is real but changes
-      // behaviour to fix, so it is its own piece of work: warnings, not errors.
-      "includes": ["src/components/*.tsx", "src/hooks/**"],
-      "linter": {
-        "rules": {
-          "a11y": { "noAutofocus": "warn" },
-          "correctness": { "useExhaustiveDependencies": "warn" },
-          "security": { "noDangerouslySetInnerHtml": "warn" },
-          "suspicious": { "noArrayIndexKey": "warn" }
-        }
-      }
     }
   ]
 }
