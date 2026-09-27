@@ -1,6 +1,8 @@
 ---
 // The terminal this site used to be. It still runs, it just lives at /terminal
 // now, and the footer of the setlist points here.
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/jetbrains-mono/wght-italic.css';
 import '../styles/global.css';
 import Meta from '../components/Meta.astro';
 import Terminal from '../components/Terminal';
@@ -9,13 +11,10 @@ import Terminal from '../components/Terminal';
 <html lang="en">
 <head>
     <Meta
-      title="Susnik — /terminal"
-      description="The portfolio as a draggable terminal window. Type help, or press Tab."
+      title="Terminal — Sebastián Susnik"
+      description="Sebastián Susnik's portfolio as a draggable terminal window: experience, skills and contact, one command at a time. Type help, or press Tab."
       themeColor="#140623"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
 </head>
 <body class="min-h-dvh p-4 bg-gradient-to-bl from-neutral-800 via-neutral-900 to-neutral-950 text-neutral-300 font-mono relative text-sm sm:text-base">
   <!-- biome-ignore lint/a11y/useAnchorContent: named by aria-label, which the rule does not read in .astro -->

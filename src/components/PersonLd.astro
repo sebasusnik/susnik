@@ -1,0 +1,41 @@
+---
+/**
+ * Who this site belongs to, in the terms a search engine reads: a Person, the
+ * profiles that are the same person (sameAs), and the site itself. Most people
+ * type the name without the accent, so that spelling is listed too.
+ */
+const site = Astro.site ?? new URL(Astro.url.origin);
+const url = new URL('/', site).href;
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${url}#person`,
+      name: 'Sebastián Susnik',
+      alternateName: ['Sebastian Susnik', 'Susnik'],
+      url,
+      image: new URL('/og.png', site).href,
+      jobTitle: 'Product Engineer',
+      worksFor: { '@type': 'Organization', name: 'Winclap' },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Buenos Aires',
+        addressCountry: 'AR',
+      },
+      knowsAbout: ['Product engineering', 'TypeScript', 'Go', 'AWS', 'Generative AI', 'Rust', 'ESP32'],
+      sameAs: ['https://github.com/sebasusnik', 'https://www.linkedin.com/in/sebasusnik'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${url}#website`,
+      url,
+      name: 'Susnik',
+      inLanguage: 'en',
+      author: { '@id': `${url}#person` },
+    },
+  ],
+};
+---
+<script type="application/ld+json" set:html={JSON.stringify(graph)} />
