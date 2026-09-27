@@ -1,8 +1,9 @@
 ---
 /**
  * Who this site belongs to, in the terms a search engine reads: a Person, the
- * profiles that are the same person (sameAs), and the site itself. Most people
- * type the name without the accent, so that spelling is listed too.
+ * profiles that are the same person (sameAs), and the site itself. The name
+ * is Sušnik; most people type it without the š or the accent, so every
+ * spelling is listed.
  */
 const site = Astro.site ?? new URL(Astro.url.origin);
 const url = new URL('/', site).href;
@@ -13,8 +14,8 @@ const graph = {
     {
       '@type': 'Person',
       '@id': `${url}#person`,
-      name: 'Sebastián Susnik',
-      alternateName: ['Sebastian Susnik', 'Susnik'],
+      name: 'Sebastián Sušnik',
+      alternateName: ['Sebastián Susnik', 'Sebastian Susnik', 'Sebastian Sušnik', 'Susnik'],
       url,
       image: new URL('/og.png', site).href,
       jobTitle: 'Product Engineer',
