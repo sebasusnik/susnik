@@ -1,7 +1,16 @@
 import type React from 'react';
 import useStaggeredReveal from '../hooks/useStaggeredReveal';
 
-export const skills = ['Typescript', 'React', 'Node.js', 'Tailwind CSS', 'SQL', 'AWS'];
+export const skills = [
+  'TypeScript',
+  'Go',
+  'AWS',
+  'Node.js',
+  'React',
+  'PostgreSQL',
+  'Generative AI',
+  'Rust',
+];
 
 interface Props {
   animate?: boolean;

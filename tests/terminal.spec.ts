@@ -27,7 +27,7 @@ test('Ctrl+C interrupts, and finished output never replays afterwards', async ({
   await page.waitForTimeout(150);
   await page.keyboard.press('Control+c');
   await expect(log(page)).toContainText('^C');
-  await expect(log(page)).toContainText('Currently');
+  await expect(log(page)).toContainText('Outside work');
 
   const before = (await log(page).innerText()).length;
   const lengths: number[] = [];
