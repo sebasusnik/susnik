@@ -27,6 +27,7 @@ const Contact: React.FC<Props> = ({ animate = false, onFinished, onLineRendered 
       <div className="text-cyan-400 mb-2">Running: "contact"...</div>
       <div className="space-y-1 pl-2">
         {rendered.map((line, idx) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: a fixed list revealed in order, never reordered; the position is the identity
           <p key={idx} className={idx === 0 ? 'text-white' : 'text-gray-400'}>
             {line}
           </p>

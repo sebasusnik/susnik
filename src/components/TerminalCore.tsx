@@ -5,7 +5,6 @@ import PromptLine from './PromptLine';
 
 interface Line {
   id: number;
-  html?: string;
   element?: React.ReactNode;
 }
 
@@ -18,8 +17,8 @@ interface TerminalCoreProps {
   introDone: boolean;
   busy: boolean;
   input: string;
-  onSubmit: (e: React.FormEvent) => void;
-  focusEnableAt: React.MutableRefObject<number>;
+  onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
+  focusEnableAt: React.RefObject<number>;
   focusVisibleInput: () => void;
   setInput: React.Dispatch<React.SetStateAction<string>>;
   handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -57,9 +56,7 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
   >
     {!cleared && <Intro key={introKey} onDone={onIntroDone} />}
     {lines.map((l) => (
-      <PromptLine key={l.id} html={l.html}>
-        {l.element}
-      </PromptLine>
+      <PromptLine key={l.id}>{l.element}</PromptLine>
     ))}
     {introDone && (
       <form
@@ -95,6 +92,7 @@ const TerminalCore: React.FC<TerminalCoreProps> = ({
           autoCorrect="off"
           autoComplete="off"
           spellCheck={false}
+          // biome-ignore lint/a11y/noAutofocus: a terminal is for typing; on a desktop the prompt is what the page is for
           autoFocus={!isMobile}
         />
       </form>

@@ -32,6 +32,7 @@ const SummaryAnimated: React.FC<{
   return (
     <div className="space-y-2 mt-2">
       {rendered.map((l, idx) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: a fixed list revealed in order, never reordered; the position is the identity
         <p key={idx} className="text-gray-400 first:text-white whitespace-pre-wrap break-words">
           {l}
         </p>
