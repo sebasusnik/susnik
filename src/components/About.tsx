@@ -4,7 +4,7 @@ import useStaggeredReveal from '../hooks/useStaggeredReveal';
 import useTyping from '../hooks/useTyping';
 import TypedText from './TypedText';
 
-const introLines = ['I am Sebastian Susnik', 'and I like to build stuff...'];
+const introLines = ['I am Sebastián Sušnik', 'and I like to build stuff...'];
 
 const summaryLines: Array<React.ReactNode> = [
   <>
