@@ -51,9 +51,13 @@ test('pause fades out instead of cutting, and play during the fade keeps it goin
     })
     .toBeGreaterThan(0.3);
 
-  // The element keeps playing through the 30 ms fade, then stops.
-  await button.click();
-  expect(await paused()).toBe(false);
+  // The element keeps playing through the 30 ms fade, then stops. Clicked and
+  // read in the same task: a round trip from the test can outlast the fade.
+  const rightAfter = await button.evaluate((b: HTMLButtonElement) => {
+    b.click();
+    return document.querySelector('audio')!.paused;
+  });
+  expect(rightAfter).toBe(false);
   await expect.poll(paused).toBe(true);
 
   // Play again, and pause-then-play inside the fade: it never stops.
