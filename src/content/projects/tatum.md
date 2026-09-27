@@ -9,6 +9,6 @@ summary: >-
   A synth engine in Rust that plays songs written as text. Edit the file and it
   changes on the next bar; plug in a MIDI controller and the knobs move it live.
 track:
-  src: tatum-detroit
-  title: After Midnight
+  src: tatum-night-shift
+  title: Night Shift
 ---

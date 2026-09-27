@@ -1,8 +1,16 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
-// Tatum's row on the setlist; the entry has no page of its own yet.
+// Tatum's row on the setlist. The track is read from the entry and its JSON,
+// so swapping it for another one does not break these.
 const PAGE = '/';
-const MP3 = /\/audio\/tatum-detroit\.mp3$/;
+const entry = readFileSync('src/content/projects/tatum.md', 'utf8');
+const SRC = entry.match(/^\s+src:\s*(\S+)/m)![1];
+const TITLE = entry.match(/^\s+title:\s*(.+)$/m)![1].trim();
+const MP3 = new RegExp(`/audio/${SRC}\\.mp3$`);
+const DURATION: number = JSON.parse(readFileSync(`public/audio/${SRC}.json`, 'utf8')).duration;
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const TOTAL = clock(DURATION);
 
 test('the waveform is there before the track is, and the track waits for play', async ({
   page,
@@ -13,12 +21,12 @@ test('the waveform is there before the track is, and the track waits for play', 
 
   await expect(page.locator('[data-seek] svg path')).toHaveCount(4);
   await expect(page.locator('[data-clip]')).toHaveAttribute('width', '0');
-  await expect(page.locator('[data-seek]')).toHaveAttribute('aria-valuetext', '0:00 of 2:57');
+  await expect(page.locator('[data-seek]')).toHaveAttribute('aria-valuetext', `0:00 of ${TOTAL}`);
   await page.waitForTimeout(1000);
   expect(fetched.some((u) => MP3.test(u))).toBe(false);
 
-  await page.getByRole('button', { name: 'Play After Midnight' }).click();
-  await expect(page.getByRole('button', { name: 'Pause After Midnight' })).toBeVisible();
+  await page.getByRole('button', { name: `Play ${TITLE}` }).click();
+  await expect(page.getByRole('button', { name: `Pause ${TITLE}` })).toBeVisible();
   await expect
     .poll(() => page.locator('audio').evaluate((a: HTMLAudioElement) => a.currentTime), {
       timeout: 8000,
@@ -26,8 +34,8 @@ test('the waveform is there before the track is, and the track waits for play', 
     .toBeGreaterThan(0.3);
   expect(fetched.some((u) => MP3.test(u))).toBe(true);
 
-  await page.getByRole('button', { name: 'Pause After Midnight' }).click();
-  await expect(page.getByRole('button', { name: 'Play After Midnight' })).toBeVisible();
+  await page.getByRole('button', { name: `Pause ${TITLE}` }).click();
+  await expect(page.getByRole('button', { name: `Play ${TITLE}` })).toBeVisible();
 });
 
 test('pause fades out instead of cutting, and play during the fade keeps it going', async ({
@@ -43,9 +51,13 @@ test('pause fades out instead of cutting, and play during the fade keeps it goin
     })
     .toBeGreaterThan(0.3);
 
-  // The element keeps playing through the 30 ms fade, then stops.
-  await button.click();
-  expect(await paused()).toBe(false);
+  // The element keeps playing through the 30 ms fade, then stops. Clicked and
+  // read in the same task: a round trip from the test can outlast the fade.
+  const rightAfter = await button.evaluate((b: HTMLButtonElement) => {
+    b.click();
+    return document.querySelector('audio')!.paused;
+  });
+  expect(rightAfter).toBe(false);
   await expect.poll(paused).toBe(true);
 
   // Play again, and pause-then-play inside the fade: it never stops.
@@ -57,7 +69,7 @@ test('pause fades out instead of cutting, and play during the fade keeps it goin
   });
   await page.waitForTimeout(200);
   expect(await paused()).toBe(false);
-  await expect(page.getByRole('button', { name: 'Pause After Midnight' })).toBeVisible();
+  await expect(page.getByRole('button', { name: `Pause ${TITLE}` })).toBeVisible();
 });
 
 test('the waveform seeks by click and by keyboard', async ({ page }) => {
@@ -67,19 +79,25 @@ test('the waveform seeks by click and by keyboard', async ({ page }) => {
 
   const box = (await seek.boundingBox())!;
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  await expect(seek).toHaveAttribute('aria-valuenow', /^(88|89)$/);
-  await expect(page.locator('[data-now]')).toHaveText(/^1:2[89]$/);
+  // Halfway, give or take the second the click lands in.
+  const half = Math.floor(DURATION / 2);
+  await expect(seek).toHaveAttribute(
+    'aria-valuenow',
+    new RegExp(`^(${half - 1}|${half}|${half + 1})$`),
+  );
+  const now = await page.locator('[data-now]').textContent();
+  expect([half - 1, half, half + 1].map(clock)).toContain(now);
   // Half of it red, and the line halfway across.
   expect(Number(await page.locator('[data-clip]').getAttribute('width'))).toBeCloseTo(500, -1);
   const head = (await page.locator('[data-head]').boundingBox())!;
   expect(Math.abs(head.x + head.width / 2 - (box.x + box.width / 2))).toBeLessThan(2);
 
   await seek.press('End');
-  await expect(seek).toHaveAttribute('aria-valuenow', '177');
+  await expect(seek).toHaveAttribute('aria-valuenow', String(Math.round(DURATION)));
   await seek.press('Home');
   await seek.press('ArrowRight');
   await seek.press('ArrowRight');
-  await expect(seek).toHaveAttribute('aria-valuetext', '0:10 of 2:57');
+  await expect(seek).toHaveAttribute('aria-valuetext', `0:10 of ${TOTAL}`);
   await seek.press('ArrowLeft');
   await expect(seek).toHaveAttribute('aria-valuenow', '5');
 });
