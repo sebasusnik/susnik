@@ -8,12 +8,12 @@ const introLines = ['I am Sebastian Susnik', 'and I like to build stuff...'];
 
 const summaryLines: Array<React.ReactNode> = [
   <>
-    👋 Hi, I'm a <span className="text-cyan-400">full-stack developer</span> who loves transforming
-    ideas into reliable, elegant software.
+    👋 Hi, I'm a <span className="text-cyan-400">product engineer</span> building PixFit at Winclap,
+    a generative ad production platform, from its first commit to production.
   </>,
-  '• Focus : TypeScript, React, Node, and cloud-native architectures.',
-  '• Philosophy : Clean code, meaningful UX, and shipping fast without breaking things.',
-  '• Currently : Building side-projects, contributing to open source and always learning.',
+  '• Focus : TypeScript, Go and AWS, with generative AI in production.',
+  '• Before : ten years of other work, from repairing printers to building roofs.',
+  '• Outside work : a synth engine in Rust, and a music visualizer on an ESP32 and an old TV.',
   ' ',
 ];
 

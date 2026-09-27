@@ -18,7 +18,7 @@ export const experiences: Experience[] = [
     from: new Date(2024, 6, 1),
     to: 'present',
     description:
-      'Part of the engineering team, building solutions that enable growth transformation for our clients.',
+      'Founding engineer on PixFit, a generative ad production platform, in production with its first enterprise customer. Before that, performance and creative operations, and the engineering handover of the Brkaway acquisition.',
   },
   {
     company: 'Sinapsis',
@@ -26,7 +26,14 @@ export const experiences: Experience[] = [
     from: new Date(2022, 1, 1),
     to: new Date(2024, 6, 1),
     description:
-      'Built proof-of-concepts and enhanced existing client products, delivering tangible value and cloud-native solutions.',
+      "Serverless backend for the Self-Realization Fellowship's annual global convocation: tens of thousands of attendees online at once, where downtime was not an option.",
+  },
+  {
+    company: 'before software',
+    role: 'Printer repair · Purchasing & logistics · Timber roofing',
+    from: new Date(2012, 0, 1),
+    to: new Date(2022, 1, 1),
+    description: 'Ten years of other work before the first line of code.',
   },
 ];
 
