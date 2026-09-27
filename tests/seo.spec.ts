@@ -63,3 +63,11 @@ test('fonts are served from this site, not Google', async ({ page }) => {
     true,
   );
 });
+
+test('every page reports a view to Vercel Analytics', async ({ page }) => {
+  for (const path of ['/', '/terminal/', '/nothing-here']) {
+    const script = page.waitForRequest(/\/_vercel\/insights\/script\.js/);
+    await page.goto(path);
+    await script;
+  }
+});

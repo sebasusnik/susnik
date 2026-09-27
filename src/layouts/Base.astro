@@ -3,6 +3,7 @@
 // before the text can draw, and one less request that reports the visit.
 // Upright only; the site's one italic line has always been a synthetic slant.
 import '@fontsource-variable/jetbrains-mono';
+import Analytics from '@vercel/analytics/astro';
 import Meta from '../components/Meta.astro';
 import '../styles/site.css';
 
@@ -36,5 +37,8 @@ const {
     <script>
       import '../scripts/presence.ts';
     </script>
+    <!-- Page views, without cookies or anything that follows a visitor
+         across sites. Only reports on Vercel; locally the script 404s. -->
+    <Analytics />
   </body>
 </html>
