@@ -39,7 +39,11 @@ A few fields exist for the ones that do not fit a date and a status:
 | `stack`      | A second line under the summary. Headliner only               |
 | `draft`      | Keeps it out of the setlist                                   |
 | `soon`       | The repo is private for now and about to go public; the row says so |
-| `track`      | A player on the entry's page: `{ src, title }`. See below     |
+| `track`      | A player under the entry's row, and on its page if it has one: `{ src, title }`. See below |
+
+Page bodies are written by hand, in my own words. Drafts and notes live in a
+private repo, `sebasusnik/susnik-notes`, until they are ready; nothing
+half-written sits in this public one.
 
 A track starts as a WAV. `node scripts/track.mjs <in.wav> <src>` (needs ffmpeg)
 writes `public/audio/<src>.mp3` and the waveform next to it as JSON, which is
@@ -90,8 +94,9 @@ Playwright, against the built site rather than the dev server — the dev toolba
 adds headings and focusable elements of its own, and a 404 has to come back
 with a real 404 status. It covers the setlist, the blood and 666, the long
 press on a phone and the gestures that must *not* trigger it, the drone and the
-sting, focus rings and contrast in both themes, the terminal's keyboard, resize
-corners, and the no-signal page. Entry counts are read from the collection, so
+sting, the track player, focus rings and contrast in both themes, the terminal's
+keyboard, resize corners, the no-signal page, and what a search engine reads
+(titles, structured data, no Google Fonts). Entry counts are read from the collection, so
 adding or cutting a project does not break it. CI runs it on every pull
 request.
 
@@ -126,16 +131,28 @@ Husky installs them on `npm install`.
 Warnings do not stop either, the same as in CI. `git commit --no-verify` and
 `git push --no-verify` skip them when you mean to.
 
-Astro and Tailwind, with React only on the terminal page. The six theme colours
+Astro 7 and Tailwind 3, with React only on the terminal page. Tailwind runs
+through PostCSS (`postcss.config.cjs`), and JetBrains Mono is served from the
+site rather than Google Fonts. The six theme colours
 are CSS variables that `tailwind.config.cjs` points at, so `666` repaints the
 whole site by swapping six values rather than filtering it — a filter turned the
 blood pink. The blood itself is a few hundred lines of canvas in
 `src/scripts/blood.ts`.
 
+## Search
+
+The name is Sebastián Sušnik, and most people type it without the š or the
+accent. The home page's title and description use the real spelling, and its
+JSON-LD `Person` lists every other one as an alternate name, with GitHub and
+LinkedIn as `sameAs`, so the site and the profiles read as one person. The
+brand stays *Susnik*, as the logo spells it. The 404 is `noindex`.
+
 ## Two things you have to supply
 
 - **`public/resume.pdf`** — the footer's `cv` link and the terminal's `resume`
-  command both point at it, and 404 without it.
+  command both point at it, and 404 without it. It is rendered from
+  `design/resume/resume.html` by `node design/resume/render.mjs`; see the README
+  there.
 - **Absolute URLs** for the canonical link and `og:image` come from
   `VERCEL_PROJECT_PRODUCTION_URL`, which Vercel points at the production domain.
   `PUBLIC_SITE_URL` overrides it; local builds fall back to localhost.

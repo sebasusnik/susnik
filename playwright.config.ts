@@ -29,9 +29,16 @@ export default defineConfig({
   webServer: external
     ? undefined
     : {
-        command: 'npm run build && astro preview --port 4399',
+        // --ignore-lock keeps the server in the foreground. Astro 7 sends
+        // `astro preview` to the background when it detects an AI agent
+        // running it, and Playwright then sees its process exit early while
+        // an orphaned server keeps the port.
+        command: 'npm run build && astro preview --port 4399 --ignore-lock',
         url: 'http://localhost:4399',
-        reuseExistingServer: !process.env.CI,
+        // Never reuse: a preview left running from another branch would be
+        // tested instead of this build, and pass or fail for the wrong code.
+        // A busy port fails loudly instead.
+        reuseExistingServer: false,
         timeout: 120_000,
       },
 });
