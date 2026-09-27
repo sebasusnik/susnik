@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BSides from '../components/BSides.astro';
 import Hero from '../components/Hero.astro';
+import LatestBSide from '../components/LatestBSide.astro';
 import PersonLd from '../components/PersonLd.astro';
 import SetList from '../components/SetList.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -17,6 +18,11 @@ const titles = Object.fromEntries(entries.map((e) => [e.id, e.data.title]));
   <PersonLd slot="head" />
   <Hero />
   <SetList entries={entries} counts={counts(notes)}>
+    <LatestBSide
+      slot="top"
+      note={notes[0]}
+      project={notes[0]?.data.project ? titles[notes[0].data.project.id] : undefined}
+    />
     <BSides notes={notes} titles={titles} />
   </SetList>
   <SiteFooter />
