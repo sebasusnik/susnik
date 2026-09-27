@@ -47,21 +47,32 @@ test.describe('setlist', () => {
     await expect(page.locator('.row:visible')).toHaveCount(SET);
   });
 
-  test('the encore plays the rest, for good', async ({ page }) => {
+  test('the encore plays the rest, and takes it back', async ({ page }) => {
     const encore = page.locator('[data-encore-button]');
     await expect(page.locator('.row:visible')).toHaveCount(SET);
     if (SET === all.length) {
       await expect(encore).toHaveCount(0);
       return;
     }
-    await expect(encore).toHaveText(new RegExp(`encore\\s*${all.length - SET} more`, 'i'));
+    const rest = all.length - SET;
+    await expect(encore).toHaveText(new RegExp(`encore\\s*${rest} more`, 'i'), {
+      useInnerText: true,
+    });
+    await expect(encore).toHaveAttribute('aria-expanded', 'false');
     await encore.click();
-    await expect(encore).toBeHidden();
     await expect(page.locator('.row:visible')).toHaveCount(all.length);
-    // A filter and back does not put the encore away again.
+    await expect(encore).toHaveText(new RegExp(`encore\\s*${rest} less`, 'i'), {
+      useInnerText: true,
+    });
+    await expect(encore).toHaveAttribute('aria-expanded', 'true');
+    // A filter and back leaves it as it was.
     await page.getByRole('button', { name: all[0].kind!, exact: true }).click();
+    await expect(encore).toBeHidden();
     await page.getByRole('button', { name: 'all', exact: true }).click();
     await expect(page.locator('.row:visible')).toHaveCount(all.length);
+    await encore.click();
+    await expect(page.locator('.row:visible')).toHaveCount(SET);
+    await expect(encore).toBeInViewport();
   });
 
   test('the hero mentions notes only once there are some', async ({ page }) => {

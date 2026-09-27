@@ -51,12 +51,14 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
     <button
       type="button"
       data-encore-button
+      aria-expanded="false"
       class="-mx-3 flex w-[calc(100%+24px)] items-baseline justify-between gap-x-3
              px-3 py-[18px] text-[11px] uppercase tracking-[.2em] text-mute transition-colors
              hover:bg-lift hover:text-fg focus-visible:outline-offset-[-2px]"
     >
       <span>encore</span>
-      <span>{encore} more ↓</span>
+      <span data-more>{encore} more ↓</span>
+      <span data-less hidden>{encore} less ↑</span>
     </button>
   )}
   <p class="py-10 text-mute" data-empty hidden>nothing of that kind. yet.</p>
@@ -71,32 +73,37 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
   const rows = document.querySelectorAll<HTMLElement>('[data-entry]');
   const empty = document.querySelector<HTMLElement>('[data-empty]');
   const encore = document.querySelector<HTMLButtonElement>('[data-encore-button]');
-  // Once the encore is played it stays played.
+  const held = [...rows].filter((row) => row.dataset.encore !== undefined);
+  // Played or not, the encore stays as it was left when a filter comes back to all.
   let played = false;
 
-  encore?.addEventListener('click', () => {
-    played = true;
-    encore.hidden = true;
-    const held = [...rows].filter((row) => row.dataset.encore !== undefined);
-    for (const row of held) row.hidden = false;
-    // The button is gone; keyboard focus picks up where the set resumes.
-    held[0]?.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
-  });
+  const play = (on: boolean) => {
+    played = on;
+    for (const row of held) row.hidden = !on;
+    if (!encore) return;
+    encore.setAttribute('aria-expanded', String(on));
+    encore.querySelector<HTMLElement>('[data-more]')!.hidden = on;
+    encore.querySelector<HTMLElement>('[data-less]')!.hidden = !on;
+    // Folding it back pulls the page up under the reader; keep the button in view.
+    if (!on) encore.scrollIntoView({ block: 'nearest' });
+  };
+
+  encore?.addEventListener('click', () => play(!played));
 
   for (const button of buttons) {
     button.addEventListener('click', () => {
       const kind = button.dataset.filter;
       for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
 
-      // A filter shows every entry of its kind; only the full set keeps some back.
-      const holding = kind === 'all' && !played;
+      // A filter shows every entry of its kind; only the full set has an encore.
+      const all = kind === 'all';
       let shown = 0;
       for (const row of rows) {
-        const match = kind === 'all' || row.dataset.kind === kind;
-        row.hidden = !match || (holding && row.dataset.encore !== undefined);
+        const match = all || row.dataset.kind === kind;
+        row.hidden = !match || (all && !played && row.dataset.encore !== undefined);
         if (match) shown++;
       }
-      if (encore) encore.hidden = !holding;
+      if (encore) encore.hidden = !all;
       if (empty) empty.hidden = shown > 0;
     });
   }
