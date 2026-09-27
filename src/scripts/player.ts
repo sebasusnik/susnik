@@ -122,10 +122,13 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
     if (audio.paused) return;
     ramp(0);
     clearTimeout(stopping);
-    stopping = window.setTimeout(() => {
-      stopping = 0;
-      audio.pause();
-    }, FADE * 1000 + 10);
+    stopping = window.setTimeout(
+      () => {
+        stopping = 0;
+        audio.pause();
+      },
+      FADE * 1000 + 10,
+    );
   };
 
   const to = (t: number) => {
