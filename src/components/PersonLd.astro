@@ -4,6 +4,10 @@
  * profiles that are the same person (sameAs), and the site itself. The name
  * is Sušnik; most people type it without the š or the accent, so every
  * spelling is listed.
+ *
+ * The site is in English, but people search in Spanish too
+ * ("susnik ingeniero"), so the occupation carries both languages and the
+ * words people actually type for it.
  */
 const site = Astro.site ?? new URL(Astro.url.origin);
 const url = new URL('/', site).href;
@@ -19,6 +23,22 @@ const graph = {
       url,
       image: new URL('/og.png', site).href,
       jobTitle: 'Product Engineer',
+      hasOccupation: {
+        '@type': 'Occupation',
+        name: 'Product Engineer',
+        alternateName: [
+          'Ingeniero de producto',
+          'Software Engineer',
+          'Ingeniero de software',
+          'Software Developer',
+          'Desarrollador de software',
+          'Full-stack Developer',
+          'Desarrollador full-stack',
+          'Programador',
+        ],
+        occupationLocation: { '@type': 'City', name: 'Buenos Aires' },
+      },
+      knowsLanguage: ['es', 'en'],
       worksFor: { '@type': 'Organization', name: 'Winclap' },
       address: {
         '@type': 'PostalAddress',
