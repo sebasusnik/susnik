@@ -24,5 +24,9 @@ export default defineConfig({
   // Tailwind runs through PostCSS: see postcss.config.cjs.
   integrations: [react()],
 
+  // Code in b-sides: Vesper is near-black with one warm accent, which is the
+  // closest a syntax theme gets to black, white and a little blood.
+  markdown: { shikiConfig: { theme: 'vesper' } },
+
   // no custom Vite plugins needed; Astro's Tailwind integration wires them up for us
 });

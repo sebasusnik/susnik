@@ -94,8 +94,55 @@
     max-width: 100%;
     height: auto;
   }
+  /* An image on its own line — a spectrogram, a photo of the circuit — takes
+     the whole column rather than the reading measure, which is too narrow
+     for anything with detail in it. */
+  .prose > p:has(> img:only-child) {
+    width: min(calc(100vw - 48px), 712px);
+  }
+  .prose > p:has(> img:only-child) img {
+    width: 100%;
+  }
   .prose code {
     background: var(--line);
     padding: 1px 5px;
+  }
+  /* Code blocks are coloured by Shiki (see astro.config.mjs); this only frames
+     them, and scrolls a long line instead of letting it push the page wide. */
+  .prose pre {
+    padding: 14px 16px;
+    border: 1px solid var(--line-strong);
+    overflow-x: auto;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .prose pre code {
+    background: none;
+    padding: 0;
+  }
+  /* Preflight takes list markers away; a dash, as on the CV. */
+  .prose ul > li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  .prose ul > li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--mute);
+  }
+  .prose ol {
+    list-style: decimal;
+    padding-left: 1.4em;
+  }
+  .prose li + li {
+    margin-top: 0.3em;
+  }
+  /* A quote reads as someone else's voice: brighter, set in from a red rule. */
+  .prose blockquote {
+    border-left: 2px solid #8b0000;
+    padding-left: 1em;
+    color: var(--fg);
+    font-style: italic;
   }
 }
