@@ -36,6 +36,7 @@ const NotFound: React.FC<Props> = ({ command, animate = false, onFinished, onLin
   return (
     <div className="mt-2 mb-4 text-sm md:text-base space-y-1 pl-2">
       {rendered.map((l, idx) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: a fixed list revealed in order, never reordered; the position is the identity
         <p key={idx} className="text-gray-400 first:text-red-500">
           {l}
         </p>

@@ -13,9 +13,17 @@ import TerminalCore from './TerminalCore';
 
 interface Line {
   id: number;
-  html?: string;
   element?: React.ReactNode;
 }
+
+/** Desktop and mobile each render a prompt; focus whichever one is showing. */
+const focusVisibleInput = () => {
+  const inputs = Array.from(
+    document.querySelectorAll<HTMLInputElement>('input[data-terminal-input]'),
+  );
+  const visible = inputs.find((el) => el.offsetParent !== null);
+  visible?.focus();
+};
 
 let idCounter = 0;
 
@@ -46,14 +54,6 @@ const Terminal: React.FC = () => {
   // Read inside stable callbacks without resubscribing listeners per keystroke.
   const inputRef = useRef(input);
   inputRef.current = input;
-
-  const focusVisibleInput = () => {
-    const inputs = Array.from(
-      document.querySelectorAll<HTMLInputElement>('input[data-terminal-input]'),
-    );
-    const visible = inputs.find((el) => el.offsetParent !== null);
-    visible?.focus();
-  };
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -125,7 +125,7 @@ const Terminal: React.FC = () => {
     [addElement, handleCommand, addToHistory],
   );
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     runCommand(input);
   };
@@ -144,6 +144,7 @@ const Terminal: React.FC = () => {
   }, []);
 
   // A deep link jumps straight to the section instead of replaying the intro.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: once, on arrival; re-running on a new callback identity would print the section again
   useEffect(() => {
     const command = window.location.hash.replace(/^#/, '').toLowerCase();
     if (!deepLinkCommands.includes(command)) return;
@@ -155,6 +156,7 @@ const Terminal: React.FC = () => {
     addToHistory(command);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: lines and introDone are the triggers, not inputs: new output, or the prompt appearing
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;

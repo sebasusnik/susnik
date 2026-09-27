@@ -86,3 +86,25 @@ for (const corner of ['bottomLeft', 'topLeft', 'bottomRight', 'topRight'] as con
     expect(Math.abs(fixedY)).toBeLessThan(14);
   });
 }
+
+test('the window cannot be dragged off the top or the left', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/terminal');
+  const handle = page.locator('.terminal-handle');
+  await handle.waitFor();
+  const win = page.locator('.react-draggable').first();
+
+  const grab = (await handle.boundingBox())!;
+  const x = grab.x + grab.width / 2;
+  const y = grab.y + grab.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x - 2000, y - 2000, { steps: 15 });
+  await page.mouse.up();
+
+  const box = (await win.boundingBox())!;
+  expect(box.x).toBeGreaterThanOrEqual(0);
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  // And the title bar is still there to drag it back by.
+  await expect(handle).toBeInViewport();
+});

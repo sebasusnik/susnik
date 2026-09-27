@@ -5,42 +5,54 @@ import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Draggable from 'react-draggable';
 
+type Size = { width: number; height: number };
+type Point = { x: number; y: number };
+
 interface DesktopWindowProps {
   children: React.ReactNode;
-  initialSize?: { width: number; height: number };
+  initialSize?: Size;
 }
 
-const DesktopWindow: React.FC<DesktopWindowProps> = ({
-  children,
-  initialSize = { width: 934, height: 672 },
-}) => {
+// Module-level, so the default is one object and not a new one per render.
+const DEFAULT_SIZE: Size = { width: 934, height: 672 };
+
+/**
+ * How far the window's top-left corner may go: it may overflow the viewport to
+ * the right and bottom, but never leave it, so the title bar is always there
+ * to drag.
+ */
+const reach = (windowSize: Size) => ({
+  left: 0,
+  top: 0,
+  right: Math.max(0, window.innerWidth - windowSize.width),
+  bottom: Math.max(0, window.innerHeight - windowSize.height),
+});
+
+const clampToViewport = (pos: Point, windowSize: Size): Point => {
+  const r = reach(windowSize);
+  return {
+    x: Math.min(Math.max(pos.x, r.left), r.right),
+    y: Math.min(Math.max(pos.y, r.top), r.bottom),
+  };
+};
+
+const centred = (windowSize: Size): Point =>
+  typeof window === 'undefined'
+    ? { x: 0, y: 0 }
+    : clampToViewport(
+        {
+          x: (window.innerWidth - windowSize.width) / 2,
+          y: (window.innerHeight - windowSize.height) / 2,
+        },
+        windowSize,
+      );
+
+const DesktopWindow: React.FC<DesktopWindowProps> = ({ children, initialSize = DEFAULT_SIZE }) => {
   const draggableRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(initialSize);
-
-  // Keep the title bar reachable: the window may overflow the viewport, but its
-  // top-left corner never leaves it, so there is always something to drag.
-  const clampToViewport = (
-    pos: { x: number; y: number },
-    windowSize: { width: number; height: number },
-  ) => ({
-    x: Math.min(Math.max(pos.x, 0), Math.max(0, window.innerWidth - windowSize.width)),
-    y: Math.min(Math.max(pos.y, 0), Math.max(0, window.innerHeight - windowSize.height)),
-  });
-
-  const getInitialPosition = () => {
-    if (typeof window !== 'undefined') {
-      return clampToViewport(
-        {
-          x: (window.innerWidth - initialSize.width) / 2,
-          y: (window.innerHeight - initialSize.height) / 2,
-        },
-        initialSize,
-      );
-    }
-    return { x: 0, y: 0 };
-  };
-
-  const [position, setPosition] = useState(getInitialPosition);
+  const [position, setPosition] = useState(() => centred(initialSize));
+  // Only here to re-render when the viewport changes, so the drag bounds follow.
+  const [, setViewport] = useState(0);
   // Starts false on both sides of the render: seeding it from `typeof window`
   // makes the server and the first client render disagree, which React reports
   // as a hydration mismatch and recovers from by throwing the tree away.
@@ -50,15 +62,16 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
   );
 
   useEffect(() => {
-    setPosition(getInitialPosition());
+    setPosition(centred(initialSize));
     setIsPositioned(true);
-  }, []);
+  }, [initialSize]);
 
   // Shrinking the browser used to strand the window off-screen with no way to
   // drag it back, since its position is absolute and never revisited.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleViewportResize = () => {
+      setViewport(window.innerWidth * 100_000 + window.innerHeight);
       setPosition((prev) => {
         const next = clampToViewport(prev, size);
         return next.x === prev.x && next.y === prev.y ? prev : next;
@@ -66,7 +79,7 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
     };
     window.addEventListener('resize', handleViewportResize);
     return () => window.removeEventListener('resize', handleViewportResize);
-  }, [size.width, size.height]);
+  }, [size]);
 
   const handleResizeStart = () => {
     resizeStartData.current = {
@@ -119,6 +132,9 @@ const DesktopWindow: React.FC<DesktopWindowProps> = ({
           handle=".terminal-handle"
           nodeRef={draggableRef}
           position={position}
+          // Dragging used to be unbounded: the title bar could be thrown off
+          // the top or the left, leaving nothing to drag it back by.
+          bounds={reach(size)}
           onStop={(_e, data) => setPosition({ x: data.x, y: data.y })}
         >
           <div ref={draggableRef} style={{ position: 'absolute', zIndex: 10 }}>

@@ -18,8 +18,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Lint errors and unformatted code fail the build; the warnings are the
-      # terminal's, tracked apart.
+      # Lint errors and unformatted code fail the build.
       - run: npx biome ci --reporter=github .
       # Syncs first: astro:content types live in .astro/, which is gitignored.
       - run: npm run typecheck

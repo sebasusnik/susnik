@@ -1,16 +1,18 @@
 import type React from 'react';
 import Caret from './Caret';
 
-const PREFIX_HTML =
-  '<span class="text-fuchsia-400">sebasusnik@portfolio</span>' +
-  '<span class="text-gray-500">:</span>' +
-  '<span class="text-cyan-400">~</span>' +
-  '<span class="text-gray-500">$</span>&nbsp;';
+const prefix = (
+  <span>
+    <span className="text-fuchsia-400">sebasusnik@portfolio</span>
+    <span className="text-gray-500">:</span>
+    <span className="text-cyan-400">~</span>
+    <span className="text-gray-500">$</span>&nbsp;
+  </span>
+);
 
 interface Props {
   input?: string;
   live?: boolean;
-  html?: string;
   children?: React.ReactNode;
   className?: string;
   valid?: string[];
@@ -21,23 +23,7 @@ const colourCmd = (cmd: string, valid?: string[]) => {
   return <span className={isValid ? 'text-green-400' : 'text-red-500'}>{cmd}</span>;
 };
 
-const PromptLine: React.FC<Props> = ({
-  input,
-  live = false,
-  html,
-  children,
-  className,
-  valid = [],
-}) => {
-  if (html) {
-    return (
-      <div
-        className={`whitespace-pre ${className ?? ''}`}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
-    );
-  }
-
+const PromptLine: React.FC<Props> = ({ input, live = false, children, className, valid = [] }) => {
   if (input !== undefined) {
     const spaceIdx = input.indexOf(' ');
     const cmd = spaceIdx === -1 ? input : input.slice(0, spaceIdx);
@@ -46,7 +32,7 @@ const PromptLine: React.FC<Props> = ({
     const trailingSpace = input.endsWith(' ');
     return (
       <div className={`whitespace-pre ${className ?? ''}`}>
-        <span dangerouslySetInnerHTML={{ __html: PREFIX_HTML }} />
+        {prefix}
         {colourCmd(cmd, valid)}
         {rest && <span className="text-white"> {rest}</span>}
         {!rest && trailingSpace && <>&nbsp;</>}

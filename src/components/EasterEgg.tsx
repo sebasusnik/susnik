@@ -61,6 +61,7 @@ const EasterEgg: React.FC<Props> = ({ command, animate = false, onFinished, onLi
     <div className="mt-2 mb-4 whitespace-pre-wrap break-all">
       <div className="text-sm md:text-base font-mono pl-2">
         {rendered.map((line, idx) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: a fixed list revealed in order, never reordered; the position is the identity
           <React.Fragment key={idx}>{line}</React.Fragment>
         ))}
       </div>
