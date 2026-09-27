@@ -6,8 +6,10 @@ interface Props {
   entry: Project;
   /** How many b-sides it has. Shown as a bare number at the end of the tag. */
   notes?: number;
+  /** Past the first few: held back until the encore is asked for. */
+  encore?: boolean;
 }
-const { entry, notes = 0 } = Astro.props;
+const { entry, notes = 0, encore = false } = Astro.props;
 const link = href(entry, notes > 0);
 const { kind, dead, status } = tag(entry);
 const external = link?.startsWith('http');
@@ -24,6 +26,8 @@ const Tag = link ? 'a' : 'div';
 <div
   data-entry
   data-kind={entry.data.kind}
+  data-encore={encore || undefined}
+  hidden={encore}
   class="-mx-3 border-b border-line transition-colors hover:bg-lift focus-within:bg-lift"
 >
 <Tag

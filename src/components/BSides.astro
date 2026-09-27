@@ -10,9 +10,11 @@ import NoteRow from './NoteRow.astro';
 interface Props {
   notes: Note[];
   titles: Record<string, string>;
+  /** How many of the newest are already announced above the setlist. */
+  skip?: number;
 }
-const { notes, titles } = Astro.props;
-const latest = notes.slice(0, 5);
+const { notes, titles, skip = 0 } = Astro.props;
+const latest = notes.slice(skip, skip + 5);
 ---
 {latest.length > 0 && (
   <section class="mt-20" aria-labelledby="b-sides">

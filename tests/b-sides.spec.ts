@@ -7,16 +7,35 @@ test.skip(!!process.env.BASE_URL, 'runs against the fixtures, not a deployment')
 
 const all = notes();
 
-test('the setlist ends in the five newest b-sides, set like tour dates', async ({ page }) => {
+test('the newest b-side is announced above the setlist', async ({ page }) => {
+  await page.goto('/');
+  const block = page.locator('section[aria-label="New b-side"]');
+  await expect(block).toContainText(/new b-side/i);
+  const row = block.locator('[data-note]');
+  await expect(row).toHaveCount(1);
+  await expect(row).toContainText(all[0].title);
+  await expect(row).toHaveAttribute('href', `/b-sides/${all[0].id}/`);
+  // It comes before the setlist.
+  const [announced, setlist] = await Promise.all([
+    block.evaluate((e) => e.getBoundingClientRect().top),
+    page.getByRole('heading', { name: 'setlist' }).evaluate((e) => e.getBoundingClientRect().top),
+  ]);
+  expect(announced).toBeLessThan(setlist);
+});
+
+test('the setlist ends in the next five b-sides, set like tour dates', async ({ page }) => {
   await page.goto('/');
   const section = page.locator('section[aria-labelledby="b-sides"]');
   const rows = section.locator('[data-note]');
-  await expect(rows).toHaveCount(Math.min(5, all.length));
-  await expect(rows.first()).toContainText(all[0].title);
-  await expect(rows.first()).toHaveAttribute('href', `/b-sides/${all[0].id}/`);
-  // The oldest does not make the cut, and a draft never does.
-  await expect(section).not.toContainText(all[all.length - 1].title);
+  const rest = all.slice(1, 6);
+  await expect(rows).toHaveCount(rest.length);
+  await expect(rows.first()).toContainText(rest[0].title);
+  await expect(rows.first()).toHaveAttribute('href', `/b-sides/${rest[0].id}/`);
+  // The one announced above is not repeated, and a draft never shows.
+  await expect(section).not.toContainText(all[0].title);
   await expect(section).not.toContainText('Un borrador');
+  // Each says how long it takes to read, so it reads as a note, not an entry.
+  for (const r of await rows.all()) await expect(r).toContainText(/\d+ min read/);
   await expect(section.getByRole('link', { name: /all b-sides/i })).toHaveAttribute(
     'href',
     '/b-sides/',

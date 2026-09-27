@@ -16,14 +16,14 @@ const titles = Object.fromEntries(entries.map((e) => [e.id, e.data.title]));
 ---
 <Base>
   <PersonLd slot="head" />
-  <Hero />
-  <SetList entries={entries} counts={counts(notes)}>
+  <Hero notes={notes.length > 0} />
+  <SetList entries={entries} counts={counts(notes)} set={notes.length > 0 ? 3 : undefined}>
     <LatestBSide
       slot="top"
       note={notes[0]}
       project={notes[0]?.data.project ? titles[notes[0].data.project.id] : undefined}
     />
-    <BSides notes={notes} titles={titles} />
+    <BSides notes={notes} titles={titles} skip={1} />
   </SetList>
   <SiteFooter />
 </Base>

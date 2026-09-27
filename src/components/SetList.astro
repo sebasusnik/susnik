@@ -6,8 +6,16 @@ interface Props {
   entries: Project[];
   /** B-sides per entry id. */
   counts?: Record<string, number>;
+  /**
+   * How many to play before the encore. Left out, the whole setlist shows: it
+   * is only cut short to make room for the b-sides under it.
+   */
+  set?: number;
 }
-const { entries, counts = {} } = Astro.props;
+const { entries, counts = {}, set = entries.length } = Astro.props;
+
+// The set proper; the rest wait for the encore.
+const encore = entries.length - set;
 
 // Only offer a filter for kinds that actually have something behind them.
 const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
@@ -38,7 +46,19 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
     </div>
   </div>
 
-  {entries.map((entry) => <Row entry={entry} notes={counts[entry.id]} />)}
+  {entries.map((entry, i) => <Row entry={entry} notes={counts[entry.id]} encore={i >= set} />)}
+  {encore > 0 && (
+    <button
+      type="button"
+      data-encore-button
+      class="-mx-3 grid w-[calc(100%+24px)] grid-cols-[auto_1fr] items-baseline gap-x-3 border-b border-line
+             px-3 py-[18px] text-left text-[11px] uppercase tracking-[.2em] text-mute transition-colors
+             hover:bg-lift hover:text-fg focus-visible:outline-offset-[-2px] sm:grid-cols-[72px_1fr_auto] sm:gap-x-6"
+    >
+      <span>encore</span>
+      <span>{encore} more ↓</span>
+    </button>
+  )}
   <p class="py-10 text-mute" data-empty hidden>nothing of that kind. yet.</p>
   <slot />
 </main>
@@ -50,18 +70,33 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
   // An entry is its row and, for some, the player under it; they go together.
   const rows = document.querySelectorAll<HTMLElement>('[data-entry]');
   const empty = document.querySelector<HTMLElement>('[data-empty]');
+  const encore = document.querySelector<HTMLButtonElement>('[data-encore-button]');
+  // Once the encore is played it stays played.
+  let played = false;
+
+  encore?.addEventListener('click', () => {
+    played = true;
+    encore.hidden = true;
+    const held = [...rows].filter((row) => row.dataset.encore !== undefined);
+    for (const row of held) row.hidden = false;
+    // The button is gone; keyboard focus picks up where the set resumes.
+    held[0]?.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
+  });
 
   for (const button of buttons) {
     button.addEventListener('click', () => {
       const kind = button.dataset.filter;
       for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
 
+      // A filter shows every entry of its kind; only the full set keeps some back.
+      const holding = kind === 'all' && !played;
       let shown = 0;
       for (const row of rows) {
         const match = kind === 'all' || row.dataset.kind === kind;
-        row.hidden = !match;
+        row.hidden = !match || (holding && row.dataset.encore !== undefined);
         if (match) shown++;
       }
+      if (encore) encore.hidden = !holding;
       if (empty) empty.hidden = shown > 0;
     });
   }

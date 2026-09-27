@@ -2,6 +2,9 @@ import { expect, test } from '@playwright/test';
 import { entries, notes, phone } from './helpers';
 
 const all = entries();
+// With b-sides under it the setlist plays three and keeps the rest for the
+// encore; with none, it plays everything.
+const SET = notes().length ? Math.min(3, all.length) : all.length;
 
 test.describe('setlist', () => {
   test.beforeEach(async ({ page }) => page.goto('/'));
@@ -41,7 +44,30 @@ test.describe('setlist', () => {
       );
     }
     await page.getByRole('button', { name: 'all', exact: true }).click();
+    await expect(page.locator('.row:visible')).toHaveCount(SET);
+  });
+
+  test('the encore plays the rest, for good', async ({ page }) => {
+    const encore = page.locator('[data-encore-button]');
+    await expect(page.locator('.row:visible')).toHaveCount(SET);
+    if (SET === all.length) {
+      await expect(encore).toHaveCount(0);
+      return;
+    }
+    await expect(encore).toHaveText(new RegExp(`encore\\s*${all.length - SET} more`, 'i'));
+    await encore.click();
+    await expect(encore).toBeHidden();
     await expect(page.locator('.row:visible')).toHaveCount(all.length);
+    // A filter and back does not put the encore away again.
+    await page.getByRole('button', { name: all[0].kind!, exact: true }).click();
+    await page.getByRole('button', { name: 'all', exact: true }).click();
+    await expect(page.locator('.row:visible')).toHaveCount(all.length);
+  });
+
+  test('the hero mentions notes only once there are some', async ({ page }) => {
+    const line = page.locator('.hero p').filter({ hasText: 'product engineer' });
+    if (notes().length) await expect(line).toContainText('And notes from building them.');
+    else await expect(line).not.toContainText('notes');
   });
 
   test('rows link to their own page, straight out, or nowhere', async ({ page }) => {

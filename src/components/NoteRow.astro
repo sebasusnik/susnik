@@ -1,9 +1,10 @@
 ---
-import { day, type Note, noteHref } from '../lib/notes';
+import { day, minutes, type Note, noteHref } from '../lib/notes';
 
 /**
  * A b-side, set like a tour date: the day, the title, and where it played —
- * the entry it belongs to — on the right. Same grid as the setlist, so the two
+ * the entry it belongs to — on the right, with how long it takes to read, so a
+ * note looks like something to read and not another entry. Same grid as the setlist, so the two
  * lists read as one flyer.
  */
 interface Props {
@@ -26,10 +27,8 @@ const { note, project } = Astro.props;
     lang={note.data.lang}
     class="col-span-2 row-start-2 mt-1 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:mt-0"
   >{note.data.title}</span>
-  {project && (
-    <span
-      class="col-start-2 row-start-1 text-right text-[11px] uppercase tracking-[.12em] text-mute
-             sm:col-start-3 sm:whitespace-nowrap sm:tracking-[.2em]"
-    >{project}</span>
-  )}
+  <span
+    class="col-start-2 row-start-1 text-right text-[11px] uppercase tracking-[.12em] text-mute
+           sm:col-start-3 sm:whitespace-nowrap sm:tracking-[.2em]"
+  >{project && <>{project} · </>}{minutes(note)} min<span class="sr-only"> read</span></span>
 </a>

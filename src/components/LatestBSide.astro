@@ -1,9 +1,10 @@
 ---
-import { day, type Note, noteHref } from '../lib/notes';
+import type { Note } from '../lib/notes';
+import NoteRow from './NoteRow.astro';
 
 /**
  * The newest b-side, announced above the setlist like a date added to a flyer.
- * The list under the setlist is the rest of the tour; this is what is new.
+ * Set like the lists under it, a header over a row, so it reads as what it is.
  */
 interface Props {
   note?: Note;
@@ -12,17 +13,15 @@ interface Props {
 const { note, project } = Astro.props;
 ---
 {note && (
-  <a
-    href={noteHref(note)}
-    data-latest
-    class="-mx-3 mb-12 grid grid-cols-[auto_1fr] items-baseline gap-x-3 border-y border-line px-3 py-3
-           text-[11px] uppercase tracking-[.2em] text-mute transition-colors hover:bg-lift
-           focus-visible:outline-offset-[-2px] sm:grid-cols-[72px_1fr_auto] sm:gap-x-6"
-  >
-    <span class="text-blood">new<span class="sr-only"> b-side</span></span>
-    <span class="normal-case tracking-normal text-[13px] text-fg">
-      <span class="text-mute">{day(note.data.date)}</span>&nbsp;&nbsp;<span lang={note.data.lang}>{note.data.title}</span>
-    </span>
-    <span class="hidden whitespace-nowrap sm:inline">{project ? `${project} →` : '→'}</span>
-  </a>
+  <section class="mb-16" aria-label="New b-side">
+    <div
+      class="-mx-3 flex items-baseline justify-between gap-4 border-b border-line-strong px-3 pb-3
+             text-[11px] uppercase tracking-[.2em] text-mute"
+    >
+      <!-- The blood red is 2.1:1 on black, too dark for text; the focus red reads in both themes. -->
+      <p><span class="text-[color:var(--focus)]">new</span> b-side</p>
+      <a class="hover:text-fg" href="/b-sides/">all b-sides →</a>
+    </div>
+    <NoteRow note={note} project={project} />
+  </section>
 )}
