@@ -2,6 +2,7 @@
 // The terminal this site used to be. It still runs, it just lives at /terminal
 // now, and the footer of the setlist points here.
 import '@fontsource-variable/jetbrains-mono';
+import Analytics from '@vercel/analytics/astro';
 import '@fontsource-variable/jetbrains-mono/wght-italic.css';
 import '../styles/global.css';
 import Meta from '../components/Meta.astro';
@@ -31,5 +32,6 @@ import Terminal from '../components/Terminal';
   </a>
   <a href="/" class="absolute bottom-4 left-4 text-neutral-400 hover:text-white z-50 text-xs tracking-[.2em] uppercase">← susnik</a>
   <Terminal client:load />
+  <Analytics />
 </body>
 </html>
