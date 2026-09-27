@@ -3,10 +3,17 @@
  * AudioContext: a file needs no synthesis, and the element brings buffering,
  * seeking and the lock-screen controls for free.
  *
+ * Its sound does go through a gain of its own, for one thing: pausing cuts the
+ * wave wherever it is, and that jump is a click. A 30 ms fade either side is
+ * too short to hear as a fade. The element's own volume cannot do it, since
+ * iOS ignores it. The context is the player's alone: the page's closes when
+ * the drone stops, and an element wired into a closed context goes silent.
+ *
  * It and the drone never play together. Starting either stops the other,
  * because a drone under a techno track is not an effect, it is a mistake.
  */
 const STEP = 5; // seconds an arrow key moves
+const FADE = 0.03; // seconds either side of a play or a pause
 
 /**
  * Draws the playhead in screen pixels: a stem one CSS pixel wide, ticks three
@@ -86,6 +93,41 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
   paint();
   window.addEventListener('resize', () => audio.paused && paint());
 
+  // Wired on the first play, inside the click, so the context may start.
+  let fader: { ctx: AudioContext; gain: GainNode } | null = null;
+  let stopping = 0;
+  const ramp = (level: number) => {
+    if (!fader) return;
+    const { ctx, gain } = fader;
+    const t = ctx.currentTime;
+    gain.gain.cancelScheduledValues(t);
+    gain.gain.setValueAtTime(gain.gain.value, t);
+    gain.gain.linearRampToValueAtTime(level, t + FADE);
+  };
+  const start = () => {
+    clearTimeout(stopping);
+    stopping = 0;
+    if (!fader) {
+      const ctx = new AudioContext();
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      ctx.createMediaElementSource(audio).connect(gain).connect(ctx.destination);
+      fader = { ctx, gain };
+    }
+    fader.ctx.resume();
+    ramp(1);
+    return audio.play();
+  };
+  const stop = () => {
+    if (audio.paused) return;
+    ramp(0);
+    clearTimeout(stopping);
+    stopping = window.setTimeout(() => {
+      stopping = 0;
+      audio.pause();
+    }, FADE * 1000 + 10);
+  };
+
   const to = (t: number) => {
     audio.currentTime = Math.max(0, Math.min(duration, t));
     paint();
@@ -108,7 +150,8 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
   audio.addEventListener('timeupdate', () => audio.paused && paint());
   audio.addEventListener('ended', () => to(0));
 
-  play.addEventListener('click', () => (audio.paused ? audio.play() : audio.pause()));
+  // A pause already fading out counts as paused: a second click brings it back.
+  play.addEventListener('click', () => (audio.paused || stopping ? start() : stop()));
 
   seek.addEventListener('click', (e) => {
     const box = seek.getBoundingClientRect();
@@ -137,7 +180,7 @@ for (const figure of document.querySelectorAll<HTMLElement>('.player')) {
   // whichever of the two scripts registered first.
   drone?.addEventListener('click', () => {
     setTimeout(() => {
-      if (drone.getAttribute('aria-pressed') === 'true') audio.pause();
+      if (drone.getAttribute('aria-pressed') === 'true') stop();
     });
   });
 }

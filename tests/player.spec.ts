@@ -30,6 +30,36 @@ test('the waveform is there before the track is, and the track waits for play', 
   await expect(page.getByRole('button', { name: 'Play After Midnight' })).toBeVisible();
 });
 
+test('pause fades out instead of cutting, and play during the fade keeps it going', async ({
+  page,
+}) => {
+  await page.goto(PAGE);
+  const paused = () => page.locator('audio').evaluate((a: HTMLAudioElement) => a.paused);
+  const button = page.locator('.player [data-play]');
+  await button.click();
+  await expect
+    .poll(() => page.locator('audio').evaluate((a: HTMLAudioElement) => a.currentTime), {
+      timeout: 8000,
+    })
+    .toBeGreaterThan(0.3);
+
+  // The element keeps playing through the 30 ms fade, then stops.
+  await button.click();
+  expect(await paused()).toBe(false);
+  await expect.poll(paused).toBe(true);
+
+  // Play again, and pause-then-play inside the fade: it never stops.
+  await button.click();
+  await expect.poll(paused).toBe(false);
+  await button.evaluate((b: HTMLButtonElement) => {
+    b.click();
+    b.click();
+  });
+  await page.waitForTimeout(200);
+  expect(await paused()).toBe(false);
+  await expect(page.getByRole('button', { name: 'Pause After Midnight' })).toBeVisible();
+});
+
 test('the waveform seeks by click and by keyboard', async ({ page }) => {
   await page.goto(PAGE);
   const seek = page.getByRole('slider', { name: 'Seek' });
