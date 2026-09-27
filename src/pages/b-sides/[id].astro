@@ -1,0 +1,57 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Player from '../../components/Player.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import Base from '../../layouts/Base.astro';
+import { fullDate, minutes, published, summary } from '../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = published(await getCollection('notes'));
+  return notes.map((note) => ({ params: { id: note.id }, props: { note } }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+const project = note.data.project ? await getEntry(note.data.project) : undefined;
+const description = summary(note);
+
+const site = Astro.site ?? new URL(Astro.url.origin);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: note.data.title,
+  description,
+  datePublished: note.data.date.toISOString().slice(0, 10),
+  inLanguage: note.data.lang,
+  url: new URL(Astro.url.pathname, site).href,
+  author: { '@id': `${new URL('/', site).href}#person` },
+  ...(project && { about: { '@type': 'CreativeWork', name: project.data.title } }),
+};
+---
+<Base title={`${note.data.title} — Sebastián Sušnik`} description={description} lang={note.data.lang}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <article class="mx-auto max-w-[760px] px-6 pb-[120px] pt-20">
+    <a
+      class="mb-12 inline-block text-[11px] uppercase tracking-[.2em] text-mute hover:text-fg"
+      href="/b-sides/"
+      lang="en"
+    >← b-sides</a>
+
+    <h1 class="text-[28px] font-medium leading-[1.15] tracking-[.02em]">{note.data.title}</h1>
+    <p class="mt-2.5 text-[11px] uppercase tracking-[.2em] text-mute" lang="en">
+      {fullDate(note.data.date)}
+      {project && (
+        <>
+          {' · '}
+          <a class="hover:text-fg" href={`/projects/${project.id}/`}>{project.data.title}</a>
+        </>
+      )}
+      {' · '}{minutes(note)} min
+    </p>
+
+    {note.data.track && <Player {...note.data.track} />}
+
+    <div class="prose mt-10 max-w-[62ch] text-dim"><Content /></div>
+  </article>
+  <SiteFooter />
+</Base>

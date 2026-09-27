@@ -1,0 +1,30 @@
+---
+import type { Note } from '../lib/notes';
+import NoteRow from './NoteRow.astro';
+
+/**
+ * The latest b-sides under the setlist, like the dates at the bottom of a tour
+ * flyer. Never more than five, however many there are; the rest live at
+ * /b-sides. With none written yet, nothing shows.
+ */
+interface Props {
+  notes: Note[];
+  titles: Record<string, string>;
+}
+const { notes, titles } = Astro.props;
+const latest = notes.slice(0, 5);
+---
+{latest.length > 0 && (
+  <section class="mt-20" aria-labelledby="b-sides">
+    <div
+      class="-mx-3 flex items-baseline justify-between gap-4 border-b border-line-strong px-3 pb-3
+             text-[11px] uppercase tracking-[.2em] text-mute"
+    >
+      <h2 id="b-sides">b-sides</h2>
+      <a class="hover:text-fg" href="/b-sides/">all b-sides →</a>
+    </div>
+    {latest.map((n) => (
+      <NoteRow note={n} project={n.data.project ? titles[n.data.project.id] : undefined} />
+    ))}
+  </section>
+)}

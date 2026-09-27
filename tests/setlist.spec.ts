@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { entries, phone } from './helpers';
+import { entries, notes, phone } from './helpers';
 
 const all = entries();
 
@@ -20,11 +20,12 @@ test.describe('setlist', () => {
     expect(size).toBeGreaterThan(20);
   });
 
-  test('has one h1, one h2 and an h3 per entry', async ({ page }) => {
+  test('has one h1, an h2 per list and an h3 per entry', async ({ page }) => {
     const counts = await page.evaluate(() =>
       ['h1', 'h2', 'h3'].map((t) => document.body.querySelectorAll(t).length),
     );
-    expect(counts).toEqual([1, 1, all.length]);
+    // The setlist, and the b-sides once there is one.
+    expect(counts).toEqual([1, notes().length ? 2 : 1, all.length]);
   });
 
   test('causes of death are shown', async ({ page }) => {
@@ -47,7 +48,7 @@ test.describe('setlist', () => {
     for (const e of all) {
       const row = page.locator('.row', { has: page.locator('h3', { hasText: e.title }) });
       const href = await row.getAttribute('href');
-      if (e.hasBody) expect(href).toBe(`/projects/${e.id}/`);
+      if (e.hasPage) expect(href).toBe(`/projects/${e.id}/`);
       else if (e.link) {
         expect(href).toBe(e.link);
         await expect(row).toHaveAttribute('target', '_blank');
@@ -65,8 +66,8 @@ test('entries whose source is about to go public say so', async ({ page }) => {
   }
 });
 
-test('entries with a body render their own page', async ({ page }) => {
-  for (const e of all.filter((x) => x.hasBody)) {
+test('entries with a body or b-sides render their own page', async ({ page }) => {
+  for (const e of all.filter((x) => x.hasPage)) {
     const res = await page.goto(`/projects/${e.id}/`);
     expect(res?.status()).toBe(200);
     await expect(page.locator('h1')).toHaveText(e.title);

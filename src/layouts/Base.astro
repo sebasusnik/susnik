@@ -12,19 +12,23 @@ interface Props {
   description?: string;
   /** Keeps the page out of search results. */
   noindex?: boolean;
+  /** The page's language. The site is in English; a b-side may not be. */
+  lang?: 'en' | 'es';
 }
 const {
   title = 'Sebastián Sušnik — Product Engineer',
   description =
     'Sebastián Sušnik (Susnik), product engineer in Buenos Aires, building PixFit at Winclap. A log of things I make: software, circuits, noise.',
   noindex = false,
+  lang = 'en',
 } = Astro.props;
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <Meta title={title} description={description} />
     {noindex && <meta name="robots" content="noindex" />}
+    <link rel="alternate" type="application/rss+xml" title="B-sides — Sebastián Sušnik" href="/b-sides/rss.xml" />
     <slot name="head" />
   </head>
   <body class="bg-bg text-fg font-mono text-[13px] leading-relaxed antialiased">

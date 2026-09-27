@@ -10,6 +10,11 @@ import { defineConfig, devices } from '@playwright/test';
  */
 const external = process.env.BASE_URL;
 
+// The build under test reads its b-sides from fixtures, so they can be tested
+// before a real one exists. Set here, it reaches both the build the web server
+// runs and the test workers, which read the same folder to know what to expect.
+if (!external) process.env.NOTES_DIR = 'tests/fixtures/notes';
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,

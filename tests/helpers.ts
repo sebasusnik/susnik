@@ -10,30 +10,60 @@ import { type CDPSession, devices, type Page } from '@playwright/test';
 const { defaultBrowserType: _, ...phoneRest } = devices['iPhone 13'];
 export const phone = phoneRest;
 
+const frontmatter = (text: string, key: string) =>
+  text.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'))?.[1].trim();
+
+/**
+ * The b-sides the build under test was made with: the fixtures locally (see
+ * playwright.config.ts), the real ones when BASE_URL points at a deployment.
+ * Newest first, drafts out, as the site lists them.
+ */
+export function notes() {
+  const dir = join(process.cwd(), process.env.NOTES_DIR ?? 'src/content/notes');
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.md') && !f.startsWith('_'))
+    .map((f) => ({ id: f.replace(/\.md$/, ''), text: readFileSync(join(dir, f), 'utf8') }))
+    .filter((n) => !/^draft:\s*true/m.test(n.text))
+    .map((n) => ({
+      id: n.id,
+      title: frontmatter(n.text, 'title') ?? n.id,
+      date: frontmatter(n.text, 'date') ?? '',
+      project: frontmatter(n.text, 'project'),
+      lang: frontmatter(n.text, 'lang') ?? 'es',
+    }))
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
 /**
  * The entries the setlist should show, read from the collection itself, so
  * adding or cutting a project does not break the suite.
  */
 export function entries() {
+  const withNotes = new Set(notes().map((n) => n.project));
   const dir = join(process.cwd(), 'src/content/projects');
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.md'))
-    .map((f) => ({ id: f.replace(/\.md$/, ''), text: readFileSync(join(dir, f), 'utf8') }))
-    .filter((e) => !/^draft:\s*true/m.test(e.text))
-    .map((e) => ({
-      id: e.id,
-      title: e.text.match(/^title:\s*(.+)$/m)?.[1].trim() ?? e.id,
-      kind: e.text.match(/^kind:\s*(\w+)/m)?.[1],
-      link: e.text.match(/^link:\s*(\S+)/m)?.[1],
-      hasBody:
-        e.text
-          .split(/^---\s*$/m)
-          .slice(2)
-          .join('')
-          .trim().length > 0,
-      cause: /^cause:/m.test(e.text),
-      soon: /^soon:\s*true/m.test(e.text),
-    }));
+  return (
+    readdirSync(dir)
+      .filter((f) => f.endsWith('.md'))
+      .map((f) => ({ id: f.replace(/\.md$/, ''), text: readFileSync(join(dir, f), 'utf8') }))
+      .filter((e) => !/^draft:\s*true/m.test(e.text))
+      .map((e) => ({
+        id: e.id,
+        title: e.text.match(/^title:\s*(.+)$/m)?.[1].trim() ?? e.id,
+        kind: e.text.match(/^kind:\s*(\w+)/m)?.[1],
+        link: e.text.match(/^link:\s*(\S+)/m)?.[1],
+        hasBody:
+          e.text
+            .split(/^---\s*$/m)
+            .slice(2)
+            .join('')
+            .trim().length > 0,
+        cause: /^cause:/m.test(e.text),
+        soon: /^soon:\s*true/m.test(e.text),
+      }))
+      .map((e) => ({ ...e, notes: notes().filter((n) => n.project === e.id).length }))
+      // A body of its own or b-sides to list: either one gives it a page.
+      .map((e) => ({ ...e, hasPage: e.hasBody || withNotes.has(e.id) }))
+  );
 }
 
 /** Terminal intro skipped and the prompt ready. */

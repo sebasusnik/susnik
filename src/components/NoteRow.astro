@@ -1,0 +1,35 @@
+---
+import { day, type Note, noteHref } from '../lib/notes';
+
+/**
+ * A b-side, set like a tour date: the day, the title, and where it played —
+ * the entry it belongs to — on the right. Same grid as the setlist, so the two
+ * lists read as one flyer.
+ */
+interface Props {
+  note: Note;
+  /** The entry's title, or nothing on the entry's own page, where it goes without saying. */
+  project?: string;
+}
+const { note, project } = Astro.props;
+---
+<a
+  href={noteHref(note)}
+  data-note
+  data-project={note.data.project?.id ?? ''}
+  class="-mx-3 grid grid-cols-[auto_1fr] items-baseline gap-x-3 border-b border-line px-3 py-[14px]
+         transition-colors hover:bg-lift focus-visible:outline-offset-[-2px]
+         sm:grid-cols-[72px_1fr_auto] sm:gap-x-6"
+>
+  <span class="col-start-1 row-start-1 text-xs text-mute sm:row-auto">{day(note.data.date)}</span>
+  <span
+    lang={note.data.lang}
+    class="col-span-2 row-start-2 mt-1 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:mt-0"
+  >{note.data.title}</span>
+  {project && (
+    <span
+      class="col-start-2 row-start-1 text-right text-[11px] uppercase tracking-[.12em] text-mute
+             sm:col-start-3 sm:whitespace-nowrap sm:tracking-[.2em]"
+    >{project}</span>
+  )}
+</a>
