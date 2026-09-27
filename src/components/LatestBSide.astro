@@ -1,5 +1,6 @@
 ---
 import type { Note } from '../lib/notes';
+import AllBSides from './AllBSides.astro';
 import NoteRow from './NoteRow.astro';
 
 /**
@@ -20,8 +21,8 @@ const { note, project } = Astro.props;
     >
       <!-- The blood red is 2.1:1 on black, too dark for text; the focus red reads in both themes. -->
       <p><span class="text-[color:var(--focus)]">new</span> b-side</p>
-      <a class="hover:text-fg" href="/b-sides/">all b-sides →</a>
     </div>
     <NoteRow note={note} project={project} />
+    <AllBSides />
   </section>
 )}

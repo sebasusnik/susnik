@@ -1,5 +1,6 @@
 ---
 import type { Note } from '../lib/notes';
+import AllBSides from './AllBSides.astro';
 import NoteRow from './NoteRow.astro';
 
 /**
@@ -23,10 +24,10 @@ const latest = notes.slice(skip, skip + 5);
              text-[11px] uppercase tracking-[.2em] text-mute"
     >
       <h2 id="b-sides">b-sides</h2>
-      <a class="hover:text-fg" href="/b-sides/">all b-sides →</a>
     </div>
     {latest.map((n) => (
       <NoteRow note={n} project={n.data.project ? titles[n.data.project.id] : undefined} />
     ))}
+    <AllBSides />
   </section>
 )}
