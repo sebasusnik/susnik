@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Hero from '../components/Hero.astro';
+import PersonLd from '../components/PersonLd.astro';
 import SetList from '../components/SetList.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import Base from '../layouts/Base.astro';
@@ -9,6 +10,7 @@ import { setlist } from '../lib/entries';
 const entries = setlist(await getCollection('projects'));
 ---
 <Base>
+  <PersonLd slot="head" />
   <Hero />
   <SetList entries={entries} />
   <SiteFooter />

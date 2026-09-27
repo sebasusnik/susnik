@@ -6,7 +6,7 @@ import ExpList from './ExpList';
 import SkillsList from './SkillsList';
 import TypedText from './TypedText';
 
-const introLines = ['I am Sebastian Susnik', 'and I like to build stuff...'];
+const introLines = ['I am Sebastián Sušnik', 'and I like to build stuff...'];
 const expCommand = 'exp';
 const skillsCommand = 'skills';
 

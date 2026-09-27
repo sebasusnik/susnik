@@ -23,7 +23,14 @@ module.exports = {
         'term-bor': '#43394F',
       },
       fontFamily: {
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        mono: [
+          '"JetBrains Mono Variable"',
+          '"JetBrains Mono"',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'monospace',
+        ],
       },
       keyframes: {
         blink: {

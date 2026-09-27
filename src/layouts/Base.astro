@@ -1,27 +1,30 @@
 ---
+// Served from this site, not Google Fonts: one less origin to connect to
+// before the text can draw, and one less request that reports the visit.
+// Upright only; the site's one italic line has always been a synthetic slant.
+import '@fontsource-variable/jetbrains-mono';
 import Meta from '../components/Meta.astro';
 import '../styles/site.css';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Keeps the page out of search results. */
+  noindex?: boolean;
 }
 const {
-  title = 'Susnik',
+  title = 'Sebastián Sušnik — Product Engineer',
   description =
-    'Sebastián Susnik — product engineer in Buenos Aires. A log of things I build: software, circuits, noise, installations.',
+    'Sebastián Sušnik (Susnik), product engineer in Buenos Aires, building PixFit at Winclap. A log of things I make: software, circuits, noise.',
+  noindex = false,
 } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <Meta title={title} description={description} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
-    />
+    {noindex && <meta name="robots" content="noindex" />}
+    <slot name="head" />
   </head>
   <body class="bg-bg text-fg font-mono text-[13px] leading-relaxed antialiased">
     <p
