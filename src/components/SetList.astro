@@ -51,14 +51,12 @@ const present = KINDS.filter((k) => entries.some((e) => e.data.kind === k));
     <button
       type="button"
       data-encore-button
-      class="-mx-3 grid w-[calc(100%+24px)] grid-cols-[1fr_auto_1fr] items-baseline gap-x-3 border-b
+      class="-mx-3 flex w-[calc(100%+24px)] items-baseline justify-between gap-x-3 border-b
              border-line px-3 py-[18px] text-[11px] uppercase tracking-[.2em] text-mute transition-colors
              hover:bg-lift hover:text-fg focus-visible:outline-offset-[-2px]"
     >
-      <!-- Equal side columns keep the count in the middle of the whole row. -->
-      <span class="text-left">encore</span>
+      <span>encore</span>
       <span>{encore} more ↓</span>
-      <span></span>
     </button>
   )}
   <p class="py-10 text-mute" data-empty hidden>nothing of that kind. yet.</p>
