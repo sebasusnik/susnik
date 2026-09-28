@@ -4,7 +4,7 @@ import Player from './Player.astro';
 
 interface Props {
   entry: Project;
-  /** How many b-sides it has. Shown as a bare number at the end of the tag. */
+  /** How many b-sides it has. A pencil and the number, at the end of the tag. */
   notes?: number;
   /** Past the first few: held back until the encore is asked for. */
   encore?: boolean;
@@ -81,7 +81,7 @@ const Tag = link ? 'a' : 'div';
            sm:col-start-3 sm:whitespace-nowrap sm:tracking-[.2em]"
   >
     {dead ? <s class="text-faint decoration-blood">{kind}</s> : kind}{status && <> · {status}</>}{notes > 0 && (
-      <span data-count class="text-faint"> · {notes}<span class="sr-only"> b-sides</span></span>
+      <span data-count class="text-faint"> <span aria-hidden="true">✎</span> {notes}<span class="sr-only"> b-sides</span></span>
     )}
   </span>
 </Tag>

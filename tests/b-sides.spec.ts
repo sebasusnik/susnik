@@ -46,7 +46,7 @@ test('an entry with b-sides counts them quietly and gets a page', async ({ page 
   await page.goto('/');
   const tatum = entries().find((e) => e.id === 'tatum')!;
   const row = page.locator('[data-entry]', { has: page.locator('h3', { hasText: tatum.title }) });
-  await expect(row.locator('[data-count]')).toHaveText(`· ${tatum.notes} b-sides`);
+  await expect(row.locator('[data-count]')).toHaveText(`✎ ${tatum.notes} b-sides`);
   await expect(row.locator('a.row')).toHaveAttribute('href', '/projects/tatum/');
 
   await page.goto('/projects/tatum/');
