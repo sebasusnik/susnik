@@ -10,6 +10,14 @@
   <span class="mt-2 basis-full text-center text-mute">all rights reversed</span>
 </footer>
 
+<!-- The page fades out under the drone button, so on a phone it never sits
+     on top of a line it cannot be read against. -->
+<div
+  aria-hidden="true"
+  class="pointer-events-none fixed inset-x-0 bottom-0 z-[9] h-16
+         bg-[linear-gradient(to_bottom,transparent,color-mix(in_srgb,var(--bg)_85%,transparent)_60%)]"
+></div>
+
 <button
   id="drone"
   type="button"
