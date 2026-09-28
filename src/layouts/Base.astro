@@ -3,6 +3,7 @@
 // before the text can draw, and one less request that reports the visit.
 // Upright only; the site's one italic line has always been a synthetic slant.
 import '@fontsource-variable/jetbrains-mono';
+import { getCollection } from 'astro:content';
 import Analytics from '@vercel/analytics/astro';
 import Meta from '../components/Meta.astro';
 import '../styles/site.css';
@@ -22,13 +23,15 @@ const {
   noindex = false,
   lang = 'en',
 } = Astro.props;
+// The feed is only announced once there is something in it.
+const feed = (await getCollection('notes', (n) => !n.data.draft)).length > 0;
 ---
 <!doctype html>
 <html lang={lang}>
   <head>
     <Meta title={title} description={description} />
     {noindex && <meta name="robots" content="noindex" />}
-    <link rel="alternate" type="application/rss+xml" title="B-sides — Sebastián Sušnik" href="/b-sides/rss.xml" />
+    {feed && <link rel="alternate" type="application/rss+xml" title="B-sides — Sebastián Sušnik" href="/b-sides/rss.xml" />}
     <slot name="head" />
   </head>
   <body class="bg-bg text-fg font-mono text-[13px] leading-relaxed antialiased">
