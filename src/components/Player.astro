@@ -20,7 +20,15 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
 // a hundred and twenty segments.
 const W = 1000;
 const H = 100;
-const pts = shape.map((v, i) => [(i / (shape.length - 1)) * W, H - 4 - v * (H - 12)]);
+// Stretched from the track's quieter moments to its loudest rather than from
+// silence: a mastered track sits near the top all the way through, and drawn
+// from zero it reads as a flat line with a dip or two. The floor is the level
+// a fifth of the track sits under, so a breakdown still drops to the bottom
+// without flattening everything else.
+const lo = [...shape].sort((a, b) => a - b)[Math.floor(shape.length * 0.2)];
+const span = Math.max(...shape) - lo || 1;
+const level = (v: number) => 0.12 + 0.88 * Math.max(0, (v - lo) / span);
+const pts = shape.map((v, i) => [(i / (shape.length - 1)) * W, H - 4 - level(v) * (H - 12)]);
 const at = (i: number) => pts[Math.max(0, Math.min(pts.length - 1, i))];
 const f = (n: number) => n.toFixed(1);
 let line = `M${f(pts[0][0])},${f(pts[0][1])}`;
@@ -33,7 +41,10 @@ for (let i = 0; i < pts.length - 1; i++) {
 const area = `${line}L${W},${H}L0,${H}Z`;
 const clip = `played-${src}`;
 ---
-<figure class:list={['player flex items-center gap-4', className]} data-duration={duration}>
+<figure
+  class:list={['player flex items-center gap-4', className]}
+  data-duration={duration}
+>
   <!-- biome-ignore lint/a11y/useMediaCaption: an instrumental track, there is nothing to caption -->
   <audio src={`/audio/${src}.mp3`} preload="none"></audio>
 
@@ -41,17 +52,17 @@ const clip = `played-${src}`;
     type="button"
     data-play
     aria-label={`Play ${title}`}
-    class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-line-strong text-dim transition-colors
+    class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-line-strong text-dim transition-colors
            hover:bg-[#333] hover:text-fg inverted:hover:bg-[#c8c8c8]"
   >
     <!-- Each icon in a span: `hidden` is an HTML attribute, not an SVG one. -->
     <span data-icon="play">
-      <svg viewBox="0 0 16 16" class="ml-0.5 h-5 w-5" aria-hidden="true">
+      <svg viewBox="0 0 16 16" class="ml-0.5 h-4 w-4" aria-hidden="true">
         <path d="M3 1.5v13l11-6.5z" fill="currentColor" />
       </svg>
     </span>
     <span data-icon="pause" hidden>
-      <svg viewBox="0 0 16 16" class="h-5 w-5" aria-hidden="true">
+      <svg viewBox="0 0 16 16" class="h-4 w-4" aria-hidden="true">
         <path d="M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z" fill="currentColor" />
       </svg>
     </span>

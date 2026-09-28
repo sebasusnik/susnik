@@ -76,8 +76,10 @@ const Tag = link ? 'a' : 'div';
   </span>
 </Tag>
 
+<!-- From sm up the player starts where the description does and stops as far
+     from the right edge, so it sits centred under the text it belongs to. -->
 {track && (
-  <div data-track class="px-3 pb-[18px] sm:pl-[108px]">
+  <div data-track class="px-3 pb-[18px] sm:px-[108px]">
     <Player {...track} class="mt-4" />
   </div>
 )}
