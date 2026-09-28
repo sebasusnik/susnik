@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { href, setlist } from '../lib/entries';
+import { counts, noteHref, published } from '../lib/notes';
 
 /**
  * Three or four URLs is not worth a dependency. Entries only appear here when
@@ -9,10 +10,15 @@ import { href, setlist } from '../lib/entries';
  */
 export const GET: APIRoute = async ({ site }) => {
   const entries = setlist(await getCollection('projects'));
+  const notes = published(await getCollection('notes'));
+  const perEntry = counts(notes);
   const paths = [
     '/',
     '/terminal/',
-    ...entries.map(href).filter((h): h is string => !!h && h.startsWith('/')),
+    ...entries
+      .map((e) => href(e, (perEntry[e.id] ?? 0) > 0))
+      .filter((h): h is string => !!h && h.startsWith('/')),
+    ...(notes.length ? ['/b-sides/', ...notes.map(noteHref)] : []),
   ];
 
   const urls = paths.map((path) => `  <url><loc>${new URL(path, site)}</loc></url>`).join('\n');

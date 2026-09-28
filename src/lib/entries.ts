@@ -10,11 +10,11 @@ export function dateLabel(p: Project): string {
 }
 
 /**
- * Its own page when the file has a body, otherwise straight out to `link`.
- * Neither one, and the row is not a link at all.
+ * Its own page when the file has a body or b-sides to list, otherwise straight
+ * out to `link`. Neither one, and the row is not a link at all.
  */
-export function href(p: Project): string | undefined {
-  if (p.body?.trim()) return `/projects/${p.id}/`;
+export function href(p: Project, hasNotes = false): string | undefined {
+  if (p.body?.trim() || hasNotes) return `/projects/${p.id}/`;
   return p.data.link;
 }
 

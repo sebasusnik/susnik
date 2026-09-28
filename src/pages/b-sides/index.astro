@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import NoteRow from '../../components/NoteRow.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import Base from '../../layouts/Base.astro';
+import { setlist } from '../../lib/entries';
+import { published } from '../../lib/notes';
+
+const notes = published(await getCollection('notes'));
+const entries = setlist(await getCollection('projects'));
+const titles = Object.fromEntries(entries.map((e) => [e.id, e.data.title]));
+
+// Filters only for entries that have b-sides, in setlist order.
+const present = entries.filter((e) => notes.some((n) => n.data.project?.id === e.id));
+
+// A year heading wherever the year changes: the rows only carry the day.
+const years = [...new Set(notes.map((n) => n.data.date.getUTCFullYear()))];
+---
+<Base
+  title="B-sides — Sebastián Sušnik"
+  description="Notes that go with the things on the setlist: how they were made, and what went wrong."
+  noindex={notes.length === 0}
+>
+  <main class="mx-auto max-w-[760px] px-6 pb-[120px] pt-20">
+    <a
+      class="mb-12 inline-block text-[11px] uppercase tracking-[.2em] text-mute hover:text-fg"
+      href="/"
+    >← setlist</a>
+
+    <h1 class="text-[28px] font-medium uppercase leading-[1.1] tracking-[.04em]">b-sides</h1>
+    <p class="mt-4 text-[13px] text-dim">Notes from building the things in the setlist.</p>
+
+    <!-- Only worth offering with more than one entry to choose between.
+         biome-ignore lint/a11y/useSemanticElements: a fieldset is for a form; these buttons filter the list below -->
+    <div
+      class="mt-10 flex flex-wrap gap-4 text-[11px] uppercase tracking-[.2em] text-mute"
+      role="group"
+      aria-label="Filter by entry"
+      hidden={present.length < 2}
+    >
+      <button type="button" data-filter="" aria-pressed="true" class="uppercase hover:text-fg aria-pressed:text-fg">all</button>
+      {present.map((e) => (
+        <button type="button" data-filter={e.id} aria-pressed="false" class="uppercase hover:text-fg aria-pressed:text-fg">
+          {e.data.title}
+        </button>
+      ))}
+    </div>
+
+    {notes.length === 0 && <p class="mt-10 text-mute">nothing on the b-side. yet.</p>}
+
+    {years.map((year) => (
+      <section data-year class="mt-10">
+        <h2
+          class="-mx-3 border-b border-line-strong px-3 pb-3 text-[11px] uppercase tracking-[.2em] text-mute"
+        >{year}</h2>
+        {notes
+          .filter((n) => n.data.date.getUTCFullYear() === year)
+          .map((n) => (
+            <NoteRow note={n} project={n.data.project ? titles[n.data.project.id] : undefined} />
+          ))}
+      </section>
+    ))}
+  </main>
+  <SiteFooter />
+</Base>
+
+<script>
+  // Same as the setlist's filter: a toggle, not a navigation. A year with
+  // nothing left to show hides its heading too.
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const project = button.dataset.filter;
+      for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+      for (const year of document.querySelectorAll<HTMLElement>('[data-year]')) {
+        let shown = 0;
+        for (const row of year.querySelectorAll<HTMLElement>('[data-note]')) {
+          row.hidden = !!project && row.dataset.project !== project;
+          if (!row.hidden) shown++;
+        }
+        year.hidden = shown === 0;
+      }
+    });
+  }
+</script>

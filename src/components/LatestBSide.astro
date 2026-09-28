@@ -1,0 +1,28 @@
+---
+import type { Note } from '../lib/notes';
+import AllBSides from './AllBSides.astro';
+import NoteRow from './NoteRow.astro';
+
+/**
+ * The newest b-side, announced above the setlist like a date added to a flyer.
+ * Set like the lists under it, a header over a row, so it reads as what it is.
+ */
+interface Props {
+  note?: Note;
+  project?: string;
+}
+const { note, project } = Astro.props;
+---
+{note && (
+  <section class="mb-16" aria-label="New b-side">
+    <div
+      class="-mx-3 flex items-baseline justify-between gap-4 border-b border-line-strong px-3 pb-3
+             text-[11px] uppercase tracking-[.2em] text-mute"
+    >
+      <!-- The blood red is 2.1:1 on black, too dark for text; the focus red reads in both themes. -->
+      <p><span class="text-[color:var(--focus)]">new</span> b-side</p>
+    </div>
+    <NoteRow note={note} project={project} />
+    <AllBSides />
+  </section>
+)}

@@ -1,20 +1,30 @@
 ---
 import { getCollection, render } from 'astro:content';
+import NoteRow from '../../components/NoteRow.astro';
 import Player from '../../components/Player.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import Base from '../../layouts/Base.astro';
 import { dateLabel, tag } from '../../lib/entries';
+import { published } from '../../lib/notes';
 
-// Only entries with something to say get a page. The rest link straight out.
+// Only entries with something to say get a page: a body of their own, or
+// b-sides to list. The rest link straight out.
 export async function getStaticPaths() {
   const entries = await getCollection('projects');
+  const notes = published(await getCollection('notes'));
   return entries
-    .filter((entry) => !entry.data.draft && entry.body?.trim())
-    .map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+    .filter((entry) => !entry.data.draft)
+    .map((entry) => ({
+      entry,
+      notes: notes.filter((n) => n.data.project?.id === entry.id),
+    }))
+    .filter(({ entry, notes }) => entry.body?.trim() || notes.length > 0)
+    .map(({ entry, notes }) => ({ params: { id: entry.id }, props: { entry, notes } }));
 }
 
-const { entry } = Astro.props;
+const { entry, notes } = Astro.props;
 const { Content } = await render(entry);
+const hasBody = !!entry.body?.trim();
 const { kind, dead, status } = tag(entry);
 ---
 <Base title={`${entry.data.title} — Sebastián Sušnik`} description={entry.data.summary}>
@@ -33,7 +43,11 @@ const { kind, dead, status } = tag(entry);
 
     {entry.data.track && <Player {...entry.data.track} />}
 
-    <div class="prose mt-10 max-w-[62ch] text-dim"><Content /></div>
+    {hasBody ? (
+      <div class="prose mt-10 max-w-[62ch] text-dim"><Content /></div>
+    ) : (
+      <p class="mt-10 max-w-[62ch] text-dim">{entry.data.summary}</p>
+    )}
 
     {entry.data.link && (
       <p class="mt-10">
@@ -44,6 +58,16 @@ const { kind, dead, status } = tag(entry);
           rel="noopener noreferrer"
         >{entry.data.link}</a>
       </p>
+    )}
+
+    {notes.length > 0 && (
+      <section class="mt-16" aria-labelledby="entry-b-sides">
+        <h2
+          id="entry-b-sides"
+          class="-mx-3 border-b border-line-strong px-3 pb-3 text-[11px] uppercase tracking-[.2em] text-mute"
+        >b-sides</h2>
+        {notes.map((n) => <NoteRow note={n} />)}
+      </section>
     )}
   </article>
   <SiteFooter />

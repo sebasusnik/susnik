@@ -1,5 +1,10 @@
 ---
 // The logo is the whole hero. Everything else is one line saying what this is.
+interface Props {
+  /** Once there are b-sides, the line says what they are. */
+  notes?: boolean;
+}
+const { notes = false } = Astro.props;
 ---
 <section
   class="hero relative min-h-svh flex flex-col items-center justify-center gap-10 text-center"
@@ -44,9 +49,9 @@
     </filter>
   </svg>
 
-  <p class="max-w-[44ch] px-6 text-[13px] leading-[1.7] text-dim">
+  <p class="max-w-[64ch] px-6 text-[13px] [text-wrap:balance] leading-[1.7] text-dim">
     <b class="font-medium text-fg">Sebastián Sušnik</b> — product engineer in Buenos
-    Aires. This is a log of things I build: software, circuits, noise, installations.
+    Aires. This is a log of things I build: software, circuits, noise, installations.{notes && ' And notes from building them.'}
   </p>
   <p class="text-[11px] uppercase tracking-[.3em] text-mute">est. MMXXI</p>
 </section>

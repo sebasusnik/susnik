@@ -23,7 +23,7 @@ async function rings(page: import('@playwright/test').Page, tabs = 20) {
 }
 
 // An entry page, if any entry has one: they come and go as bodies are written.
-const withPage = entries().find((e) => e.hasBody);
+const withPage = entries().find((e) => e.hasPage);
 
 for (const [name, path, color] of [
   ['home', '/', 'rgb(255, 45, 45)'],

@@ -49,6 +49,29 @@ A track starts as a WAV. `node scripts/track.mjs <in.wav> <src>` (needs ffmpeg)
 writes `public/audio/<src>.mp3` and the waveform next to it as JSON, which is
 drawn at build time; the MP3 is not fetched until someone presses play.
 
+## Writing a b-side
+
+B-sides are notes that go with an entry, the way liner notes go with a record.
+One markdown file each in `src/content/notes/`; copy `_template.md`. The file
+name is the URL, `/b-sides/<name>/`.
+
+```yaml
+---
+title: Depurar audio con espectrogramas
+date: 2026-09-27
+project: tatum     # the entry's file name; leave it off for a note on its own
+lang: es           # es | en — the site stays in English, the note does not have to
+summary: One line for search results and the feed. Optional.
+---
+```
+
+The five newest sit under the setlist, set like tour dates; the rest are at
+`/b-sides`, by year and filterable by entry, with a feed at `/b-sides/rss.xml`.
+An entry with b-sides gets a page listing them even without a body of its own,
+and its row counts them in grey at the end of the tag. With none written, none
+of it shows. The e2e suite builds against `tests/fixtures/notes`, so the
+b-sides are tested before the first real one exists.
+
 ## What is hiding in it
 
 - The logo **dies for a frame** every 15 to 30 seconds, like a neon that is going.

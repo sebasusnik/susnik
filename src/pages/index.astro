@@ -1,17 +1,29 @@
 ---
 import { getCollection } from 'astro:content';
+import BSides from '../components/BSides.astro';
 import Hero from '../components/Hero.astro';
+import LatestBSide from '../components/LatestBSide.astro';
 import PersonLd from '../components/PersonLd.astro';
 import SetList from '../components/SetList.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import Base from '../layouts/Base.astro';
 import { setlist } from '../lib/entries';
+import { counts, published } from '../lib/notes';
 
 const entries = setlist(await getCollection('projects'));
+const notes = published(await getCollection('notes'));
+const titles = Object.fromEntries(entries.map((e) => [e.id, e.data.title]));
 ---
 <Base>
   <PersonLd slot="head" />
-  <Hero />
-  <SetList entries={entries} />
+  <Hero notes={notes.length > 0} />
+  <SetList entries={entries} counts={counts(notes)} set={notes.length > 0 ? 3 : undefined}>
+    <LatestBSide
+      slot="top"
+      note={notes[0]}
+      project={notes[0]?.data.project ? titles[notes[0].data.project.id] : undefined}
+    />
+    <BSides notes={notes} titles={titles} skip={1} />
+  </SetList>
   <SiteFooter />
 </Base>

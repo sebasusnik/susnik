@@ -2,9 +2,15 @@
 import { dateLabel, href, type Project, tag } from '../lib/entries';
 import Player from './Player.astro';
 
-interface Props { entry: Project }
-const { entry } = Astro.props;
-const link = href(entry);
+interface Props {
+  entry: Project;
+  /** How many b-sides it has. A pencil and the number, at the end of the tag. */
+  notes?: number;
+  /** Past the first few: held back until the encore is asked for. */
+  encore?: boolean;
+}
+const { entry, notes = 0, encore = false } = Astro.props;
+const link = href(entry, notes > 0);
 const { kind, dead, status } = tag(entry);
 const external = link?.startsWith('http');
 const featured = entry.data.featured;
@@ -20,6 +26,8 @@ const Tag = link ? 'a' : 'div';
 <div
   data-entry
   data-kind={entry.data.kind}
+  data-encore={encore || undefined}
+  hidden={encore}
   class="-mx-3 border-b border-line transition-colors hover:bg-lift focus-within:bg-lift"
 >
 <Tag
@@ -72,7 +80,9 @@ const Tag = link ? 'a' : 'div';
     class="col-start-2 row-start-1 text-right text-[11px] uppercase tracking-[.12em] text-mute
            sm:col-start-3 sm:whitespace-nowrap sm:tracking-[.2em]"
   >
-    {dead ? <s class="text-faint decoration-blood">{kind}</s> : kind}{status && <> · {status}</>}
+    {dead ? <s class="text-faint decoration-blood">{kind}</s> : kind}{status && <> · {status}</>}{notes > 0 && (
+      <span data-count class="text-faint"> <span aria-hidden="true">✎</span> {notes}<span class="sr-only"> b-sides</span></span>
+    )}
   </span>
 </Tag>
 

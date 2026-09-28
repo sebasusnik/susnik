@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { entries, phone } from './helpers';
+import { entries, notes, phone } from './helpers';
 
 const all = entries();
+// With b-sides under it the setlist plays three and keeps the rest for the
+// encore; with none, it plays everything.
+const SET = notes().length ? Math.min(3, all.length) : all.length;
 
 test.describe('setlist', () => {
   test.beforeEach(async ({ page }) => page.goto('/'));
@@ -20,11 +23,12 @@ test.describe('setlist', () => {
     expect(size).toBeGreaterThan(20);
   });
 
-  test('has one h1, one h2 and an h3 per entry', async ({ page }) => {
+  test('has one h1, an h2 per list and an h3 per entry', async ({ page }) => {
     const counts = await page.evaluate(() =>
       ['h1', 'h2', 'h3'].map((t) => document.body.querySelectorAll(t).length),
     );
-    expect(counts).toEqual([1, 1, all.length]);
+    // The setlist, and the b-sides once there is one.
+    expect(counts).toEqual([1, notes().length ? 2 : 1, all.length]);
   });
 
   test('causes of death are shown', async ({ page }) => {
@@ -40,14 +44,48 @@ test.describe('setlist', () => {
       );
     }
     await page.getByRole('button', { name: 'all', exact: true }).click();
+    await expect(page.locator('.row:visible')).toHaveCount(SET);
+  });
+
+  test('the encore plays the rest, and takes it back', async ({ page }) => {
+    const encore = page.locator('[data-encore-button]');
+    await expect(page.locator('.row:visible')).toHaveCount(SET);
+    if (SET === all.length) {
+      await expect(encore).toHaveCount(0);
+      return;
+    }
+    const rest = all.length - SET;
+    await expect(encore).toHaveText(new RegExp(`encore\\s*${rest} more`, 'i'), {
+      useInnerText: true,
+    });
+    await expect(encore).toHaveAttribute('aria-expanded', 'false');
+    await encore.click();
     await expect(page.locator('.row:visible')).toHaveCount(all.length);
+    await expect(encore).toHaveText(new RegExp(`encore\\s*${rest} less`, 'i'), {
+      useInnerText: true,
+    });
+    await expect(encore).toHaveAttribute('aria-expanded', 'true');
+    // A filter and back leaves it as it was.
+    await page.getByRole('button', { name: all[0].kind!, exact: true }).click();
+    await expect(encore).toBeHidden();
+    await page.getByRole('button', { name: 'all', exact: true }).click();
+    await expect(page.locator('.row:visible')).toHaveCount(all.length);
+    await encore.click();
+    await expect(page.locator('.row:visible')).toHaveCount(SET);
+    await expect(encore).toBeInViewport();
+  });
+
+  test('the hero mentions notes only once there are some', async ({ page }) => {
+    const line = page.locator('.hero p').filter({ hasText: 'product engineer' });
+    if (notes().length) await expect(line).toContainText('And notes from building them.');
+    else await expect(line).not.toContainText('notes');
   });
 
   test('rows link to their own page, straight out, or nowhere', async ({ page }) => {
     for (const e of all) {
       const row = page.locator('.row', { has: page.locator('h3', { hasText: e.title }) });
       const href = await row.getAttribute('href');
-      if (e.hasBody) expect(href).toBe(`/projects/${e.id}/`);
+      if (e.hasPage) expect(href).toBe(`/projects/${e.id}/`);
       else if (e.link) {
         expect(href).toBe(e.link);
         await expect(row).toHaveAttribute('target', '_blank');
@@ -65,8 +103,8 @@ test('entries whose source is about to go public say so', async ({ page }) => {
   }
 });
 
-test('entries with a body render their own page', async ({ page }) => {
-  for (const e of all.filter((x) => x.hasBody)) {
+test('entries with a body or b-sides render their own page', async ({ page }) => {
+  for (const e of all.filter((x) => x.hasPage)) {
     const res = await page.goto(`/projects/${e.id}/`);
     expect(res?.status()).toBe(200);
     await expect(page.locator('h1')).toHaveText(e.title);

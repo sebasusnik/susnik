@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
@@ -23,10 +23,6 @@ const projects = defineCollection({
     stack: z.string().optional(),
     link: z.url().optional(),
     /**
-     * alive: still being worked on. undead: never finishes, never dies.
-     * deceased: over, and `died` says when.
-     */
-    /**
      * alive: still being worked on. undead: never finishes, never quite dies.
      * deceased: over, and `died` says when. Leave it off and the entry is
      * simply done — it works, there is nothing more to say about it.
@@ -48,4 +44,28 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { projects };
+/**
+ * B-sides: notes that go with a project, the way liner notes go with a record.
+ * Written by hand, in whichever language the note is in; the site around them
+ * stays in English.
+ *
+ * NOTES_DIR exists for the e2e suite, which points it at tests/fixtures/notes
+ * so the b-sides can be tested before the first real one is written.
+ */
+const notes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: process.env.NOTES_DIR ?? './src/content/notes' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    /** The entry it belongs to. Optional: a note can stand alone. */
+    project: reference('projects').optional(),
+    /** Marks the page for search engines and screen readers. */
+    lang: z.enum(['es', 'en']).default('es'),
+    /** One line for search results and the feed. Falls back to the opening words. */
+    summary: z.string().optional(),
+    track: z.object({ src: z.string(), title: z.string() }).optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { projects, notes };
